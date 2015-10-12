@@ -4,13 +4,13 @@ sudo: required
 warnings_are_errors: false
 bioc_required: true
 
+# stuff needed by iPlot (Java and X11)
 apt_packages:
   - r-cran-rjava
 
 before_install:
-  - ant init-ivy
-  - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
+  - "export DISPLAY=:99.0"
 
 env:
   global:
