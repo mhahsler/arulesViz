@@ -2,6 +2,7 @@
 language: r
 sudo: required
 warnings_are_errors: false
+bioc_required: true
 
 env:
   global:
@@ -9,6 +10,11 @@ env:
 
 r_packages:
   - covr
+  - iplots
+
+bioc_packages:
+  - graph
+  - Rgraphviz
 
 after_success:
   - Rscript -e 'covr::codecov()'
