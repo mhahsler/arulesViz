@@ -14,7 +14,6 @@ env:
 r_packages:
   - covr
   - iplots
-  - rJava
 
 bioc_packages:
   - graph
