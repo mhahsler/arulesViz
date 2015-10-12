@@ -7,6 +7,11 @@ bioc_required: true
 apt_packages:
   - r-cran-rjava
 
+before_install:
+  - ant init-ivy
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+
 env:
   global:
     - CRAN: http://cran.rstudio.com
@@ -14,7 +19,6 @@ env:
 r_packages:
   - covr
   - iplots
-  - rJava
 
 bioc_packages:
   - graph
