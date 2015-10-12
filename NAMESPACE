@@ -1,0 +1,18 @@
+import(arules)
+importFrom(graphics, par, plot, mtext, text, axis)
+importFrom(stats, median, kmeans)
+importFrom(grDevices, hcl, rgb, gray.colors, gray)
+importFrom(methods, is, as, new)
+importFrom(utils, head, installed.packages)
+import(grid) ### need to use as depends in DESCRIPTION because of vcd
+#import(igraph) ### we use now igraph::
+importFrom(seriation, seriate, ser_permutation, set_seriation_method, 
+  permute, get_order)
+importFrom(scatterplot3d, scatterplot3d)
+importFrom(vcd, mosaic, doubledecker)
+
+export(saveAsGraph)
+
+S3method(plot, rules)
+S3method(plot, itemsets)
+S3method(plot, grouped_matrix)
