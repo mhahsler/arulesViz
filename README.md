@@ -30,7 +30,6 @@ Several visualizations are also available in interactive exploration mode.
 R> library(arulesViz)
 R> data(Groceries)
 R> rules <- apriori(Groceries, parameter=list(support=0.005, confidence=0.5))
-
 R> plot(rules)
 ```
 

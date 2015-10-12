@@ -9,6 +9,9 @@ env:
 
 r_packages:
   - covr
+  - graph
+  - Rgraphviz
+  - iplots
 
 after_success:
   - Rscript -e 'covr::codecov()'
