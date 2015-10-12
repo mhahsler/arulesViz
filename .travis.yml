@@ -4,6 +4,7 @@ sudo: required
 warnings_are_errors: false
 bioc_required: true
 
+# stuff needed by iPlot (Java and X11)
 apt_packages:
   - r-cran-rjava
 
