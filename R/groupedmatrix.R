@@ -159,15 +159,20 @@ grouped_matrix_int <- function(rules, measure, shading,
   s <- rulesAsMatrix(rules, shading)
   if(is.na(max.shading)) max.shading <- max(s, na.rm=TRUE)
   
-  ## fixme: this handling of na for clustering is not great!
+  ## FIXME: this handling of na for clustering is not great!
   s_clust <- s
   if(shading=="lift") naVal <- 1
   else naVal <- 0
   s_clust[is.na(s_clust)] <- naVal
   
   s_clust <- t(s_clust)
-  if(nrow(s_clust)>k) km <-  kmeans(s_clust, k, iter.max=50, nstart=10)$cl
-  else km <- 1:nrow(s_clust)
+  
+  ## are there enought non-identical points for k-means?
+  ## if not then we group the identical ones using hclust
+  if(sum(!duplicated(s_clust))>k) 
+      km <- kmeans(s_clust, k, iter.max=50, nstart=10)$cl
+  else 
+      km <- cutree(hclust(dist(s_clust)), h=0)
   
   sAggr <- .aggr(s, km, aggr.fun)
   
