@@ -438,9 +438,9 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
       s <- quality(rules)[[shading]]
       v.color <- c(rep(control$nodeColors[1], length(itemNodes)),
         control$node_hcl(map(s, c(0.9,0.1)), alpha=control$alpha)) 
+    } else v.color <- c(rep(control$nodeColors[1], length(itemNodes)),
+      control$node_hcl(rep(.5, length(rules)), alpha=control$alpha))
       
-      
-    }
     
     if(control$measureLabels) {
       if(is.na(m) || is.na(s)) {
