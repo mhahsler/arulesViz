@@ -10,5 +10,5 @@ Suggests: graph, Rgraphviz, colorspace, iplots
 Description: Extends package arules with various visualization techniques for association rules and itemsets. The package also includes several interactive visualizations for rule exploration.
 License: GPL-3
 URL: http://lyle.smu.edu/IDA/arules/
-BugReports: http://r-forge.r-project.org/projects/arules
+BugReports: https://github.com/mhahsler/arulesViz/issues
 Copyright: (C) 2011 Michael Hahsler and Sudheer Chelluboina
