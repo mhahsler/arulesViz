@@ -19,7 +19,8 @@
 ## mapping helper
 
 map <- function(x, range = c(0,1), from.range=NA) {
-    if(any(is.na(from.range))) from.range <- range(x, na.rm=TRUE)
+    if(is.null(from.range) || any(is.na(from.range))) 
+      from.range <- range(x, na.rm=TRUE)
     
     ## check if all values are the same
     if(!diff(from.range)) { 

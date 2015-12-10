@@ -10,6 +10,7 @@ importFrom(seriation, seriate, ser_permutation, set_seriation_method,
   permute, get_order)
 importFrom(scatterplot3d, scatterplot3d)
 importFrom(vcd, mosaic, doubledecker)
+importFrom(colorspace, heat_hcl)
 
 export(saveAsGraph)
 

@@ -17,317 +17,325 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 matrix_arules <- function(rules, measure = "support", control = NULL, ...){
-
-    control <- .get_parameters(list(
-		    main = paste("Matrix with",length(rules),"rules"),
-		    col = gray.colors(100, 0.3, .8),
-		    reorder = FALSE,
-		    reorderBy = NULL,
-		    reorderMethod = "TSP",
-		    reorderControl = NULL,
-		    reorderDist = "euclidean",
-		    type = "grid",
-		    newpage = TRUE,
-		    interactive = FALSE
-		    ), control)
-
-
-    ## somehow the colors are reversed
-    control$col <- rev(control$col) 
-
-    ## regular case (only one measure)
-    if(length(measure) < 2) ret <- matrix_int(rules, measure, control, ...)
-    else ret <- matrix_int2(rules, measure, control, ...)
-
-
-    if(!control$interactive) return(invisible())
-    if(control$type != "grid") {
-	cat("Interactive mode not available for this method!\n")
-	return(invisible())
-    }
+  
+  control <- .get_parameters(list(
+    main = paste("Matrix with",length(rules),"rules"),
+    #col = gray.colors(100, 0.3, .8),
+    col = heat_hcl(100),
+    zlim = NULL,
+    axes = TRUE,
+    reorder = FALSE,
+    reorderBy = NULL,
+    reorderMethod = "TSP",
+    reorderControl = NULL,
+    reorderDist = "euclidean",
+    type = "grid",
+    newpage = TRUE,
+    interactive = FALSE
+  ), control)
+  
+  
+  ## somehow the colors are reversed
+  control$col <- rev(control$col) 
+  
+  ## regular case (only one measure)
+  if(length(measure) < 2) ret <- matrix_int(rules, measure, control, ...)
+  else ret <- matrix_int2(rules, measure, control, ...)
+  
+  
+  if(!control$interactive) return(invisible())
+  if(control$type != "grid") {
+    cat("Interactive mode not available for this method!\n")
+    return(invisible())
+  }
+  
+  ## interactive mode
+  cat("Interactive mode.\nIdentify rules by selecting them.\nEnd interactive mode by clicking outside the plotting area!\n")
+  
+  ## go to viewport
+  downViewport("image")
+  
+  ## no buttons
+  gI <- gInteraction()
+  
+  while(TRUE){
+    gI <- gIdentify(gI)
     
-    ## interactive mode
-    cat("Interactive mode.\nIdentify rules by selecting them.\nEnd interactive mode by clicking outside the plotting area!\n")
-
-    ## go to viewport
-    downViewport("image")
-
-    ## no buttons
-    gI <- gInteraction()
-
-    while(TRUE){
-	gI <- gIdentify(gI)
-
-	sel <- selection(gI)
-	if(is.null(sel)) return(invisible())
-	
-	select <- convertLoc(selection(gI)$loc,
-		"native", valueOnly=TRUE)
-	select <- lapply(select, round)
-
-	rule <- ret[select$y,select$x,drop=FALSE]
-
-	if(is.na(as.numeric(rule))) cat("No rules selected!\n")
-	else cat(colnames(rule), " -> ", rownames(rule), 
-		" (",measure[1],": ",as.numeric(rule), ")\n", sep='')
-    } 
-
+    sel <- selection(gI)
+    if(is.null(sel)) return(invisible())
+    
+    select <- convertLoc(selection(gI)$loc,
+      "native", valueOnly=TRUE)
+    select <- lapply(select, round)
+    
+    rule <- ret[select$y,select$x,drop=FALSE]
+    
+    if(is.na(as.numeric(rule))) cat("No rules selected!\n")
+    else cat(colnames(rule), " -> ", rownames(rule), 
+      " (",measure[1],": ",as.numeric(rule), ")\n", sep='')
+  } 
+  
 }
 
 
 
 matrix_int <- function(rules, measure, control, ...){
-    m <- rulesAsMatrix(rules, measure)
-
-
-    if(control$reorder == TRUE)
-    {
-	if(is.null(control$reorderBy)) mReorder <- m
-	else mReorder <- rulesAsMatrix(rules, control$reorderBy)
-
-	order <- .reorder(mReorder, rules, method=control$reorderMethod,
-		control=control$reorderControl);
-	m <- permute(m, order)
-
-    }
-
-    writeLines("Itemsets in Antecedent (LHS)")
-    print(colnames(m))
-    writeLines("Itemsets in Consequent (RHS)")
-    print(rownames(m))
-
-
-    if (control$type == "image") {
-	image(t(m), col = control$col, xlab = "Antecedent (LHS)", 
-		ylab = "Consequent (RHS)", main = control$main, 
-		sub=paste("Measure:", measure), axes=FALSE, ...)
-	axis(1, labels=1:ncol(m), at=(0:(ncol(m)-1))/(ncol(m)-1))
-	axis(2, labels=1:nrow(m), at=(0:(nrow(m)-1))/(nrow(m)-1))
-    }
-    else if (control$type == "3d") {
-	df <- cbind(which(!is.na(m), arr.ind=TRUE), as.vector(m[!is.na(m)]))
-	scatterplot3d(df, zlab = measure, xlab="Consequent (RHS)", 
-		ylab= "Antecedent (LHS)", main = control$main,
-		type="h", pch="", ...)
-    }
-    else
-    {
-	#dimnames(m) <- NULL
-	#plot(levelplot(t(m), xlab = "Antecedent (LHS)", 
-	#		ylab = "Consequent (RHS)", 
-	#		main = control$main, aspect = "fill", 
-	#		cuts = 20, col.regions = control$col, 
-	#		sub=paste("Measure:", measure), ...))
+  m <- rulesAsMatrix(rules, measure)
+  
+  
+  if(control$reorder == TRUE)
+  {
+    if(is.null(control$reorderBy)) mReorder <- m
+    else mReorder <- rulesAsMatrix(rules, control$reorderBy)
     
-	## start plot
-	if(control$newpage) grid.newpage()
-
-	## main 
-	gTitle(control$main)
-
-	## image
-	pushViewport(viewport(x=unit(4, "lines"),
-			y=unit(4, "lines"),
-			height=unit(1,"npc")-unit(4+4, "lines"),
-			width=unit(1,"npc")-unit(4+2+2+3, "lines"),
-			just = c("left", "bottom")))
-
-  cols <- matrix(NA, nrow=nrow(m), ncol=ncol(m))
-  cols[] <- control$col[map(m, c(1,(length(control$col)+1)))]
-	cols[is.na(cols)] <- control$col[length(control$col)]
-	cols[is.na(m)] <- NA
-
-	gImage(cols, xlab="Antecedent (LHS)", ylab="Consequent (RHS)", 
-		name="image")
-
-	upViewport(1)
-
-	### color key
-	pushViewport(viewport(x=unit(1, "npc")-unit(4+2, "lines"),
-			#y=unit(4, "lines"),
-			y=unit(1, "npc")-unit(4, "lines"),
-			height=unit(1,"npc")-unit(4+4, "lines"),
-			width=unit(1, "lines"),
-			#just = c("left", "bottom")))
-			just = c("left", "top")))
-	
-	gColorkey(range(m, na.rm=TRUE), control$col, label = measure[1])
-   
-	upViewport(1)
+    order <- .reorder(mReorder, rules, method=control$reorderMethod,
+      control=control$reorderControl);
+    m <- permute(m, order)
+    
+  }
+  
+  writeLines("Itemsets in Antecedent (LHS)")
+  print(colnames(m))
+  writeLines("Itemsets in Consequent (RHS)")
+  print(rownames(m))
+  
+  
+  if (control$type == "image") {
+    image(t(m), col = control$col, xlab = "Antecedent (LHS)", 
+      ylab = "Consequent (RHS)", main = control$main, 
+      sub=paste("Measure:", measure), axes=FALSE, ...)
+    if(control$axes) {
+      axis(1, labels=1:ncol(m), at=(0:(ncol(m)-1))/(ncol(m)-1))
+      axis(2, labels=1:nrow(m), at=(0:(nrow(m)-1))/(nrow(m)-1))
     }
-
-    m
+    box()
+  }
+  else if (control$type == "3d") {
+    df <- cbind(which(!is.na(m), arr.ind=TRUE), as.vector(m[!is.na(m)]))
+    scatterplot3d(df, zlab = measure, xlab="Consequent (RHS)", 
+      ylab= "Antecedent (LHS)", main = control$main,
+      type="h", pch="", ...)
+  }
+  else
+  {
+    #dimnames(m) <- NULL
+    #plot(levelplot(t(m), xlab = "Antecedent (LHS)", 
+    #		ylab = "Consequent (RHS)", 
+    #		main = control$main, aspect = "fill", 
+    #		cuts = 20, col.regions = control$col, 
+    #		sub=paste("Measure:", measure), ...))
+    
+    ## start plot
+    if(control$newpage) grid.newpage()
+    
+    ## main 
+    gTitle(control$main)
+    
+    ## image
+    pushViewport(viewport(x=unit(4, "lines"),
+      y=unit(4, "lines"),
+      height=unit(1,"npc")-unit(4+4, "lines"),
+      width=unit(1,"npc")-unit(4+2+2+3, "lines"),
+      just = c("left", "bottom")))
+   
+    if(is.null(control$zlim)) control$zlim <- range(m, na.rm=TRUE) 
+    cols <- matrix(NA, nrow=nrow(m), ncol=ncol(m))
+    cols[] <- control$col[map(m, c(1,(length(control$col)+1)), 
+      from = control$zlim)]
+    cols[is.na(cols)] <- control$col[length(control$col)]
+    cols[is.na(m)] <- NA
+    
+    gImage(cols, xlab="Antecedent (LHS)", ylab="Consequent (RHS)", 
+      name="image", axes = control$axes, ...)
+    
+    upViewport(1)
+    
+    ### color key
+    pushViewport(viewport(x=unit(1, "npc")-unit(4+2, "lines"),
+      #y=unit(4, "lines"),
+      y=unit(1, "npc")-unit(4, "lines"),
+      height=unit(1,"npc")-unit(4+4, "lines"),
+      width=unit(1, "lines"),
+      #just = c("left", "bottom")))
+      just = c("left", "top")))
+    
+    gColorkey(control$zlim, control$col, label = measure[1])
+    
+    upViewport(1)
+  }
+  
+  m
 }
 
-	
+
 
 ## 2 measures
 matrix_int2 <- function(rules, measure, control, ...){
-
-    m1 <- rulesAsMatrix(rules, measure[1])
-    m2 <- rulesAsMatrix(rules, measure[2])
-
-    if(control$reorder == TRUE)
-    {
-	if(is.null(control$reorderBy)) m_reorder <- m1
-	else if(control$reorderBy == measure[1]) m_reorder <- m1
-	else if(control$reorderBy == measure[2]) m_reorder <- m2
-	else m_reorder <- rulesAsMatrix(rules, control$reorderBy)
-
-	order <- .reorder(m_reorder, rules, method=control$reorderMethod, 
-		control=control$reorderControl)
-
-	m1 <- permute(m1, order)
-	m2 <- permute(m2, order)
-
-    }
-
-    writeLines("Itemsets in Antecedent (LHS)")
-    print(colnames(m1))
-    writeLines("Itemsets in Consequent (RHS)")
-    print(rownames(m1))
-
-    ## start plot
-    grid.newpage()
+  
+  m1 <- rulesAsMatrix(rules, measure[1])
+  m2 <- rulesAsMatrix(rules, measure[2])
+  
+  if(control$reorder == TRUE)
+  {
+    if(is.null(control$reorderBy)) m_reorder <- m1
+    else if(control$reorderBy == measure[1]) m_reorder <- m1
+    else if(control$reorderBy == measure[2]) m_reorder <- m2
+    else m_reorder <- rulesAsMatrix(rules, control$reorderBy)
     
-    ## main 
-    pushViewport(viewport(y=1, height=unit(4, "lines"),
-		    just = c("top")))
-    grid.text(control$main,
-	    gp=gpar(fontface="bold", cex=1.2))
-    upViewport(1)
-
-    ## image
-    pushViewport(viewport(x=unit(4, "lines"),
-		    y=unit(4, "lines"),
-		    height=unit(1,"npc")-unit(4+4, "lines"),
-		    width=unit(1,"npc")-unit(4+2+9, "lines"),
-		    just = c("left", "bottom")))
-
-
-    ## h = 0..360, but we only use 0..260
-    ## l = 0..100 but we use 10..90
-    ## all colors are reversed
-
-    cols <- matrix(hcl(
-		    h=floor(map(m1, c(260, 0))), 
-		    l=floor(map(m2, c(100, 30))), 
-		    c=floor(map(m2, c(30, 100)))), 
-	    ncol=ncol(m1))
-    cols[is.na(m1) | is.na(m2)] <- NA
-
-    gImage(cols, xlab="Antecedent (LHS)", ylab="Consequent (RHS)",
-	    name="image")
+    order <- .reorder(m_reorder, rules, method=control$reorderMethod, 
+      control=control$reorderControl)
     
-    upViewport(1)
-
-    ### color key
-    pushViewport(viewport(x=unit(1, "npc")-unit(9-3, "lines"),
-		    #y=unit(4, "lines"),
-		    y=unit(1, "npc")-unit(4, "lines"),
-		    #height=unit(1,"npc")-unit(4+4, "lines"),
-		    height=unit(5, "lines"),
-		    width=unit(5, "lines"),
-		    #just = c("left", "bottom")))
-		    just = c("left", "top")))
-
+    m1 <- permute(m1, order)
+    m2 <- permute(m2, order)
     
-    
-    steps <- 10
-    mm <- outer(seq(260, 0, length.out=steps), seq(100, 30, length.out=steps), 
-	    FUN=function(x, y) hcl(h=x, l=y, c=130-y))
-
-    gImage(mm, 
-	    xScale = range(m2, na.rm=TRUE), yScale = range(m1, na.rm=TRUE),
-	    xlab=measure[2], ylab=NULL)
-    
-    ## we have to move the label for the y axis out some more
-    grid.text(measure[1],unit(-4, "lines"),0.5, rot=90)
-    upViewport(1)
-
-    m1
+  }
+  
+  writeLines("Itemsets in Antecedent (LHS)")
+  print(colnames(m1))
+  writeLines("Itemsets in Consequent (RHS)")
+  print(rownames(m1))
+  
+  ## start plot
+  grid.newpage()
+  
+  ## main 
+  pushViewport(viewport(y=1, height=unit(4, "lines"),
+    just = c("top")))
+  grid.text(control$main,
+    gp=gpar(fontface="bold", cex=1.2))
+  upViewport(1)
+  
+  ## image
+  pushViewport(viewport(x=unit(4, "lines"),
+    y=unit(4, "lines"),
+    height=unit(1,"npc")-unit(4+4, "lines"),
+    width=unit(1,"npc")-unit(4+2+9, "lines"),
+    just = c("left", "bottom")))
+  
+  
+  ## h = 0..360, but we only use 0..260
+  ## l = 0..100 but we use 10..90
+  ## all colors are reversed
+  
+  cols <- matrix(hcl(
+    h=floor(map(m1, c(260, 0))), 
+    l=floor(map(m2, c(100, 30))), 
+    c=floor(map(m2, c(30, 100)))), 
+    ncol=ncol(m1))
+  cols[is.na(m1) | is.na(m2)] <- NA
+  
+  gImage(cols, xlab="Antecedent (LHS)", ylab="Consequent (RHS)",
+    name="image")
+  
+  upViewport(1)
+  
+  ### color key
+  pushViewport(viewport(x=unit(1, "npc")-unit(9-3, "lines"),
+    #y=unit(4, "lines"),
+    y=unit(1, "npc")-unit(4, "lines"),
+    #height=unit(1,"npc")-unit(4+4, "lines"),
+    height=unit(5, "lines"),
+    width=unit(5, "lines"),
+    #just = c("left", "bottom")))
+    just = c("left", "top")))
+  
+  
+  
+  steps <- 10
+  mm <- outer(seq(260, 0, length.out=steps), seq(100, 30, length.out=steps), 
+    FUN=function(x, y) hcl(h=x, l=y, c=130-y))
+  
+  gImage(mm, 
+    xScale = range(m2, na.rm=TRUE), yScale = range(m1, na.rm=TRUE),
+    xlab=measure[2], ylab=NULL)
+  
+  ## we have to move the label for the y axis out some more
+  grid.text(measure[1],unit(-4, "lines"),0.5, rot=90)
+  upViewport(1)
+  
+  m1
 }
 
 
 ## reorder helper
 .reorder <- function(m, rules=NULL, method=NULL, control=NULL){
-    ## rules is only needed by ConfSupp
+  ## rules is only needed by ConfSupp
+  
+  distMethods <- c( 
+    "ARSA",
+    "BBURCG",
+    "BBWRCG",
+    "TSP",
+    "Chen",
+    "MDS",
+    "HC",
+    "GW",
+    "OLO"
+  )
+  
+  if(is.null(method)) method <- "TSP"
+  
+  dist <- control$reorderDist
+  if(is.null(dist)) dist <- "euclidean"
+  
+  ## replace unknown values with 0. Also takes care of NAs (see below)
+  m[is.na(m)] <- 0
+  
+  if(toupper(method) %in% distMethods){
     
-    distMethods <- c( 
-	    "ARSA",
-	    "BBURCG",
-	    "BBWRCG",
-	    "TSP",
-	    "Chen",
-	    "MDS",
-	    "HC",
-	    "GW",
-	    "OLO"
-	    )
+    l <- dist(m, method = dist)
+    r <- dist(t(m), method = dist)
+    ## handle NAs make them a large distance
+    #l[is.na(l)] <- max(l, na.rm=TRUE) * 2
+    #r[is.na(r)] <- max(r, na.rm=TRUE) * 2
     
-    if(is.null(method)) method <- "TSP"
+    ls <- seriate(l, method = method, control=control)
+    rs <- seriate(r, method = method, control=control)
+    return(c(ls,rs))
+  }else{
     
-    dist <- control$reorderDist
-    if(is.null(dist)) dist <- "euclidean"
-	
-    ## replace unknown values with 0. Also takes care of NAs (see below)
-    m[is.na(m)] <- 0
-    
-    if(toupper(method) %in% distMethods){
-
-	l <- dist(m, method = dist)
-	r <- dist(t(m), method = dist)
-	## handle NAs make them a large distance
-	#l[is.na(l)] <- max(l, na.rm=TRUE) * 2
-	#r[is.na(r)] <- max(r, na.rm=TRUE) * 2
-	
-	ls <- seriate(l, method = method, control=control)
-	rs <- seriate(r, method = method, control=control)
-	return(c(ls,rs))
-    }else{
-
-	if(method == "ConfSupp")
-	{
-	    ms <- rulesAsMatrix(rules,"support")
-	    mc <- rulesAsMatrix(rules,"confidence")
-	    o1 <- order(colMeans(ms, na.rm=TRUE))
-	    o2 <- order(rowMeans(mc, na.rm=TRUE))
-	    o <- ser_permutation(o2,o1)
-	    return(o)
-	
-	}else{   
-	    l <- seriate(m, method = method, control=control)
-	    return(l)
-	}
+    if(method == "ConfSupp")
+    {
+      ms <- rulesAsMatrix(rules,"support")
+      mc <- rulesAsMatrix(rules,"confidence")
+      o1 <- order(colMeans(ms, na.rm=TRUE))
+      o2 <- order(rowMeans(mc, na.rm=TRUE))
+      o <- ser_permutation(o2,o1)
+      return(o)
+      
+    }else{   
+      l <- seriate(m, method = method, control=control)
+      return(l)
     }
-
+  }
+  
 }
 
 seriation_method_avgMeasure <- function(x, control){
-    ser_permutation(
-	    order(rowMeans(x, na.rm=TRUE)),
-	    order(colMeans(x, na.rm=TRUE)))
+  ser_permutation(
+    order(rowMeans(x, na.rm=TRUE)),
+    order(colMeans(x, na.rm=TRUE)))
 }
 
 seriation_method_maxMeasure <- function(x, control){
-    ser_permutation(
-	    order(apply(x, MARGIN=1, max, na.rm=TRUE)),
-	    order(apply(x, MARGIN=2, max, na.rm=TRUE)))
+  ser_permutation(
+    order(apply(x, MARGIN=1, max, na.rm=TRUE)),
+    order(apply(x, MARGIN=2, max, na.rm=TRUE)))
 }
 
 seriation_method_medMeasure <- function(x, control){
-    ser_permutation(
-	    order(apply(x, MARGIN=1, median, na.rm=TRUE)),
-	    order(apply(x, MARGIN=2, median, na.rm=TRUE)))
+  ser_permutation(
+    order(apply(x, MARGIN=1, median, na.rm=TRUE)),
+    order(apply(x, MARGIN=2, median, na.rm=TRUE)))
 }
 
 
 set_seriation_method("matrix", "avg", seriation_method_avgMeasure, 
-	"Order by average")
+  "Order by average")
 set_seriation_method("matrix", "max", seriation_method_maxMeasure, 
-	"Order by maximum")
+  "Order by maximum")
 set_seriation_method("matrix", "median", seriation_method_maxMeasure, 
-	"Order by median")
+  "Order by median")
 
 
 

@@ -29,7 +29,7 @@
     o <- pmatch(names(parameter), names(p))
     
     if(any(is.na(o)))
-      stop(sprintf(ngettext(length(is.na(o)),
+      warning(sprintf(ngettext(length(is.na(o)),
         "Unknown option: %s",
         "Unknown options: %s"),
         paste(names(parameter)[is.na(o)],

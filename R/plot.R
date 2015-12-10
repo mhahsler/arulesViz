@@ -54,7 +54,7 @@ plot.rules <- function(x, method = NULL, measure = "support",
   else if (methodNr == 6) {
     if(length(measure)<2) measure[2] <- "confidence"
     scatterplot_arules(x, measure = measure, 
-      shading = shading, control)
+      shading = shading, control, ...)
   }
   else if (methodNr == 7) grouped_matrix_arules(x, measure= measure, 
     shading = shading, control=control, ...)

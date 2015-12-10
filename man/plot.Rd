@@ -219,6 +219,7 @@ plot(rules)
 ## Scatterplot with custom colors
 library(colorspace) # for sequential_hcl
 plot(rules, control=list(col=sequential_hcl(100)))
+plot(rules, control=list(col=sequential_hcl(100, c.=0)))
     
 ## Two-key plot is a scatterplot with shading = "order"
 plot(rules, shading="order", control=list(main = "Two-key plot", 
