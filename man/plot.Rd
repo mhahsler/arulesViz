@@ -69,7 +69,7 @@ The list of control parameters for this method is
 \item{"cex"}{symbol size}
 \item{"xlim","ylim"}{limits}
 \item{"jitter"}{a number greater than 0 adds jitter to the points}
-\item{"col"}{color palette (default is 100 gray values.)}
+\item{"col"}{color palette}
 }
 
 Interactive manipulations are available.
@@ -128,6 +128,7 @@ Control arguments are
 \item{"main"}{plot title}
 \item{"cex"}{cex for labels}
 \item{"itemLabels"}{display item/itemset names instead of ids (\code{TRUE})}
+\item{"edgeCol", "nodeCol"}{color palettes for edges and nodes.}
 \item{"measureLabels"}{display values of interest measures (\code{FALSE})}
 \item{"precision"}{ number of digits for numbers in plot.}
 \item{"type"}{vertices represent: "items" (default) or "itemsets"}
@@ -219,7 +220,7 @@ plot(rules)
 ## Scatterplot with custom colors
 library(colorspace) # for sequential_hcl
 plot(rules, control=list(col=sequential_hcl(100)))
-plot(rules, control=list(col=sequential_hcl(100, c.=0)))
+plot(rules, control=list(col=grey.colors(50, alpha =.8)))
     
 ## Two-key plot is a scatterplot with shading = "order"
 plot(rules, shading="order", control=list(main = "Two-key plot", 
@@ -268,6 +269,7 @@ plot(subrules2, method="paracoord", control=list(reorder=TRUE))
 
 ## Doubledecker plot only works for a single rule
 oneRule <- sample(rules, 1)
+inspect(oneRule)
 plot(oneRule, method="doubledecker", data = Groceries)
 
 ## use iplots (experimental)

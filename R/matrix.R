@@ -18,7 +18,7 @@
 
 matrix_arules <- function(rules, measure = "support", control = NULL, ...){
   
-  control <- .get_parameters(list(
+  control <- .get_parameters(control, list(
     main = paste("Matrix with",length(rules),"rules"),
     #col = gray.colors(100, 0.3, .8),
     col = heat_hcl(100),
@@ -32,7 +32,7 @@ matrix_arules <- function(rules, measure = "support", control = NULL, ...){
     type = "grid",
     newpage = TRUE,
     interactive = FALSE
-  ), control)
+  ))
   
   
   ## somehow the colors are reversed
@@ -141,12 +141,12 @@ matrix_int <- function(rules, measure, control, ...){
     if(is.null(control$zlim)) control$zlim <- range(m, na.rm=TRUE) 
     cols <- matrix(NA, nrow=nrow(m), ncol=ncol(m))
     cols[] <- control$col[map(m, c(1,(length(control$col)+1)), 
-      from = control$zlim)]
+      from.range = control$zlim)]
     cols[is.na(cols)] <- control$col[length(control$col)]
     cols[is.na(m)] <- NA
     
     gImage(cols, xlab="Antecedent (LHS)", ylab="Consequent (RHS)", 
-      name="image", axes = control$axes, ...)
+      name="image", axes = "integer", ...)
     
     upViewport(1)
     
@@ -225,7 +225,7 @@ matrix_int2 <- function(rules, measure, control, ...){
   cols[is.na(m1) | is.na(m2)] <- NA
   
   gImage(cols, xlab="Antecedent (LHS)", ylab="Consequent (RHS)",
-    name="image")
+    name="image", axes = "integer")
   
   upViewport(1)
   

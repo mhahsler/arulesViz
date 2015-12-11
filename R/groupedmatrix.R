@@ -22,16 +22,17 @@ grouped_matrix_arules <- function(rules, measure, shading, control=NULL, ...){
   ## measure controls circle size
   ## shading controls color
   
-  control <- .get_parameters(list(
+  control <- .get_parameters(control, list(
     main =paste("Grouped matrix for", length(rules), "rules"),
     k = 20,
     aggr.fun=median, 
     ## fix lift so serveral plots are comparable (NA: take max)
     max.shading=NA,
     interactive = FALSE,
-    col = hcl(c=0, l=seq(10,80, length.out=100)),
+    col = heat_hcl(100),
+    #col = hcl(c=0, l=seq(10,80, length.out=100)),
     newpage=TRUE
-  ), control)
+  ))
   
   
   x <- grouped_matrix_int(rules, measure, shading,
@@ -116,7 +117,7 @@ grouped_matrix_arules <- function(rules, measure, shading, control=NULL, ...){
       if(!identical(ret, "zoom out")) return(ret)
       
       ## we come back up so replot
-      plot(x)
+      plot(x, col = control$col)
       seekViewport("grouped_matrix")
       gI <- resetButtons(gI)
     }
@@ -255,7 +256,7 @@ grouped_matrix_plot_int <- function (x, y, order = NULL, options = NULL) {
   if (!is.matrix(x)) 
     stop("Argument 'x' must be a matrix.")
   
-  options <- .get_parameters(list(
+  options <- .get_parameters(options, list(
     panel.function = panel.circles, 
     reverse = FALSE, 
     xlab = NULL, 
@@ -268,7 +269,7 @@ grouped_matrix_plot_int <- function (x, y, order = NULL, options = NULL) {
     main = "Grouped matrix",
     col = hcl(c=0, l=seq(10,80, length.out=100)),
     legend = ""
-  ), options)
+  ))
   
   if (!is.null(options$xlab)) rownames(x) <- options$xlab
   if (!is.null(options$ylab)) colnames(x) <- options$ylab

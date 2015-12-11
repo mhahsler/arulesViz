@@ -22,7 +22,7 @@ scatterplot_arules <- function(rules, measure = c("support","confidence"),
   
   control <- c(control, list(...))  
   
-  control <- .get_parameters(list(
+  control <- .get_parameters(control, list(
     main =paste("Scatter plot for", length(rules), class(rules)),
     interactive = FALSE,
     pch = 22,
@@ -36,7 +36,7 @@ scatterplot_arules <- function(rules, measure = c("support","confidence"),
     #gray_range = c(.1,.8),
     newpage = TRUE,
     jitter = 0
-  ), control)
+  ))
   
   
   ## set zlim depending on measure...

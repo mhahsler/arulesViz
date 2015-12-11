@@ -23,11 +23,11 @@ doubledecker_arules <- function(rules, measure ="support", data,
     if(length(rules) != 1) stop("only can visualize one rule.")
     if(is.null(data)) stop("Data missing.")
     
-    control <- .get_parameters(list(
+    control <- .get_parameters(control, list(
 		    main = "Doubledecker plot for 1 rule",
 		    type = "doubledecker",
 		    interactive = FALSE
-		    ), control)
+		    ))
 
     table <- getTable(rules, data)
 

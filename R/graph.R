@@ -24,8 +24,6 @@
 }
 
 
-.grey_hcl <- function(level, alpha=NULL) hcl(c=0, l=level*100, 
-  alpha=if(!is.null(alpha)) alpha else 1)
 
 graph_arules <- function(rules, measure = "support", shading = "lift", 
   control=NULL, ...) {
@@ -33,15 +31,16 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
   .font.family <- par()$family
   if(.font.family=="") .font.family <- "sans"
   
-  control <- .get_parameters(list(
+  control <- .get_parameters(control, list(
     main = paste("Graph for", length(rules), "rules"),
     nodeColors = .nodeColors(
       if(!is.null(control$alpha)) control$alpha else .5),
-    node_hcl = .grey_hcl,
-    edge_hcl = .grey_hcl,
+    nodeCol = heat_hcl(100),
+    edgeCol = grey_hcl(100),
     alpha = .5,
     cex = 1,
     itemLabels = TRUE,
+    labelCol = hcl(l=0, alpha = .7),
     measureLabels = FALSE,
     precision = 3,
     type = "items",
@@ -51,7 +50,7 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
     interactive = FALSE,
     engine = "igraph",
     plot = TRUE
-  ), control)
+  ))
   
   opar <- par(mar = c(0,0.1,4,0.1))
   on.exit(par(opar))
@@ -105,11 +104,12 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
     }
     
     ## use gray value to code for measure
-    e.color <- control$node_hcl(0.3, control$alpha)
+    e.color <- .col_picker(.3, control$nodeCol, control$alpha)
     s <- NA
     if(!is.na(shading)) {
       s <- quality(rules)[[shading]]
-      e.color <- control$node_hcl(map(s, c(0.9,0.1)), alpha=control$alpha)
+      e.color <- .col_picker(map(s, c(0.9,0.1)), control$nodeCol, 
+        alpha=control$alpha)
     }
     
     e.label <- NA
@@ -150,7 +150,7 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
         vertex.shape=v.shape, 
         vertex.label=v,
         vertex.label.cex=control$cex,
-        vertex.label.color="black",
+        vertex.label.color=control$labelCol,
         vertex.color = v.color,
         #vertex.size=v.size,
         edge.width=e.width,
@@ -220,11 +220,12 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
       e.width <- map(m, c(.5,3))
     }
     
-    e.color <- control$edge_hcl(0.3, control$alpha)
+    e.color <- .col_picker(.3, control$edgeCol, control$alpha)
     s <- NA
     if(!is.na(shading)) {
       s <- quality(rules)[[shading]]
-      e.color <- control$edge_hcl(map(s, c(0.9,0.1)), alpha=control$alpha)
+      e.color <- .col_picker(map(s, c(0.9,0.1)), control$edgeCol, 
+        alpha=control$alpha)
     }
     
     e.label <- NA
@@ -268,7 +269,7 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
         #att$node$fontsize <- 8.0
         #att$edge$weight <- 4.0
         att$edge$len <- 2.5 # neato
-        att$edge$color <- control$edge_hcl(0, control$alpha)
+        att$edge$color <- .col_picker(0, control$edgeCol, control$alpha)
         
         ## edges
         eAttrs <- list()
@@ -295,9 +296,9 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
         }
         
         if(!is.na(shading)) {
-          color <- control$edge_hcl(map(sapply(Rgraphviz::edgeData(gNEL), 
+          color <- .col_picker(map(sapply(Rgraphviz::edgeData(gNEL), 
             FUN = function(i) i[[shading]]),
-            c(0.9,0.1)), alpha=control$alpha)
+            c(0.9,0.1)), control$edgeCol, alpha=control$alpha)
           names(color) <- Rgraphviz::edgeNames(gNEL)
           eAttrs$color <- color
         }
@@ -340,7 +341,8 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
           vertex.shape=v.shape, 
           vertex.label=v,
           vertex.label.cex=control$cex,
-          vertex.label.color="black",
+          #vertex.label.color="black",
+          vertex.label.color=control$labelCol,
           #vertex.color = v.color,
           #vertex.size=v.size,
           edge.width=e.width,
@@ -424,7 +426,7 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
     }
     
     e.width <- 1
-    e.color <- control$edge_hcl(.6,control$alpha)
+    e.color <- .col_picker(.6, control$edgeCol, control$alpha)
     
     m <- NA
     if(!is.na(measure)) {
@@ -437,9 +439,11 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
     if(!is.na(shading)) {
       s <- quality(rules)[[shading]]
       v.color <- c(rep(control$nodeColors[1], length(itemNodes)),
-        control$node_hcl(map(s, c(0.9,0.1)), alpha=control$alpha)) 
+        .col_picker(map(s, c(0.9,0.1)), control$nodeCol, 
+          alpha=control$alpha)) 
     } else v.color <- c(rep(control$nodeColors[1], length(itemNodes)),
-      control$node_hcl(rep(.5, length(rules)), alpha=control$alpha))
+      .col_picker(rep(.5, length(rules)), control$nodeCol, 
+        alpha=control$alpha))
       
     
     if(control$measureLabels) {
@@ -475,7 +479,7 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
         
         if(is.null(control$layout)) control$layout <- "dot"
         att <-  Rgraphviz::getDefaultAttrs(layoutType = control$layout)
-        att$edge$color <- control$edge_hcl(0, control$alpha)
+        att$edge$color <- .col_picker(0, control$edgeCol, control$alpha)
         att$edge$len <- 2.0	# neato
         att$graph$rankdir <- "LR" # dot
         att$graph$ranksep <- .75 #dot
@@ -487,7 +491,7 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
           nAttrs <- Rgraphviz::makeNodeAttrs(gNEL, 
             fillcolor = c(rep(control$nodeColors[1], 
               length(itemNodes)), 
-              control$node_hcl(map(s, c(0.9,0.1)), 
+              .col_picker(map(s, c(0.9,0.1)), control$nodeCol, 
                 alpha=control$alpha)), 
             label = nodeLabels,
             shape = c("box", "circle")[type], 
@@ -498,7 +502,7 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
           nAttrs <- Rgraphviz::makeNodeAttrs(gNEL, 
             fillcolor = c(rep(control$nodeColors[1],
               length(itemNodes)),
-              control$node_hcl(map(s, c(0.9,0.1)), 
+              .col_picker(map(s, c(0.9,0.1)), control$nodeCol, 
                 alpha=control$alpha)),
             shape = c("box", "circle")[type],
             width=c(rep(.75, length(itemNodes)),
@@ -530,7 +534,8 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
           vertex.shape=v.shape, 
           vertex.label=v,
           vertex.label.cex=control$cex,
-          vertex.label.color="black",
+          #vertex.label.color="black",
+          vertex.label.color=control$labelCol,
           vertex.color = v.color,
           vertex.size=v.size,
           edge.width=e.width,
@@ -573,10 +578,10 @@ graph_arules_is <- function(itemsets, measure = "support", shading = NULL,
   .font.family <- par()$family
   if(.font.family=="") .font.family <- "sans"
   
-  control <- .get_parameters(list(
+  control <- .get_parameters(control, list(
     main = paste("Graph for", length(itemsets), "itemsets"),
-    node_hcl = .grey_hcl,
-    edge_hcl = .grey_hcl,
+    nodeCol = grey_hcl(100),
+    edgeCol = heat_hcl(100),
     #itemLabels = TRUE,	    ### not implemented yet
     #measureLabels = FALSE,
     cex = 1,
@@ -589,7 +594,7 @@ graph_arules_is <- function(itemsets, measure = "support", shading = NULL,
     arrowSize = .5,
     interactive = FALSE,
     plot = TRUE
-  ), control)
+  ))
   
   opar <- par(mar = c(0,0.1,4,0.1))
   on.exit(par(opar))
@@ -628,11 +633,10 @@ graph_arules_is <- function(itemsets, measure = "support", shading = NULL,
     
     
     v.shape <- c("circle","none")[type]
-    #v.color <- control$nodeColors[type]
-    v.color <- control$node_hcl(0.8, control$alpha)
+    v.color <- .col_picker(.8, control$nodeCol, control$alpha)
     
     e.width <- 1
-    e.color <- control$edge_hcl(0.3, control$alpha)
+    e.color <- .col_picker(.3, control$edgeCol, control$alpha)
     e.label <- NA
     
     m <- NA
@@ -640,7 +644,7 @@ graph_arules_is <- function(itemsets, measure = "support", shading = NULL,
       m <- quality(itemsets)[[measure]]
       v.size <- c(map(m, c(5,20)), 
         rep(15, length(items)))
-      #v.color <- c(control$node_hcl(map(m, c(0.9,0.1)), alpha=control$alpha), 
+      #v.color <- c(control$nodeCol(map(m, c(0.9,0.1)), alpha=control$alpha), 
       #	    rep(NA, length(items)))
     }
     

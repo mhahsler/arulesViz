@@ -20,9 +20,9 @@ iplot_arules <- function(rules,
 	measure = c("support", "confidence"), shading="lift", data=NULL, 
 	control = NULL, ...) {
    
-    control <- .get_parameters(list(
+    control <- .get_parameters(control, list(
 		    interactive = FALSE
-		    ), control)
+		    ))
 
     if(!.installed("iplots")) stop("iplots requires package 'iplots'")
     

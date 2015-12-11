@@ -279,7 +279,8 @@ All implemented visualization techniques share the
 following interface:
 
 <<eval=FALSE>>=
-plot(x, method = NULL, measure = "support", shading = "lift", interactive = FALSE, data = NULL, control = NULL, ...)
+plot(x, method = NULL, measure = "support", shading = "lift", 
+  interactive = FALSE, data = NULL, control = NULL, ...)
 @
 
 where \code{x} is the set of rules to be visualized, 

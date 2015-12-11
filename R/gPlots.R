@@ -76,10 +76,15 @@ gImage <- function(m,
     default.units = "npc", gp = gp_border)
   
   if(is.logical(axes) && axes) {
+    grid.xaxis(gp = gp)
+    grid.yaxis(gp = gp)
+  }
+    
+  if(is.character(axes) && axes == "integer") {
     grid.xaxis(gp = gp, at = 1:ncol(m))
     grid.yaxis(gp = gp, at = 1:nrow(m))
   }
-  
+    
   ## labels
   if(!is.null(xlab)) grid.text(xlab, 0.5, unit(-3, "lines"))
   if(!is.null(ylab))  grid.text(ylab, unit(-3, "lines"), 0.5, rot=90)

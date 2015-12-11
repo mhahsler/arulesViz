@@ -20,28 +20,21 @@
 .installed <- function(pkg) !is(try(installed.packages()[pkg,],
   silent=TRUE), "try-error")
 
-.get_parameters <- function(p, parameter) {
-  if(!is.null(parameter) && length(parameter) != 0) {
-    
-    # get rid of NULL enties
-    parameter[sapply(parameter, is.null)] <- NULL
-    
-    o <- pmatch(names(parameter), names(p))
-    
-    if(any(is.na(o)))
-      warning(sprintf(ngettext(length(is.na(o)),
-        "Unknown option: %s",
-        "Unknown options: %s"),
-        paste(names(parameter)[is.na(o)],
-          collapse = " ")))
-    
-    p[o] <- parameter
+## color paletts
+.col_picker <- function(level, palette, alpha=NULL) {
+  col <- palette[floor(level*(length(palette)-1))+1]
+  if(!is.null(alpha)) {
+    col <- apply(sapply(col, col2rgb)/255, 2, 
+      function(x) 
+        rgb(x[1], x[2], x[3], alpha=alpha))
   }
-  
-  p
+  col
 }
 
+grey_hcl <- function(n, alpha = 1) sequential_hcl(100, c.=0, alpha = alpha)
 
+
+## helpers for variouse visualizations
 rulesAsDataFrame <- function(rules, measure = "support") {
   antes <- labels(lhs(rules))
   conseqs <- labels(rhs(rules))
@@ -90,7 +83,8 @@ getTable <- function(rules, data) {
   ruleAsDataFrame <- as.data.frame(as(transactions, "matrix"))
   for (i in 1:ncol(ruleAsDataFrame)) {
     ruleAsDataFrame[[i]] <- factor(ruleAsDataFrame[[i]],
-      levels = c(0, 1), labels = c("no", "yes"))
+      levels = c(FALSE, TRUE), labels = c("no", "yes"))
   }
   table(ruleAsDataFrame)
 }
+

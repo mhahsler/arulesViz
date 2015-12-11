@@ -10,7 +10,7 @@ saves a rule sat as a graph description in different formats
 (e.g., GraphML, dimacs, dot).
 }
 \usage{
-saveAsGraph(x, file, type=NULL, format="graphml")
+saveAsGraph(x, file, type="items", format="graphml")
 }
 \arguments{
   \item{x}{ an object of class "rules" or "itemsets".}

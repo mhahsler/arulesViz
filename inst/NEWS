@@ -1,8 +1,8 @@
 Changes in version 1-0.4.1 (xx/xx/2015)
     * abbreviate has been moved to arules. 
     * fixed bug in grouped plots when the quality of many rules is identical.
-    * scatterplots use now heat colors and for lift, 
-      zlim is set to start at 1.
+    * plots use now heat colors. 
+    * scatterplots use now for lift zlim starting at 1.
 
 Changes in version 1-0.4 (09/15/2015)
     * fixed empty LHS problem in grouped plot (reported by Andrew Collier)
