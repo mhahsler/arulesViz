@@ -1,10 +1,10 @@
 Package: arulesViz
-Version: 1.0-4.1
-Date: 2015-xx-xx
+Version: 1.1-0
+Date: 2015-12-13
 Title: Visualizing Association Rules and Frequent Itemsets
 Author: Michael Hahsler and Sudheer Chelluboina
 Maintainer: Michael Hahsler <mhahsler@lyle.smu.edu>
-Depends: R (>= 2.14.0), arules (>= 1.2.0), grid
+Depends: arules (>= 1.2.0), grid
 Imports: scatterplot3d, vcd, seriation, igraph (>= 1.0.0), graphics, methods, utils, grDevices, stats, colorspace
 Suggests: graph, Rgraphviz, iplots
 Description: Extends package arules with various visualization techniques for association rules and itemsets. The package also includes several interactive visualizations for rule exploration.
