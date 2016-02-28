@@ -23,24 +23,26 @@ grouped_matrix_arules <- function(rules, measure, shading, control=NULL, ...){
   ## shading controls color
   
   control <- .get_parameters(control, list(
-    main =paste("Grouped matrix for", length(rules), "rules"),
+    main = paste("Grouped matrix for", length(rules), "rules"),
     k = 20,
     aggr.fun=median, 
     ## fix lift so serveral plots are comparable (NA: take max)
-    max.shading=NA,
-    interactive = FALSE,
     col = heat_hcl(100),
-    #col = hcl(c=0, l=seq(10,80, length.out=100)),
-    newpage=TRUE
+    reverse = TRUE, 
+    xlab = NULL, 
+    ylab = NULL, 
+    legend = paste("size:", measure, "\ncolor:", shading),
+    panel.function = panel.circles, 
+    spacing = -1, 
+    newpage=TRUE,
+    gp_labels = gpar(cex=.8), 
+    gp_panels = gpar(), 
+    interactive = FALSE,
+    max.shading=NA
   ))
   
   
-  x <- grouped_matrix_int(rules, measure, shading,
-    k=control$k, 
-    aggr.fun=control$aggr.fun, 
-    max.shading=control$max.shading,
-    col=control$col
-  )
+  x <- grouped_matrix_int(rules, measure, shading, control) 
   
   if(!control$interactive) return(invisible(x))
   
@@ -117,7 +119,7 @@ grouped_matrix_arules <- function(rules, measure, shading, control=NULL, ...){
       if(!identical(ret, "zoom out")) return(ret)
       
       ## we come back up so replot
-      plot(x, col = control$col)
+      plot(x, control=control)
       seekViewport("grouped_matrix")
       gI <- resetButtons(gI)
     }
@@ -149,9 +151,11 @@ rowMaxs <- function(x, na.rm=FALSE) apply(x, MARGIN=1, max, na.rm=na.rm)
 }
 
 ## create an grouped_matrix
-grouped_matrix_int <- function(rules, measure, shading,
-  k=15, aggr.fun=median, max.shading=NA, 
-  col=hcl(c=0, l=seq(10,80, length.out=100))) {
+grouped_matrix_int <- function(rules, measure, shading, control) {
+  k <- control$k
+  aggr.fun <- control$aggr.fun
+  max.shading <- control$max.shading
+  col <- control$col
   
   ## check k
   if(length(unique(lhs(rules)))< k) k <- length(unique(lhs(rules)))
@@ -199,13 +203,17 @@ grouped_matrix_int <- function(rules, measure, shading,
   class(ret) <- "grouped_matrix"
   
   ## call plotting work horse
-  plot(ret, col=col)
+  plot(ret, control=control)
   
   ret
 }
 
 ## display grouped_matrix
-plot.grouped_matrix <- function(x, col = hcl(c=0, l=seq(10,80, length.out=100)), ...) {
+plot.grouped_matrix <- function(x, ...) {
+  control <- list(...)$control
+  
+  col <- control$col
+  
   ## circle size
   sn <- x$mAggr
   ## shading
@@ -223,24 +231,16 @@ plot.grouped_matrix <- function(x, col = hcl(c=0, l=seq(10,80, length.out=100)),
           names(which.max(x))   
         }
       })
-  
+ 
+  control$ylab <- paste(
+    paste('{',most_imp_item, '}', " - ", table(x$cl), " rules", sep=''))
+      
   grouped_matrix_plot_int(
     x = map(sn, c(0.2,1)), 
     y = map(ln, range = c(1,.2), 
       from.range = c(min(x$sAggr, na.rm=TRUE), x$max.shading)),
     order = x$order,
-    options = list(
-      panel = panel.circles, 
-      spacing = -1, 
-      reverse=TRUE,
-      ylab=paste(#1:max(x$cl), "-",
-        paste('{',most_imp_item, '}', " - ",
-          table(x$cl), " rules",
-          sep='')),
-      main = paste("Grouped matrix for", length(x$rules), "rules"),
-      legend = paste("size:",x$measure, "\ncolor:",x$shading),
-      col = col
-    )
+    options = control
   )
 }
 
@@ -252,24 +252,23 @@ inspect.grouped_matrix <- function(x, cluster, measure="lift") {
 
 ## workhorse for plotting
 ## based on bertinplot in package seriation
-grouped_matrix_plot_int <- function (x, y, order = NULL, options = NULL) {
+grouped_matrix_plot_int <- function(x, y, order = NULL, options = NULL) {
   if (!is.matrix(x)) 
     stop("Argument 'x' must be a matrix.")
   
-  options <- .get_parameters(options, list(
-    panel.function = panel.circles, 
-    reverse = FALSE, 
-    xlab = NULL, 
-    ylab = NULL, 
-    frame = FALSE, 
-    spacing = 0.2, 
-    gp_labels = gpar(cex=.8), 
-    gp_panels = gpar(), 
-    newpage = TRUE,
-    main = "Grouped matrix",
-    col = hcl(c=0, l=seq(10,80, length.out=100)),
-    legend = ""
-  ))
+  # options <- .get_parameters(options, list(
+  #   panel.function = panel.circles, 
+  #   reverse = FALSE, 
+  #   xlab = NULL, 
+  #   ylab = NULL, 
+  #   spacing = 0.2, 
+  #   gp_labels = gpar(cex=.8), 
+  #   gp_panels = gpar(), 
+  #   newpage = TRUE,
+  #   main = "Grouped matrix",
+  #   col = hcl(c=0, l=seq(10,80, length.out=100)),
+  #   legend = ""
+  # ))
   
   if (!is.null(options$xlab)) rownames(x) <- options$xlab
   if (!is.null(options$ylab)) colnames(x) <- options$ylab

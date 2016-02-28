@@ -1,3 +1,6 @@
+Changes in version 1-1.0-1 (xx/xx/2016)
+    * plot method ordered passes now control arguments correctly on.
+
 Changes in version 1-1.0 (12/13/2015)
     * abbreviate has been moved to arules. 
     * fixed bug in grouped plots when the quality of many rules is identical.
