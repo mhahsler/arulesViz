@@ -1,6 +1,6 @@
 Package: arulesViz
-Version: 1.1-0.1
-Date: 2016-xx-xx
+Version: 1.1-1
+Date: 2016-04-10
 Title: Visualizing Association Rules and Frequent Itemsets
 Author: Michael Hahsler and Sudheer Chelluboina
 Maintainer: Michael Hahsler <mhahsler@lyle.smu.edu>
