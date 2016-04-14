@@ -1,20 +1,20 @@
-# Changes in version 1-1.1 (04/10/2016)
+# Changes in version 1.1-1 (04/10/2016
 
 * plot method ordered now passes control arguments on correctly.
 
-# Changes in version 1-1.0 (12/13/2015)
+# Changes in version 1.1-0 (12/13/2015)
 
 * abbreviate has been moved to arules. 
 * fixed bug in grouped plots when the quality of many rules is identical.
 * plots use now heat colors. 
 * scatterplots use now for lift zlim starting at 1.
 
-# Changes in version 1-0.4 (09/15/2015)
+# Changes in version 1.0-4 (09/15/2015)
 
 * fixed empty LHS problem in grouped plot (reported by Andrew Collier)
-* Updated for arules version 1-2.0
+* Updated for arules version 1.2.0
 
-# Changes in version 1-0.2 (6/29/2015)
+# Changes in version 1.0-2 (6/29/2015)
 
 * fixed imports from non-base standard packages.
 * plot (graph) now honors font family set via par(). 
@@ -24,11 +24,11 @@
       Transitioned to igraphs new layout me# Chanism. 
 * itemsets: scatterplot is now also defaut for itemsets.
 
-# Changes in version 1-0.0 (12/07/2014)
+# Changes in version 1.0-0 (12/07/2014)
 
 * Improved LHS annotation for grouped plot
 
-# Changes in version 0-1.9 (3/10/2014)
+# Changes in version 0.1-9 (3/10/2014)
 
 * Cleaned up dependencies on Rgraphviz
 
