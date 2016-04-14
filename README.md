@@ -1,7 +1,7 @@
 # arulesViz - Visualizing Association Rules and Frequent Itemsets - R package
 
-[![CRAN version](http://www.r-pkg.org/badges/version/arulesViz)](http://cran.r-project.org/web/packages/arulesViz/index.html)
-[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/arulesViz)](http://cran.r-project.org/web/packages/arulesViz/index.html)
+[![CRAN version](http://www.r-pkg.org/badges/version/arulesViz)](https://cran.r-project.org/package=arulesViz)
+[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/arulesViz)](https://cran.r-project.org/package=arulesViz)
 [![Travis-CI Build Status](https://travis-ci.org/mhahsler/arulesViz.svg?branch=master)](https://travis-ci.org/mhahsler/arulesViz)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/mhahsler/arulesViz?branch=master&svg=true)](https://ci.appveyor.com/project/mhahsler/arulesViz)
 
