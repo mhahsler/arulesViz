@@ -101,7 +101,7 @@ Currently there is no interactive version available.
 }
 
 \item{"grouped"}{
-Grouped matrix-based visualization (Hahsler and Chelloboina, 2011). 
+Grouped matrix-based visualization (Hahsler and Chelloboina, 2011; Hahsler and Karpienko, 2016). 
 Antecedents (columns) in the matrix are
 grouped using clustering. Groups are represented as balloons
 in the matrix.
@@ -197,10 +197,12 @@ Bruzzese, D. and Davino, C. (2008), Visual Mining of Association Rules, in
 Visual Data Mining: Theory, Techniques and Tools for Visual Analytics,
 Springer-Verlag, pp. 103--122.
 
-Hahsler M. and Chelluboina S. (2011), Visualizing association rules in
-hierarchical groups. In 42nd Symposium on the Interface: Statistical, Machine
-Learning, and Visualization Algorithms (Interface 2011). The Interface
-Foundation of North America.
+Hahsler, M. and Chelluboina, S. (2011), Visualizing association rules in
+hierarchical groups. Presented at the 42nd Symposium on the Interface: 
+Statistical, Machine Learning, and Visualization Algorithms 
+(Interface 2011). The Interface Foundation of North America.
+
+Hahsler, M. and Karpienko, R. (2016) Visualizing Association Rules in Hierarchical Groups. \emph{Journal of Business Economics,} accepted for publication, 2016.
 }
 
 \seealso{
