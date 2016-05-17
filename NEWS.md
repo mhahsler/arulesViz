@@ -1,6 +1,6 @@
-# Changes in version 1.1-1.1 (xx/xx/2016
+# Changes in version 1.1-1.1 (xx/xx/2016)
 
-# Changes in version 1.1-1 (04/10/2016
+# Changes in version 1.1-1 (04/10/2016)
 
 * plot method ordered now passes control arguments on correctly.
 

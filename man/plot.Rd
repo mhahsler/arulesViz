@@ -45,8 +45,7 @@ graph based visualizations, doubledecker plots, etc.
   used to generate the rules/itemsets. Only 
   "mosaic" and "doubledecker" require the original data.}
   
-  \item{\dots}{ further arguments are typically passed on to the 
-  used low-level plotting function. }
+  \item{\dots}{ further arguments are usually passed on to the low level plotting function. For scatterplot it is added for convenience to the control list (see above).}
 }
 \details{
 Most visualization techniques are described by Bruzzese and Davino (2008),
@@ -222,11 +221,14 @@ plot(rules)
 
 ## Scatterplot with custom colors
 library(colorspace) # for sequential_hcl
-plot(rules, control=list(col=sequential_hcl(100)))
-plot(rules, control=list(col=grey.colors(50, alpha =.8)))
+plot(rules, control = list(col=sequential_hcl(100)))
+plot(rules, control = list(col=grey.colors(50, alpha =.8)))
     
+## see all control options
+plot(rules, control = list(verbose = TRUE))
+
 ## Two-key plot is a scatterplot with shading = "order"
-plot(rules, shading="order", control=list(main = "Two-key plot", 
+plot(rules, shading="order", control = list(main = "Two-key plot", 
   col=rainbow(5)))
 
 ## The following techniques work better with fewer rules
@@ -256,8 +258,10 @@ plot(rules, method="grouped")
 ## graphs only work well with very few rules
 subrules2 <- sample(rules, 10)
 plot(subrules2, method="graph")
+plot(subrules2, method="graph", 
+  control = list(nodeCol = grey.colors(10), edgeCol = grey(.7), alpha = 1))
 ## igraph layout generators can be used (see ? igraph::layout_)
-plot(subrules2, method="graph", control=list(layout=igraph::in_circle()))
+plot(subrules2, method="graph", layout=igraph::in_circle()))
 plot(subrules2, method="graph", control=list(
   layout=igraph::with_graphopt(spring.const=5, mass=50)))
 
