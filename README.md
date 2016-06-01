@@ -11,7 +11,7 @@ extends package [arules](http://github.com/mhahsler/arules) with various visuali
 ## Installation
 
 * __Stable CRAN version:__ install from within R.
-* __Current development version:__ Download package from [AppVeyor](https://ci.appveyor.com/project/mhahsler/arulesViz/build/artifacts) or install via `intall_git("mhahsler/arulesViz")` (requires devtools). You
+* __Current development version:__ Download package from [AppVeyor](https://ci.appveyor.com/project/mhahsler/arulesViz/build/artifacts) or install via `install_git("mhahsler/arulesViz")` (requires devtools). You
 might also have to install the development version of [arules](http://github.com/mhahsler/arules).
 
 ## Available Visualizations
@@ -37,4 +37,6 @@ R> plot(rules)
 
 * [arulesViz package vignette](http://cran.r-project.org/web/packages/arulesViz/vignettes/arulesViz.pdf) with complete examples.
 * [Reference manual](http://cran.r-project.org/web/packages/arulesViz/arulesViz.pdf)
+
+_Maintainer:_ [Michael Hahsler](http://michael.hahsler.net)
 
