@@ -261,7 +261,7 @@ plot(subrules2, method="graph")
 plot(subrules2, method="graph", 
   control = list(nodeCol = grey.colors(10), edgeCol = grey(.7), alpha = 1))
 ## igraph layout generators can be used (see ? igraph::layout_)
-plot(subrules2, method="graph", layout=igraph::in_circle())
+plot(subrules2, method="graph", control=list(layout=igraph::in_circle()))
 plot(subrules2, method="graph", control=list(
   layout=igraph::with_graphopt(spring.const=5, mass=50)))
 
@@ -295,4 +295,3 @@ head(quality(itemsets))
 plot(itemsets, measure=c("support", "allConfidence"), shading="lift")
 }
 \keyword{ hplot }
-%\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
