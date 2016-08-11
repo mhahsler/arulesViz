@@ -61,7 +61,9 @@ There is a special value for shading called "order" which produces a
 two-key plot where the color of the points represents the length (order) 
 of the rule.
 
-The list of control parameters for this method is 
+Interactive manipulations are available.
+
+The list of control parameters for this method is: 
 \describe{
 \item{"main"}{plot title}
 \item{"pch"}{ use filled symbols: 20--25}
@@ -71,7 +73,6 @@ The list of control parameters for this method is
 \item{"col"}{color palette}
 }
 
-Interactive manipulations are available.
 }
 
 \item{"matrix", "matrix3D"}{ 
@@ -80,7 +81,9 @@ on one axis and the itemsets in the consequent on the other.  The interest
 measure is either visualized by a color (darker means a higher value for the
 measure) or as the height of a bar (method "matrix3D").
 
-The list of control parameters for this method is
+Currently there is no interactive version available.
+
+The list of control parameters for this method is:
 \describe{
 \item{"main"}{plot title}
 \item{"type"}{defines the way the data is rendered: "grid", "image" 
@@ -96,7 +99,6 @@ used for reordering (see \code{seriate()} method in \pkg{seriation})}
 \item{"xlim","ylim"}{limits}
 }
 
-Currently there is no interactive version available.
 }
 
 \item{"grouped"}{
@@ -105,7 +107,10 @@ Antecedents (columns) in the matrix are
 grouped using clustering. Groups are represented as balloons
 in the matrix.
 
-The list of control parameters for this method is
+Interactive manipulations are available. 
+
+
+The list of control parameters for this method is:
 \describe{
 \item{"main"}{plot title}
 \item{"k"}{number of antecedent groups (default: 20)}
@@ -114,16 +119,15 @@ can be any function computing a scalar from a vector
 (e.g., min, mean, median (default), sum, max). It is also used
 to reorder the balloons in the plot.}
 \item{"col"}{color palette (default is 100 heat colors.)}
-\item{"gp_labels"}{a \code{gpar()} object used for labes. Can be used to set font and font size. }
+\item{"gp_labels", "gp_main", "gp_labs", "gp_lines"}{\code{gpar()} objects used to specify color, font and font size for
+    different elements.}
 }
-
-Interactive manipulations are available. 
 }
 
 \item{"graph"}{
 Represents the rules (or itemsets) as a graph.
 
-Control arguments are 
+Control arguments are: 
 \describe{
 \item{"main"}{plot title}
 \item{"cex"}{cex for labels}
@@ -155,7 +159,7 @@ interactive version \code{tkplot} in \pkg{igraph} is always used.
 Represents a single rule as a doubledecker or mosaic plot.
 Parameter data has to be specified to compute the needed contingency
 table.
-Available control parameters are
+Available control parameters are:
 \describe{
 \item{"main"}{plot title}
 }
@@ -163,14 +167,14 @@ Available control parameters are
 
 \item{"paracoord"}{
 Represents the rules (or itemsets) as a parallel coordinate plot.
-Available control parameters are
+Currently there is no interactive version available.
+Available control parameters are:
 \describe{
 \item{"main"}{plot title}
 \item{"reorder"}{reorder to minimize crossing lines.}
 \item{"alpha"}{ alpha transparency value}
 }
 
-Currently there is no interactive version available.
 }
 
 \item{"iplots"}{
@@ -229,7 +233,7 @@ plot(rules, control = list(verbose = TRUE))
 
 ## Two-key plot is a scatterplot with shading = "order"
 plot(rules, shading="order", control = list(main = "Two-key plot", 
-  col=rainbow(5)))
+  col=rainbow(max(size(rules))-1L)))
 
 ## The following techniques work better with fewer rules
 subrules <- subset(rules, lift>2.5)
@@ -253,6 +257,9 @@ plot(subrules, method="matrix", measure=c("lift", "confidence"),
 
 ## grouped matrix plot
 plot(rules, method="grouped")
+plot(rules, method="grouped", 
+  control = list(col = grey.colors(10), 
+    gp_labels= gpar(col = "blue", cex=1, fontface="italic")))
 ## try: sel <- plot(rules, method="grouped", interactive=TRUE)
 
 ## graphs only work well with very few rules

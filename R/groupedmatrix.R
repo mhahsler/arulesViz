@@ -32,11 +32,13 @@ grouped_matrix_arules <- function(rules, measure, shading, control=NULL, ...){
     xlab = NULL, 
     ylab = NULL, 
     legend = paste("size:", measure, "\ncolor:", shading),
-    panel.function = panel.circles, 
     spacing = -1, 
-    newpage=TRUE,
+    panel.function = panel.circles, 
+    gp_main   = gpar(cex=1.2, fontface="bold"),
     gp_labels = gpar(cex=.8), 
-    gp_panels = gpar(), 
+    gp_labs   = gpar(cex=1.2, fontface="bold"),
+    gp_lines  = gpar(col="gray", lty=3),
+    newpage=TRUE,
     interactive = FALSE,
     max.shading=NA
   ))
@@ -256,20 +258,6 @@ grouped_matrix_plot_int <- function(x, y, order = NULL, options = NULL) {
   if (!is.matrix(x)) 
     stop("Argument 'x' must be a matrix.")
   
-  # options <- .get_parameters(options, list(
-  #   panel.function = panel.circles, 
-  #   reverse = FALSE, 
-  #   xlab = NULL, 
-  #   ylab = NULL, 
-  #   spacing = 0.2, 
-  #   gp_labels = gpar(cex=.8), 
-  #   gp_panels = gpar(), 
-  #   newpage = TRUE,
-  #   main = "Grouped matrix",
-  #   col = hcl(c=0, l=seq(10,80, length.out=100)),
-  #   legend = ""
-  # ))
-  
   if (!is.null(options$xlab)) rownames(x) <- options$xlab
   if (!is.null(options$ylab)) colnames(x) <- options$ylab
   
@@ -289,16 +277,15 @@ grouped_matrix_plot_int <- function(x, y, order = NULL, options = NULL) {
   
   if (options$newpage) grid.newpage()
   
-  
   ## main
-  gTitle(options$main, name="main")
+  gTitle(options$main, name="main", gp=options$gp_main)
   
   ## legend
   downViewport("main")
   grid.text(options$legend, 
     x=unit(1, "npc")-unit(1,"lines"),
     y=unit(-2, "lines"),
-    just=c("right", "top"), gp=options$gp_labels)
+    just=c("right", "top"), gp=options$gp_legend)
   
   ### FIXME: a color and size key would be great!
   #gColorkey(c(0,1), options$col, label = "FIXME",
@@ -307,29 +294,31 @@ grouped_matrix_plot_int <- function(x, y, order = NULL, options = NULL) {
   upViewport(1)
   
   ## determine margins
-  topSpace <- max(stringWidth(rownames(x)))
-  rightSpace <- max(stringWidth(colnames(x)))
+  #topSpace <- max(stringWidth(rownames(x)))
+  topSpace <- max(grobWidth(textGrob(rownames(x), gp=options$gp_labels)))
+  #rightSpace <- max(stringWidth(colnames(x)))
+  rightSpace <- max(grobWidth(textGrob(colnames(x), gp=options$gp_labels)))
   
   pushViewport(viewport(x=unit(2,"lines"), y=unit(4,"lines"),
     just = c("left","bottom"),
-    width = unit(1, "npc")-rightSpace-unit(3,"lines"), 
+    width = unit(1, "npc")-rightSpace-unit(3+4,"lines"), 
     height = unit(1, "npc")-topSpace-unit(4+3,"lines"),
     #xscale = c(1, nrow(x)), yscale = c(1, ncol(x)), 
     xscale = c(.5, nrow(x)+.5), yscale = c(.5, ncol(x)+.5), 
-    default.units = "native", gp=options$gp_labels,
+    default.units = "native",
+    #gp = options$gp_labels,
     name="grouped_matrix"))
   
   ## grid
   yLabPos <- unit(ncol(x), "native")
   xLabPos <- unit(nrow(x), "native") 
   
-  gp_lines <- gpar(col="gray", lty=3)
   for(i in 1:nrow(x))  grid.lines(x = c(i,i),  
     y=c(1, yLabPos),
-    default.units = "native", gp=gp_lines)
+    default.units = "native", gp=options$gp_lines)
   for(i in 1:ncol(x))  grid.lines(y = c(i,i),  
     x=c(1, xLabPos),
-    default.units = "native", gp=gp_lines)
+    default.units = "native", gp=options$gp_lines)
   
   ## symbols
   for (variable in 1:ncol(x)) {
@@ -348,28 +337,25 @@ grouped_matrix_plot_int <- function(x, y, order = NULL, options = NULL) {
   xLabPos <- xLabPos + unit(1, "lines")
   grid.text(rownames(x), x = 1:nrow(x), y = yLabPos,
     rot = 90, just = "left", 
-    default.units = "native")
-  # gpar is already set in viewport
-  # gp = options$gp_labels)
+    default.units = "native",
+    gp = options$gp_labels)
   
   
   grid.text(rev(colnames(x)), x = xLabPos, y = (1:ncol(x)), 
     just = "left", 
-    default.units = "native")
-  # gpar is already set in viewport
-  # gp = options$gp_labels)
+    default.units = "native",
+    gp = options$gp_labels)
   
   ## add lhs, rhs
-  gp <- gpar(fontface = "bold", cex = 1.2)
   grid.text("LHS", 
     x = unit(1, "native")-unit(1,"lines"), y = yLabPos, 
     rot = 90, just = "left", 
     default.units = "native", 
-    gp = gp)
+    gp = options$gp_labs)
   grid.text("RHS", x = xLabPos,  
     y = unit(ncol(x), "native")+unit(1,"lines"), 
     just = "left", 
-    default.units = "native", gp = gp)
+    default.units = "native", gp = options$gp_labs)
   
   
   
