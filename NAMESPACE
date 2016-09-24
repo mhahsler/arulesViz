@@ -2,7 +2,7 @@ import("arules")
 
 importFrom("graphics", "par", "plot", "mtext", "text", "axis", "box")
 importFrom("stats", "median", "kmeans", "cutree", "dist", "hclust")
-importFrom("grDevices", "hcl", "rgb", "gray.colors", "gray", "col2rgb")
+importFrom("grDevices", "hcl", "rgb", "gray.colors", "gray", "col2rgb", "colorRamp")
 importFrom("methods", "is", "as", "new")
 importFrom("utils", "installed.packages")
 import("grid") ### need to use as depends in DESCRIPTION because of vcd
@@ -13,6 +13,7 @@ importFrom("scatterplot3d", "scatterplot3d")
 importFrom("vcd", "mosaic", "doubledecker")
 importFrom("colorspace", "heat_hcl", "sequential_hcl")
 importFrom("DT", "datatable", "%>%", "formatRound")
+importFrom("plotly", "plot_ly", "layout")
 
 export("saveAsGraph")
 
@@ -24,3 +25,4 @@ export("inspect2")
 S3method(inspect2, rules)
 S3method(inspect2, itemsets)
 
+export("plotly_arules")

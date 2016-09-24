@@ -5,7 +5,7 @@ Title: Visualizing Association Rules and Frequent Itemsets
 Author: Michael Hahsler and Sudheer Chelluboina
 Maintainer: Michael Hahsler <mhahsler@lyle.smu.edu>
 Depends: arules (>= 1.4.1), grid
-Imports: scatterplot3d, vcd, seriation, igraph (>= 1.0.0), graphics, methods, utils, grDevices, stats, colorspace, DT
+Imports: scatterplot3d, vcd, seriation, igraph (>= 1.0.0), graphics, methods, utils, grDevices, stats, colorspace, DT, plotly
 Suggests: graph, Rgraphviz, iplots
 Description: Extends package arules with various visualization techniques for association rules and itemsets. The package also includes several interactive visualizations for rule exploration.
 License: GPL-3

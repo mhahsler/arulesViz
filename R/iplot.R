@@ -16,7 +16,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-iplot_arules <- function(rules,
+iplot_arules <- function(x,
 	measure = c("support", "confidence"), shading="lift", data=NULL, 
 	control = NULL, ...) {
    
