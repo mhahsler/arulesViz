@@ -50,6 +50,8 @@ graph based visualizations, doubledecker plots, etc.
 \details{
 Most visualization techniques are described by Bruzzese and Davino (2008),
 however, we added more color shading, reordering and interactive features.
+Many visualization methods take extra parameters as a list in the control parameter. Some of the parameters are described below. Use verbose mode with, e.g., \code{plot(rules, method = "graph", control = list(verbose = TRUE))} to get a complete list of parameters and theit default values. 
+
 The following visualization method are available:
 
 \describe{

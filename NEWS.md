@@ -1,6 +1,7 @@
 # Changes in version 1.1-1.1 (xx/xx/2016)
 
-* impoved grapical parameters for the grouped matrix plot.
+* improved graphical parameters for the grouped matrix plot.
+* added inspect 2 for interactive rules inspection using package DT.
 
 # Changes in version 1.1-1 (04/10/2016)
 
