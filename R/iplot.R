@@ -26,19 +26,19 @@ iplot_arules <- function(x,
 
     if(!.installed("iplots")) stop("iplots requires package 'iplots'")
     
-    iplots::iplot(quality(rules)[[measure[1]]], quality(rules)[[measure[2]]],
+    iplots::iplot(quality(x)[[measure[1]]], quality(x)[[measure[2]]],
 	    xlab = measure[1], ylab = measure[2])
-    iplots::ihist(quality(rules)[[measure[1]]], 
+    iplots::ihist(quality(x)[[measure[1]]], 
 	    main = paste("Histogram (", measure[1], ")", sep=''))
-    iplots::ihist(quality(rules)[[measure[2]]],
+    iplots::ihist(quality(x)[[measure[2]]],
 	    main = paste("Histogram (", measure[2], ")", sep=''))
-    iplots::ihist(quality(rules)[[shading]],
+    iplots::ihist(quality(x)[[shading]],
 	    main = paste("Histogram (", shading, ")", sep=''))
    
     ## parallel coordinate
     ## does not seem so helful
-    #l <- LIST(lhs(rules), decode=FALSE)
-    #r <- LIST(rhs(rules), decode=FALSE)
+    #l <- LIST(lhs(x), decode=FALSE)
+    #r <- LIST(rhs(x), decode=FALSE)
     #
     #lk<-list()
     #for(i in 1:length(l)) lk[i]<-list(c(l[[i]],r[[i]]))
@@ -47,11 +47,11 @@ iplot_arules <- function(x,
     #lk1<- sapply(lk, function(x) {length(x) <-len; x})
     #ll <- as.data.frame(t(lk1))
     #names(ll) <- 1:length(ll)
-    #ipcp(ll, main ="Parallel Coord. (rules)")
+    #ipcp(ll, main ="Parallel Coord. (x)")
     
     ## imosaic
-    #l2 <- LIST(lhs(rules))
-    #r2 <- LIST(rhs(rules))
+    #l2 <- LIST(lhs(x))
+    #r2 <- LIST(rhs(x))
     #lk2<-0
     #for(i in 1:length(l2))
     #{
@@ -79,7 +79,7 @@ iplot_arules <- function(x,
 	    }
 
 	    sel <-  iplots::iset.selected()
-	    r_sel <- rules[sel]
+	    r_sel <- x[sel]
 
 	    if(y=='s') {
 		print(r_sel)

@@ -21,7 +21,7 @@ matrix_arules <- function(rules, measure = "support", control = NULL, ...){
   control <- .get_parameters(control, list(
     main = paste("Matrix with",length(rules),"rules"),
     #col = gray.colors(100, 0.3, .8),
-    col = heat_hcl(100),
+    col = default_colors(100),
     zlim = NULL,
     axes = TRUE,
     reorder = FALSE,

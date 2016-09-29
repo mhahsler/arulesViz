@@ -10,6 +10,8 @@ This is the S3 method to visualize association rules and itemsets.
 Implemented are several popular visualization methods 
 including scatter plots with shading (two-key plots), 
 graph based visualizations, doubledecker plots, etc.
+
+Interactive plotting with plotly is available with \code{\link{plotly_arules}}.
 }
 \usage{
 \method{plot}{rules}(x, method = NULL, measure = "support", shading = "lift", 
@@ -211,6 +213,7 @@ Hahsler, M. and Karpienko, R. (2016) Visualizing Association Rules in Hierarchic
 }
 
 \seealso{
+\code{\link{plotly_arules}},
 \code{\link[scatterplot3d]{scatterplot3d}} in \pkg{scatterplot3d},
 \code{\link[igraph]{plot.igraph}} and
 \code{\link[igraph]{tkplot}} in \pkg{igraph},

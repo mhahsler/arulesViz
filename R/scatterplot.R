@@ -25,14 +25,15 @@ scatterplot_arules <- function(rules, measure = c("support","confidence"),
   control <- .get_parameters(control, list(
     main =paste("Scatter plot for", length(rules), class(rules)),
     interactive = FALSE,
-    pch = 22,
+    pch = 19,
     cex = .5,
     xlim = NULL,
     ylim = NULL,
     zlim = NULL,
     alpha = NULL,
+    col = default_colors(100),
     #col = hcl(c=0, l=seq(10,80, length.out=100)),
-    col = heat_hcl(100),
+    #col = heat_hcl(100),
     #gray_range = c(.1,.8),
     newpage = TRUE,
     jitter = 0
@@ -42,12 +43,12 @@ scatterplot_arules <- function(rules, measure = c("support","confidence"),
   ## set zlim depending on measure...
   ## add order
   quality(rules) <- cbind(quality(rules), order=size(rules))
- 
+  
   if(!is.na(shading)) {
     i <- pmatch(shading, colnames(quality(rules)))
     if(is.na(i)) stop("Unknown quality measure for shading.")
     shading <- colnames(quality(rules))[i]
-  
+    
     ## fix zlim for some known measures!
     if(is.null(control$zlim)) {
       if(shading == "lift") 
@@ -56,7 +57,7 @@ scatterplot_arules <- function(rules, measure = c("support","confidence"),
     }
     
   }
-   
+  
   ## call workhorse
   scatterplot_int(rules, measure, shading, control, ...)
   
@@ -99,7 +100,7 @@ scatterplot_arules <- function(rules, measure = c("support","confidence"),
     
     if(b=="filter") {
       if(is.na(shading) || shading=="order") {
-        cat("No filtering fo order/no shading!\n")
+        cat("No filtering for order/no shading!\n")
         gI <- changeButton(gI,"filter", FALSE)
         next
       }
@@ -233,10 +234,11 @@ scatterplot_int <- function(rules, measure, shading, control, ...){
       steps <- (max_size-min_size)+1
       ypos <- rev((1:steps -.5)/steps)
       #col <- gray(map(min_size:max_size, control$gray_range))
-    col <- colors[map_int(min_size:max_size, c(1,length(colors)))]
+      col <- colors[map_int(min_size:max_size, c(1,length(colors)))]
       grid.points(x=rep(0,steps), 
-        y=ypos, pch=control$pch, 
-        gp=gpar(col=NA, fill=rev(col), alpha=control$alpha), size=unit(.5,"npc"))
+        y=ypos, pch=control$pch,
+        gp=gpar(col=rev(col), fill=rev(col), alpha=control$alpha, cex = control$cex),
+        size=unit(.5,"npc"))
       grid.text(paste("order", max_size:min_size, sep=" "), 
         x=rep(1,steps), y=ypos)
       

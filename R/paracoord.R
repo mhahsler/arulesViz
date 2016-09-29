@@ -26,7 +26,7 @@ paracoord_arules <- function(x, measure= "support", shading = "lift",
     interactive = FALSE,
     gp_labels = gpar(),
     newpage = TRUE,
-    col = heat_hcl(100),
+    col = default_colors(100),
     alpha = NULL,
     quality = 2,
     verbose = FALSE

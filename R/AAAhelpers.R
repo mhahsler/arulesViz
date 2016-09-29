@@ -31,8 +31,11 @@
   col
 }
 
-grey_hcl <- function(n, alpha = 1) sequential_hcl(100, c.=0, alpha = alpha)
+grey_hcl <- function(n, alpha = 1) sequential_hcl(n, c.=0, alpha = alpha)
 
+### default are gray - > red
+default_colors <- function(n , alpha = 1) 
+  colorRampPalette(c("#EE0000", "#EE9999","#EEEEEE"), alpha = alpha)(n)
 
 ## helpers for variouse visualizations
 rulesAsDataFrame <- function(rules, measure = "support") {

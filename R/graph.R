@@ -35,7 +35,7 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
     main = paste("Graph for", length(rules), "rules"),
     nodeColors = .nodeColors(
       if(!is.null(control$alpha)) control$alpha else .5),
-    nodeCol = heat_hcl(100),
+    nodeCol = default_colors(100),
     edgeCol = grey_hcl(100),
     alpha = .5,
     cex = 1,

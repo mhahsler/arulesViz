@@ -2,7 +2,8 @@ import("arules")
 
 importFrom("graphics", "par", "plot", "mtext", "text", "axis", "box")
 importFrom("stats", "median", "kmeans", "cutree", "dist", "hclust")
-importFrom("grDevices", "hcl", "rgb", "gray.colors", "gray", "col2rgb", "colorRamp")
+importFrom("grDevices", "hcl", "rgb", "gray.colors", "gray", "col2rgb", 
+  "colorRampPalette")
 importFrom("methods", "is", "as", "new")
 importFrom("utils", "installed.packages")
 import("grid") ### need to use as depends in DESCRIPTION because of vcd

@@ -27,7 +27,7 @@ grouped_matrix_arules <- function(rules, measure, shading, control=NULL, ...){
     k = 20,
     aggr.fun=median, 
     ## fix lift so serveral plots are comparable (NA: take max)
-    col = heat_hcl(100),
+    col = default_colors(100),
     reverse = TRUE, 
     xlab = NULL, 
     ylab = NULL, 
@@ -371,7 +371,7 @@ panel.circles <- function (row, size, shading, spacing)
   
   grid.circle(x = c(1:length(size)), y=row, r = size/2 * (1 - spacing), 
     default.units = "native", 
-    gp = gpar(fill = shading, alpha=.9))
+    gp = gpar(fill = shading, col = shading, alpha=.9))
 }
 
 panel.squares <- function (row, size, shading, spacing) 
@@ -381,7 +381,7 @@ panel.squares <- function (row, size, shading, spacing)
   grid.rect(x = c(1:length(size)), y=row, width = size * (1 - spacing), 
     height = size * (1 - spacing), 
     default.units = "native", 
-    gp = gpar(fill = shading, alpha=.9))
+    gp = gpar(fill = shading, col = shading, alpha=.9))
 }
 
 

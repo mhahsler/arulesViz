@@ -26,14 +26,16 @@ inspect2.default <- function(x, ...)
 
 inspect2.rules <- function(x, precision = 2, ...) {
   datatable(
-    data.frame(LHS = labels(lhs(x)), RHS = labels(rhs(x)), 
-      quality(x)), filter = "top", ...) %>% formatRound(3:(3+ncol(quality(x))), 
+    data.frame(LHS = labels(lhs(x)), RHS = labels(rhs(x)), quality(x)), 
+    filter = "top", 
+    rownames = paste0('[', 1:length(x), ']'), ...) %>% formatRound(3:(3+ncol(quality(x))), 
         precision)
 }
 
 inspect2.itemsets <- function(x, precision = 2, ...) {
   datatable(
-    data.frame(items = labels(x), 
-      quality(x)), filter = "top", ...) %>% formatRound(2:(2+ncol(quality(x))), 
-        precision)
+    data.frame(items = labels(x), quality(x)), 
+    filter = "top", rownames = paste0('[', 1:length(x), ']'), 
+    ...) %>% formatRound(2:(2+ncol(quality(x))), 
+      precision)
 }

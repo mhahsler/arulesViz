@@ -2,6 +2,7 @@
 
 * improved graphical parameters for the grouped matrix plot.
 * added inspect 2 for interactive rules inspection using package DT.
+* default color scheme is now a grey-red ramp.
 
 # Changes in version 1.1-1 (04/10/2016)
 
