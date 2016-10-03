@@ -1,7 +1,7 @@
-\name{inspect2}
+\name{inspectDT}
 \Rdversion{1.1}
 \alias{inspect}
-\alias{inspect2}
+\alias{inspectDT}
 \alias{datatable}
 \title{Inspect Associations Interactively using datatable}
 \description{
@@ -9,7 +9,7 @@ Uses \pkg{datatable} to create a HTML table widget using the DataTables
 library. Rules can be interactively filtered and sorted.
 }
 \usage{
-inspect2(x, ...) 
+inspectDT(x, ...) 
 }
 \arguments{
   \item{x}{ an object of class "rules" or "itemsets". }
@@ -35,10 +35,10 @@ data(Groceries)
 rules <- apriori(Groceries, parameter=list(support=0.005, confidence=0.5))
 rules
 
-inspect2(rules)
+inspectDT(rules)
 
 ### save table as a html page.
-p <- inspect2(rules)
+p <- inspectDT(rules)
 htmlwidgets::saveWidget(as.widget(p), "arules.html")}
 }
 \keyword{ print }

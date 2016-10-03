@@ -49,7 +49,6 @@ htmlwidgets::saveWidget(as.widget(p), "arules.html")
 
 ### Interactive matrix visualization
 plotly_arules(rules, method = "matrix") %>% layout(title = "Reordered Matrix")
-  
 }
 }
 \keyword{ hplot }

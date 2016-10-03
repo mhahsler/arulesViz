@@ -22,8 +22,8 @@ S3method(plot, rules)
 S3method(plot, itemsets)
 S3method(plot, grouped_matrix)
 
-export("inspect2")
-S3method(inspect2, rules)
-S3method(inspect2, itemsets)
+export("inspectDT")
+S3method(inspectDT, rules)
+S3method(inspectDT, itemsets)
 
 export("plotly_arules")

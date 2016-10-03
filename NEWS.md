@@ -1,8 +1,9 @@
 # Changes in version 1.1-1.1 (xx/xx/2016)
 
 * improved graphical parameters for the grouped matrix plot.
-* added inspect 2 for interactive rules inspection using package DT.
 * default color scheme is now a grey-red ramp.
+* added inspectDT for interactive rules inspection using package DT.
+* added plotyl_arules, interactive plots with plotly.
 
 # Changes in version 1.1-1 (04/10/2016)
 

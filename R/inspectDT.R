@@ -19,12 +19,12 @@
 
 # use library DT
 
-inspect2 <- function(x, ...) UseMethod("inspect2", x)
+inspectDT <- function(x, ...) UseMethod("inspectDT", x)
 
-inspect2.default <- function(x, ...) 
+inspectDT.default <- function(x, ...) 
   stop("inspect 2 not implemented for class ", class(x))
 
-inspect2.rules <- function(x, precision = 2, ...) {
+inspectDT.rules <- function(x, precision = 2, ...) {
   datatable(
     data.frame(LHS = labels(lhs(x)), RHS = labels(rhs(x)), quality(x)), 
     filter = "top", 
@@ -32,7 +32,7 @@ inspect2.rules <- function(x, precision = 2, ...) {
         precision)
 }
 
-inspect2.itemsets <- function(x, precision = 2, ...) {
+inspectDT.itemsets <- function(x, precision = 2, ...) {
   datatable(
     data.frame(items = labels(x), quality(x)), 
     filter = "top", rownames = paste0('[', 1:length(x), ']'), 
