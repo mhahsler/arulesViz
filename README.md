@@ -34,10 +34,28 @@ Available Visualizations:
 R> library(arulesViz)
 R> data(Groceries)
 R> rules <- apriori(Groceries, parameter=list(support=0.005, confidence=0.5))
+```
+
+Standard visualization
+```R
 R> plot(rules)
 ```
 
 ![Scatter plot](https://raw.githubusercontent.com/mhahsler/arulesViz/master/README/plot.png)
+
+Interactive visualization with plotly
+```R
+R> plotly_arules(rules)
+```
+[Click for Output](https://raw.githubusercontent.com/mhahsler/arulesViz/master/README/inspectDT.html)
+
+Interactive inspect with datatable
+```R
+R> inspectDT(rules)
+```
+[Click for Output](https://raw.githubusercontent.com/mhahsler/arulesViz/master/README/inspectDT.html)
+
+
 
 
 ## Further Information
