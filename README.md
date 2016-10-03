@@ -35,8 +35,8 @@ R> plot(rules)
 
 ## Further Information
 
-* [arulesViz package vignette](http://cran.r-project.org/web/packages/arulesViz/vignettes/arulesViz.pdf) with complete examples.
-* [Reference manual](http://cran.r-project.org/web/packages/arulesViz/arulesViz.pdf)
+* [arulesViz package vignette](https://cran.r-project.org/package=arulesViz/vignettes/arulesViz.pdf) with complete examples.
+* [Reference manual](https://cran.r-project.org/package=arulesViz/arulesViz.pdf)
 
 _Maintainer:_ [Michael Hahsler](http://michael.hahsler.net)
 

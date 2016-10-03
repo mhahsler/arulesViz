@@ -1,4 +1,4 @@
-# Changes in version 1.1-1.1 (xx/xx/2016)
+# Changes in version 1.2-0 (10/02/2016)
 
 * improved graphical parameters for the grouped matrix plot.
 * default color scheme is now a grey-red ramp.
