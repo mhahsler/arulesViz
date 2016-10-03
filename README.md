@@ -20,7 +20,7 @@ might also have to install the development version of [arules](http://github.com
 * Interactive visualizations with package `plotly`.
 * Interactive rule inspection with package `datatable`.
 
-Available Visualizations:
+### Available Visualizations:
 
 * Scatterplot, two-key plot
 * Matrix and matrix 3D visualization
@@ -29,31 +29,31 @@ Available Visualizations:
 * Doubledecker and mosaic plots
 * Parallel Coordinate plot
 
-## Example
+## Examples
 ```R
 R> library(arulesViz)
 R> data(Groceries)
 R> rules <- apriori(Groceries, parameter=list(support=0.005, confidence=0.5))
 ```
 
-Standard visualization
+### Standard visualization
 ```R
 R> plot(rules)
 ```
 
 ![Scatter plot](https://raw.githubusercontent.com/mhahsler/arulesViz/master/README/plot.png)
 
-Interactive visualization with plotly
+### Interactive visualization with plotly
 ```R
 R> plotly_arules(rules)
 ```
-[Click for Output](https://raw.githubusercontent.com/mhahsler/arulesViz/master/README/inspectDT.html)
+[Click for Output](https://rawgit.com/mhahsler/arulesViz/master/README/plotly_arules.html)
 
-Interactive inspect with datatable
+### Interactive inspect with datatable
 ```R
 R> inspectDT(rules)
 ```
-[Click for Output](https://raw.githubusercontent.com/mhahsler/arulesViz/master/README/inspectDT.html)
+[Click for Output](https://rawgit.com/mhahsler/arulesViz/master/README/inspectDT.html)
 
 
 
