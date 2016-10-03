@@ -37,7 +37,7 @@ R> rules <- apriori(Groceries, parameter=list(support=0.005, confidence=0.5))
 R> plot(rules)
 ```
 
-![Scatter plot](https://raw.githubusercontent.com/mhahsler/arulesViz/main/README/plot.png)
+![Scatter plot](https://raw.githubusercontent.com/mhahsler/arulesViz/master/README/plot.png)
 
 
 ## Further Information
