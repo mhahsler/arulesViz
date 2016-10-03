@@ -14,16 +14,20 @@ extends package [arules](http://github.com/mhahsler/arules) with various visuali
 * __Current development version:__ Download package from [AppVeyor](https://ci.appveyor.com/project/mhahsler/arulesViz/build/artifacts) or install via `install_git("mhahsler/arulesViz")` (requires devtools). You
 might also have to install the development version of [arules](http://github.com/mhahsler/arules).
 
-## Available Visualizations
+## Features
+* Visualizations using `base` and/or `grid`. 
+* Interactive visualizations using `grid`.
+* Interactive visualizations with package `plotly`.
+* Interactive rule inspection with package `datatable`.
+
+Available Visualizations:
 
 * Scatterplot, two-key plot
 * Matrix and matrix 3D visualization
 * Grouped matrix-based visualization
 * Several graph-based visualizations
 * Doubledecker and mosaic plots
-* Parallel Coodfinate plot
-
-Several visualizations are also available in interactive exploration mode. 
+* Parallel Coordinate plot
 
 ## Example
 ```R
@@ -33,8 +37,11 @@ R> rules <- apriori(Groceries, parameter=list(support=0.005, confidence=0.5))
 R> plot(rules)
 ```
 
-## Further Information
+![Scatter plot](https://raw.githubusercontent.com/mhahsler/arulesViz/main/README/plot.png)
 
+
+## Further Information
+* List changes from [NEWS.md](https://github.com/mhahsler/arulesViz/blob/master/NEWS.md)
 * [arulesViz package vignette](https://cran.r-project.org/package=arulesViz/vignettes/arulesViz.pdf) with complete examples.
 * [Reference manual](https://cran.r-project.org/package=arulesViz/arulesViz.pdf)
 
