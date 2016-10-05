@@ -24,15 +24,14 @@ inspectDT <- function(x, ...) UseMethod("inspectDT", x)
 inspectDT.default <- function(x, ...) 
   stop("inspect 2 not implemented for class ", class(x))
 
-inspectDT.rules <- function(x, precision = 2, ...) {
+inspectDT.rules <- function(x, precision = 3, ...) {
   datatable(
     data.frame(LHS = labels(lhs(x)), RHS = labels(rhs(x)), quality(x)), 
-    filter = "top", 
-    rownames = paste0('[', 1:length(x), ']'), ...) %>% formatRound(3:(3+ncol(quality(x))), 
-        precision)
+    filter = "top", rownames = paste0('[', 1:length(x), ']'), ...) %>% 
+    formatRound(3:(3+ncol(quality(x))), max(precision))
 }
 
-inspectDT.itemsets <- function(x, precision = 2, ...) {
+inspectDT.itemsets <- function(x, precision = 3, ...) {
   datatable(
     data.frame(items = labels(x), quality(x)), 
     filter = "top", rownames = paste0('[', 1:length(x), ']'), 

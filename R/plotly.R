@@ -21,13 +21,15 @@
 #plot <- function(x, method = NULL, measure = "support", 
 #  shading = "lift", interactive = FALSE, data = NULL, control = NULL, ...) {
 
-# FIXME: also for itemsets and matrix... 
+# FIXME: also for itemsets 
 
 plotly_arules <- function(x, method = "scatterplot", 
   measure = c("support", "confidence"), shading = "lift", 
   max = 1000, ...) {
   
-  methods <- c("scatterplot", "matrix")
+  if(!is(x, "rules")) stop("x has to be a set of rules.")
+  
+  methods <- c("scatterplot", "two-key plot", "matrix")
   
   if(length(x)<1) stop("x contains 0 rules!")
   
@@ -35,44 +37,54 @@ plotly_arules <- function(x, method = "scatterplot",
   else methodNr <- pmatch(tolower(method), tolower(methods))
   if(is.na(methodNr)) stop (paste("Unknown method:",sQuote(method)))
   
+  # two-key plot is a scatterplot with order shading
+  if(methodNr==2) {
+    shading <- "order"
+    methodNr <- 1
+  }
+  
   # filter by max 
   quality(x)[["order"]] <- size(x) 
   qnames <- names(quality(x))
   measure <- qnames[pmatch(measure, qnames, duplicates.ok = TRUE)]
   shading <- qnames[pmatch(shading, qnames)]
-  ### order x to prevent overplotting and limit x
-  ### FIXME: RuleID
-  #o <- order(x, by = )
   
-  if(length(x) > max) {
-    warning("too many rules supplied only plotting the best ", 
-      max, " rules using ", shading, " (change parameter max if needed)")
-    x <- tail(x, n = max, by = shading, decreasing = FALSE)
-  }else x <- sort(x, by = shading, decreasing = FALSE) 
   
-  if(methodNr == 1) .plotly_scatter(x, measure, shading, ...)
-  else .plotly_matrix(x, shading, ...)
-  
+  if(methodNr == 1) .plotly_scatter(x, measure, shading, max = max, ...)
+  else .plotly_matrix(x, shading, max = max, ...)
 }
 
 .plotly_scatter <- function(x, 
   measure = c("support", "confidence"), shading = "lift", 
-  colors = default_colors(100), ...) {
+  colors = default_colors(2), jitter = 0, precision = 3, max = 1000, ...) {
 
   colors <- rev(colors) 
+ 
+  ### order (overplotting) and check for max 
+  o <- order(quality(x)[[shading]], decreasing = FALSE)
+  if(length(o) > max) {
+    warning("too many rules supplied only plotting the best ", 
+      max, " rules using ", shading, " (change parameter max if needed)")
+    o <- tail(o, n = max)
+  }
   
+  x <- x[o]
   q <- quality(x)
+  
   l <- labels(x, itemSep= ',<BR>&nbsp;&nbsp;', 
     ruleSep = '<BR>&nbsp;&nbsp; &rArr; ', 
     setStart = '<B>{', setEnd = '}</B>')
   
-  txt <- paste(paste0('[', 1:length(x),']<br>'), l, 
-    paste('<BR><BR>', measure[1], ": ", round(q[, measure[1]], 2), sep = ""),
-    paste('<BR>', measure[2], ": ", round(q[, measure[2]], 2), sep =""),
+  txt <- paste(paste0('[', o,']<br>'), l, 
+    paste('<BR><BR>', measure[1], ": ", signif(q[, measure[1]], precision), sep = ""),
+    paste('<BR>', measure[2], ": ", signif(q[, measure[2]], precision), sep =""),
     paste('<BR>', shading, ": ", 
-      if(is.numeric(q[, shading])) round(q[, shading], 2) 
+      if(is.numeric(q[, shading])) signif(q[, shading], precision) 
       else q[, shading], sep="")
   )
+  
+  ### add x/y-jitter
+  if(jitter>0) for(m in measure) q[[m]] <- jitter(q[[m]], jitter)
 
   if(shading == "order")
     p <- plot_ly(q, x = q[,measure[1]], y = q[,measure[2]], 
@@ -97,9 +109,16 @@ plotly_arules <- function(x, method = "scatterplot",
 
 .plotly_matrix <- function(x, measure = "lift", reorder = TRUE, 
   #colors = colorRamp(c("grey", "red"))) {
-  colors = default_colors(100)) {
+  colors = default_colors(2), precision = 3, max = 1000) {
   
   colors <- rev(colors)
+  
+  if(length(x) > max) {
+    warning("too many rules supplied only plotting the best ", 
+      max, " rules using ", measure, " (change parameter max if needed)")
+    x <- tail(x, n = max, by = measure, decreasing = FALSE)
+  }
+  
   m <- rulesAsMatrix(x, measure = measure)
   if(reorder) {
     o <- .reorder(m, method = "TSP")
@@ -108,7 +127,7 @@ plotly_arules <- function(x, method = "scatterplot",
 
   
   txt <- t(outer(colnames(m), rownames(m), paste, sep = ' &rArr; '))
-  txt[] <- paste('<B>', txt, '</B>', '<BR>',measure, ': ', round(m, 2), sep = '')
+  txt[] <- paste('<B>', txt, '</B>', '<BR>',measure, ': ', signif(m, precision), sep = '')
   txt[is.na(m)] <- NA
   
   plot_ly(z = m,

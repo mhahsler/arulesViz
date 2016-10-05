@@ -12,14 +12,17 @@ plotly_arules(x, method = "scatterplot", measure = c("support", "confidence"),
 }
 \arguments{
   \item{x}{ an object of class "rules". }
-  \item{method}{ currently the methods "scatterplot" and "matrix" are supported.}
+  \item{method}{ currently the methods "scatterplot", "two-key plot"
+    and "matrix" are supported.}
   \item{measure}{ measure(s) of interestingness 
   (e.g., "support", "confidence", "lift", "order") used in the visualization as x
   and y-axis.}
   \item{shading}{ measure of interestingness used for color shading.}
   \item{max}{ client side processing in plotly is expensive. We restrict the 
   number of rules to the max best rules (according to the measure used for shading.)}
-  \item{\dots}{ colors can be used to specify a color palette. 
+  \item{\dots}{ The following additional arguments can be used: \code{colors} to specify a color palette, \code{precision}
+    to specify the precision used for printing quality measures, and
+    \code{jitter} to reduce overplotting in scatterplots.
     Further arguments are passed on to \code{plot_ly()} as
     markter attributes (e.g., size, symbol and opacity).}
 }
@@ -36,18 +39,21 @@ data(Groceries)
 rules <- apriori(Groceries, parameter=list(support=0.005, confidence=0.5))
 rules
 
-### interactive scatter plot visualization
+# interactive scatter plot visualization
 plotly_arules(rules)
-plotly_arules(rules, measure = c("support", "lift"), shading = "order")
+plotly_arules(rules, measure = c("support", "lift"), shading = "confidence")
+plotly_arules(rules, method = "two-key plot")
 
-# add a title
-plotly_arules(rules) %>% layout(title = "Some Grocery Rules")
+# add jitter, change color and markers and add a title
+plotly_arules(rules, jitter = 10, opacity = .7, size = 10, symbol = 1, 
+  colors = c("blue", "green")) %>% layout(title = "Some Grocery Rules")
+
 
 # save a plot as a html page
 p <- plotly_arules(rules)
 htmlwidgets::saveWidget(as.widget(p), "arules.html")
 
-### Interactive matrix visualization
+# interactive matrix visualization
 plotly_arules(rules, method = "matrix") %>% layout(title = "Reordered Matrix")
 }
 }

@@ -1,3 +1,10 @@
+# Changes in version 1.2-0.1 (xx/xx/2016)
+
+* arules_plotly uses now signif instead of round for 
+  quality measures. 
+* arules_plotly shows correct rule indices for too large rule sets. 
+* arules_plotly implements can now use jitter to reduce overplotting.
+
 # Changes in version 1.2-0 (10/02/2016)
 
 * improved graphical parameters for the grouped matrix plot.
