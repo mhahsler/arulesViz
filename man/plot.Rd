@@ -106,7 +106,7 @@ used for reordering (see \code{seriate()} method in \pkg{seriation})}
 }
 
 \item{"grouped"}{
-Grouped matrix-based visualization (Hahsler and Chelloboina, 2011; Hahsler and Karpienko, 2016). 
+Grouped matrix-based visualization (Hahsler 2016; Hahsler and Karpienko, 2016). 
 Antecedents (columns) in the matrix are
 grouped using clustering. Groups are represented as balloons
 in the matrix.
@@ -204,12 +204,9 @@ Bruzzese, D. and Davino, C. (2008), Visual Mining of Association Rules, in
 Visual Data Mining: Theory, Techniques and Tools for Visual Analytics,
 Springer-Verlag, pp. 103--122.
 
-Hahsler, M. and Chelluboina, S. (2011), Visualizing association rules in
-hierarchical groups. Presented at the 42nd Symposium on the Interface: 
-Statistical, Machine Learning, and Visualization Algorithms 
-(Interface 2011). The Interface Foundation of North America.
-
 Hahsler, M. and Karpienko, R. (2016) Visualizing Association Rules in Hierarchical Groups. \emph{Journal of Business Economics,} accepted for publication, 2016.
+
+Hahsler, M. (2016) Grouping association rules using lift. In C. Iyigun, R. Moghaddess, and A. Oztekin, editors, 11th INFORMS Workshop on Data Mining and Decision Analytics (DM-DA 2016).
 }
 
 \seealso{
