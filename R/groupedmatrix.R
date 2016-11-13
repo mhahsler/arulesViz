@@ -23,15 +23,16 @@ grouped_matrix_arules <- function(rules, measure, shading, control=NULL, ...){
   ## shading controls color
   
   control <- .get_parameters(control, list(
-    main = paste("Grouped matrix for", length(rules), "rules"),
+    main = paste("Grouped Matrix for", length(rules), "Rules"),
     k = 20,
+    lhs_items = 2,
     aggr.fun=median, 
     ## fix lift so serveral plots are comparable (NA: take max)
     col = default_colors(100),
     reverse = TRUE, 
     xlab = NULL, 
     ylab = NULL, 
-    legend = paste("size:", measure, "\ncolor:", shading),
+    legend = paste("Size:", measure, "\nColor:", shading),
     spacing = -1, 
     panel.function = panel.circles, 
     gp_main   = gpar(cex=1.2, fontface="bold"),
@@ -199,7 +200,7 @@ grouped_matrix_int <- function(rules, measure, shading, control) {
   mAggr <- .aggr(rulesAsMatrix(rules, measure[1]), km, aggr.fun)
   
   ret <- list(rules=rules, measure=measure, shading=shading, 
-    cl=cl, km= km, max.shading=max.shading, 
+    cl=cl, km= km, lhs_items = control$lhs_items, max.shading=max.shading, 
     aggr.fun=aggr.fun, 
     order=order, k=k, sAggr=sAggr, mAggr=mAggr)
   class(ret) <- "grouped_matrix"
@@ -222,20 +223,28 @@ plot.grouped_matrix <- function(x, ...) {
   ln <- x$sAggr
   
   ## get most important item in the lhs
-  f <- lapply(split(x$rules, x$cl), FUN = function(r) itemFrequency(lhs(r)))
+  f <- lapply(split(x$rules, x$cl), FUN = function(r) itemFrequency(lhs(r), 
+    type = "absolute"))
+  ## divide by sum to find most important item...
+  f <- lapply(f, "/", itemFrequency(lhs(x$rules), type = "absolute")+1L)
+ 
   most_imp_item <- lapply(f, FUN = 
       function(x) {
         items <- sum(x>0)
         if(items==0) { "" }
-        else if(items>1){
-          paste(names(which.max(x)), ", +",sum(x>0)-1, " items", sep="")
+        else if(control$lhs_items<1){ 
+          paste(items, "items") 
+        } else if(items>control$lhs_items){
+          paste(paste(names(x[head(order(x, decreasing = TRUE), n = control$lhs_items)]), 
+            collapse = ", "), ", +", items-control$lhs_items, " items", sep="")
         }else{
-          names(which.max(x))   
+          paste(names(x[head(order(x, decreasing = TRUE), n = control$lhs_items)]), 
+            collapse = ", ")
         }
       })
  
   control$ylab <- paste(
-    paste('{',most_imp_item, '}', " - ", table(x$cl), " rules", sep=''))
+    paste(format(table(x$cl)), " rules: ", '{',most_imp_item, '}', sep=''))
       
   grouped_matrix_plot_int(
     x = map(sn, c(0.2,1)), 
@@ -293,16 +302,21 @@ grouped_matrix_plot_int <- function(x, y, order = NULL, options = NULL) {
   
   upViewport(1)
   
-  ## determine margins
+  # determine margins for labels
+  # Note: rownames are LHSs!
   #topSpace <- max(stringWidth(rownames(x)))
-  topSpace <- max(grobWidth(textGrob(rownames(x), gp=options$gp_labels)))
+  topSpace <- max(grobHeight(textGrob(rownames(x), rot = 90, 
+    gp=options$gp_labels)))
+  #, gp=options$gp_labels))
   #rightSpace <- max(stringWidth(colnames(x)))
-  rightSpace <- max(grobWidth(textGrob(colnames(x), gp=options$gp_labels)))
+  rightSpace <- max(grobWidth(textGrob(colnames(x), 
+    gp=options$gp_labels)))
   
-  pushViewport(viewport(x=unit(2,"lines"), y=unit(4,"lines"),
+  # have 2 lines to the left and 2 lines from bottom 
+  pushViewport(viewport(x=unit(2,"lines"), y=unit(2,"lines"), 
     just = c("left","bottom"),
-    width = unit(1, "npc")-rightSpace-unit(3+4,"lines"), 
-    height = unit(1, "npc")-topSpace-unit(4+3,"lines"),
+    width = unit(1, "npc")-(rightSpace+unit(3+4,"lines")), 
+    height = unit(1, "npc")-(topSpace+unit(4+4+3,"lines")),
     #xscale = c(1, nrow(x)), yscale = c(1, ncol(x)), 
     xscale = c(.5, nrow(x)+.5), yscale = c(.5, ncol(x)+.5), 
     default.units = "native",
@@ -347,7 +361,7 @@ grouped_matrix_plot_int <- function(x, y, order = NULL, options = NULL) {
     gp = options$gp_labels)
   
   ## add lhs, rhs
-  grid.text("LHS", 
+  grid.text("Items in LHS Group", 
     x = unit(1, "native")-unit(1,"lines"), y = yLabPos, 
     rot = 90, just = "left", 
     default.units = "native", 

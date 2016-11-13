@@ -2,7 +2,9 @@
 
 * arules_plotly uses now signif instead of round for quality measures. 
 * arules_plotly shows correct rule indices for too large rule sets. 
-* arules_plotly implements can now use jitter to reduce overplotting.
+* arules_plotly implements now jitter to reduce overplotting.
+* plot method "grouped" now shows the most interesting items instead of the
+  most frequent items to represent antecedents.
 
 # Changes in version 1.2-0 (10/02/2016)
 

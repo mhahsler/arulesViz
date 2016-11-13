@@ -81,7 +81,7 @@ The list of control parameters for this method is:
 
 \item{"matrix", "matrix3D"}{ 
 Arranges the association rules as a matrix with the itemsets in the antecedents
-on one axis and the itemsets in the consequent on the other.  The interest
+on one axis and the itemsets in the consequents on the other.  The interest
 measure is either visualized by a color (darker means a higher value for the
 measure) or as the height of a bar (method "matrix3D").
 
@@ -108,16 +108,21 @@ used for reordering (see \code{seriate()} method in \pkg{seriation})}
 \item{"grouped"}{
 Grouped matrix-based visualization (Hahsler 2016; Hahsler and Karpienko, 2016). 
 Antecedents (columns) in the matrix are
-grouped using clustering. Groups are represented as balloons
-in the matrix.
+grouped using clustering. Groups are represented by the most
+interesting item (highest ratio of support in the group to support in all rules) 
+in the group. Balloons
+in the matrix are used to represent with what consequent the antecedents are 
+connected.
 
-Interactive manipulations are available. 
+Interactive manipulations are available. They can be used to zoom into groups
+and identify rules.
 
 
 The list of control parameters for this method is:
 \describe{
 \item{"main"}{plot title}
 \item{"k"}{number of antecedent groups (default: 20)}
+\item{"lhs_items"}{number oo LHS items shown (default: 2)}
 \item{"aggr.fun"}{aggregation function
 can be any function computing a scalar from a vector
 (e.g., min, mean, median (default), sum, max). It is also used
