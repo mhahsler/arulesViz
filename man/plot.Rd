@@ -73,7 +73,7 @@ The list of control parameters for this method is:
 \item{"pch"}{ use filled symbols: 20--25}
 \item{"cex"}{symbol size}
 \item{"xlim","ylim"}{limits}
-\item{"jitter"}{a number greater than 0 adds jitter to the points}
+\item{"jitter"}{a number greater than 0 adds jitter to the points. If overplotting would occur, jitter defaults to .1.}
 \item{"col"}{color palette}
 }
 
@@ -106,7 +106,7 @@ used for reordering (see \code{seriate()} method in \pkg{seriation})}
 }
 
 \item{"grouped"}{
-Grouped matrix-based visualization (Hahsler 2016; Hahsler and Karpienko, 2016). 
+Grouped matrix-based visualization (Hahsler and Karpienko, 2016; Hahsler 2016). 
 Antecedents (columns) in the matrix are
 grouped using clustering. Groups are represented by the most
 interesting item (highest ratio of support in the group to support in all rules) 

@@ -2,7 +2,9 @@
 
 * arules_plotly uses now signif instead of round for quality measures. 
 * arules_plotly shows correct rule indices for too large rule sets. 
-* arules_plotly implements now jitter to reduce overplotting.
+* arules_plotly implements now jitter to reduce overplotting (defaults
+    to .1 if overplotting would occur)
+* regular scatter plot also defaults jitter to .1 if overplotting would occur.
 * plot method "grouped" now shows the most interesting items instead of the
   most frequent items to represent antecedents.
 
@@ -11,7 +13,7 @@
 * improved graphical parameters for the grouped matrix plot.
 * default color scheme is now a grey-red ramp.
 * added inspectDT for interactive rules inspection using package DT.
-* added plotyl_arules, interactive plots with plotly.
+* added plotly_arules, interactive plots with plotly.
 
 # Changes in version 1.1-1 (04/10/2016)
 
@@ -22,7 +24,7 @@
 * abbreviate has been moved to arules. 
 * fixed bug in grouped plots when the quality of many rules is identical.
 * plots use now heat colors. 
-* scatterplots use now for lift zlim starting at 1.
+* scatter plots use now for lift zlim starting at 1.
 
 # Changes in version 1.0-4 (09/15/2015)
 

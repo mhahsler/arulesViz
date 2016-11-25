@@ -39,6 +39,7 @@ inspectDT(rules)
 
 ### save table as a html page.
 p <- inspectDT(rules)
-htmlwidgets::saveWidget(as.widget(p), "arules.html")}
+htmlwidgets::saveWidget(p, "arules.html", selfcontained = FALSE)
+browseURL("arules.html")}
 }
 \keyword{ print }

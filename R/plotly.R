@@ -43,12 +43,10 @@ plotly_arules <- function(x, method = "scatterplot",
     methodNr <- 1
   }
   
-  # filter by max 
   quality(x)[["order"]] <- size(x) 
   qnames <- names(quality(x))
   measure <- qnames[pmatch(measure, qnames, duplicates.ok = TRUE)]
   shading <- qnames[pmatch(shading, qnames)]
-  
   
   if(methodNr == 1) .plotly_scatter(x, measure, shading, max = max, ...)
   else .plotly_matrix(x, shading, max = max, ...)
@@ -56,7 +54,7 @@ plotly_arules <- function(x, method = "scatterplot",
 
 .plotly_scatter <- function(x, 
   measure = c("support", "confidence"), shading = "lift", 
-  colors = default_colors(2), jitter = 0, precision = 3, max = 1000, ...) {
+  colors = default_colors(2), jitter = NA, precision = 3, max = 1000, ...) {
 
   colors <- rev(colors) 
  
@@ -72,28 +70,34 @@ plotly_arules <- function(x, method = "scatterplot",
   q <- quality(x)
   
   l <- labels(x, itemSep= ',<BR>&nbsp;&nbsp;', 
-    ruleSep = '<BR>&nbsp;&nbsp; &rArr; ', 
+    ruleSep = '<BR>&nbsp;&nbsp; => ', 
     setStart = '<B>{', setEnd = '}</B>')
   
-  txt <- paste(paste0('[', o,']<br>'), l, 
+  txt <- paste(paste0('[', o,']<BR>'), l, 
     paste('<BR><BR>', measure[1], ": ", signif(q[, measure[1]], precision), sep = ""),
     paste('<BR>', measure[2], ": ", signif(q[, measure[2]], precision), sep =""),
     paste('<BR>', shading, ": ", 
       if(is.numeric(q[, shading])) signif(q[, shading], precision) 
       else q[, shading], sep="")
   )
-  
+ 
   ### add x/y-jitter
-  if(jitter>0) for(m in measure) q[[m]] <- jitter(q[[m]], jitter)
+  jitter <- jitter[1]
+  if(is.na(jitter) && any(duplicated(q[,measure]))) {
+      jitter <- .1
+  }
+  
+  if(!is.na(jitter) && jitter>0) 
+    for(m in measure) q[[m]] <- jitter(q[[m]], factor = jitter, amount = 0)
 
   if(shading == "order")
-    p <- plot_ly(q, x = q[,measure[1]], y = q[,measure[2]], 
+    p <- plot_ly(q, type = "scatter", x = q[,measure[1]], y = q[,measure[2]], 
       hoverinfo = 'text', text = txt, 
       color = as.ordered(q[,shading]),
       mode = 'markers', marker = list(...) 
     ) 
   else
-    p <- plot_ly(q, x = q[,measure[1]], y = q[,measure[2]], 
+    p <- plot_ly(q, type = "scatter", x = q[,measure[1]], y = q[,measure[2]], 
       hoverinfo = 'text', text = txt, 
       color = q[,shading], colors = colors,
       mode = 'markers', 

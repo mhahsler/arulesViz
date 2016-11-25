@@ -36,7 +36,7 @@ scatterplot_arules <- function(rules, measure = c("support","confidence"),
     #col = heat_hcl(100),
     #gray_range = c(.1,.8),
     newpage = TRUE,
-    jitter = 0
+    jitter = NA
   ))
   
   
@@ -273,10 +273,16 @@ scatterplot_int <- function(rules, measure, shading, control, ...){
     just = c("left", "bottom")))
   
   x <- q[, c(measure[1], measure[2])]
-  
-  if(control$jitter >0) {
-    x[,1] <- jitter(x[,1], factor=control$jitter)
-    x[,2] <- jitter(x[,2], factor=control$jitter)
+ 
+  control$jitter <- control$jitter[1]
+  if(is.na(control$jitter) && any(duplicated(x))) {
+    #warning("To reduce overplotting, jitter is set to 1!")
+    control$jitter <- .1
+    }
+   
+  if(!is.na(control$jitter) && control$jitter>0) {
+    x[,1] <- jitter(x[,1], factor=control$jitter, amount = 0)
+    x[,2] <- jitter(x[,2], factor=control$jitter, amount = 0)
   }
   
   

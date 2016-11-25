@@ -22,7 +22,8 @@ plotly_arules(x, method = "scatterplot", measure = c("support", "confidence"),
   number of rules to the max best rules (according to the measure used for shading.)}
   \item{\dots}{ The following additional arguments can be used: \code{colors} to specify a color palette, \code{precision}
     to specify the precision used for printing quality measures, and
-    \code{jitter} to reduce overplotting in scatterplots.
+    \code{jitter} to reduce overplotting in scatterplots 
+    (defaults to .1 if overplotting would occur).
     Further arguments are passed on to \code{plot_ly()} as
     markter attributes (e.g., size, symbol and opacity).}
 }
@@ -51,7 +52,9 @@ plotly_arules(rules, jitter = 10, opacity = .7, size = 10, symbol = 1,
 
 # save a plot as a html page
 p <- plotly_arules(rules)
-htmlwidgets::saveWidget(as.widget(p), "arules.html")
+htmlwidgets::saveWidget(p, "arules.html", selfcontained = FALSE)
+browseURL("arules.html")
+# Note: selfcontained seems to make the browser slow.
 
 # interactive matrix visualization
 plotly_arules(rules, method = "matrix") %>% layout(title = "Reordered Matrix")
