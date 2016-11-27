@@ -204,8 +204,19 @@ scatterplot_int <- function(rules, measure, shading, control, ...){
   
   ## reverse colors
   colors <- rev(control$col)
+ 
+   
+  q <- quality(rules)[, na.omit(c(measure, shading))]
   
-  q <- quality(rules)
+  ## handle Inf
+  for(i in 1:ncol(q)) {
+    infin <- is.infinite(q[[i]])
+    if(any(infin)) {
+      replinfin <- signif(2 * max(q[[i]][!infin], na.rm = TRUE), 3)
+      warning(colnames(q)[i], " contains infinite values! Replaced by twice the max (", replinfin, ")!")
+      q[[i]][infin] <- replinfin
+    }
+ }
   
   if(control$newpage) grid.newpage()
   

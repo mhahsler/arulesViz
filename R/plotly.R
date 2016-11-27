@@ -67,8 +67,17 @@ plotly_arules <- function(x, method = "scatterplot",
   }
   
   x <- x[o]
-  q <- quality(x)
-  
+  q <- quality(x)[, c(measure, shading)]
+
+  for(i in 1:ncol(q)) {
+    infin <- is.infinite(q[[i]])
+    if(any(infin)) {
+      replinfin <- signif(2 * max(q[[i]][!infin], na.rm = TRUE), 3)
+      warning(colnames(q)[i], " contains infinite values! Replaced by twice the max (", replinfin, ")!")
+      q[[i]][infin] <- replinfin
+    }
+  } 
+    
   l <- labels(x, itemSep= ',<BR>&nbsp;&nbsp;', 
     ruleSep = '<BR>&nbsp;&nbsp; => ', 
     setStart = '<B>{', setEnd = '}</B>')

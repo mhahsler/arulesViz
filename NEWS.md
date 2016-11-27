@@ -7,6 +7,7 @@
 * regular scatter plot also defaults jitter to .1 if overplotting would occur.
 * plot method "grouped" now shows the most interesting items instead of the
   most frequent items to represent antecedents.
+* scatterplot now handled Inf by a warning.
 
 # Changes in version 1.2-0 (10/02/2016)
 
