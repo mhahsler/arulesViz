@@ -59,7 +59,7 @@ R> inspectDT(rules)
 
 
 ## Further Information
-* List changes from [NEWS.md](https://github.com/mhahsler/arulesViz/blob/master/NEWS.md)
+* List of changes from [NEWS.md](https://github.com/mhahsler/arulesViz/blob/master/NEWS.md)
 * [arulesViz package vignette](https://cran.r-project.org/package=arulesViz/vignettes/arulesViz.pdf) with complete examples.
 * [Reference manual](https://cran.r-project.org/package=arulesViz/arulesViz.pdf)
 

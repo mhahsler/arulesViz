@@ -38,9 +38,9 @@ default_colors <- function(n , alpha = 1)
   colorRampPalette(c("#EE0000", "#EE9999","#EEEEEE"), alpha = alpha)(n)
 
 ## helpers for variouse visualizations
-rulesAsDataFrame <- function(rules, measure = "support") {
-  antes <- labels(lhs(rules))
-  conseqs <- labels(rhs(rules))
+rulesAsDataFrame <- function(rules, measure = "support", ...) {
+  antes <- labels(lhs(rules), ...)
+  conseqs <- labels(rhs(rules), ...)
   
   data.frame(
     antecedent = factor(antes, levels = unique(antes)),
@@ -49,8 +49,8 @@ rulesAsDataFrame <- function(rules, measure = "support") {
   )
 }
 
-rulesAsMatrix <- function(rules, measure = "support") {
-  df <- rulesAsDataFrame(rules, measure)
+rulesAsMatrix <- function(rules, measure = "support", ...) {
+  df <- rulesAsDataFrame(rules, measure, ...)
   
   antes <- as.integer(df$antecedent)
   conseqs <- as.integer(df$consequent)

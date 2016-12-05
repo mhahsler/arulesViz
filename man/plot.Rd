@@ -122,7 +122,9 @@ The list of control parameters for this method is:
 \describe{
 \item{"main"}{plot title}
 \item{"k"}{number of antecedent groups (default: 20)}
-\item{"lhs_items"}{number oo LHS items shown (default: 2)}
+\item{"rhs_max"}{maximal number of RHSs to show. The rest are 
+  suppressed. (default: 10)}
+\item{"lhs_items"}{number of LHS items shown (default: 2)}
 \item{"aggr.fun"}{aggregation function
 can be any function computing a scalar from a vector
 (e.g., min, mean, median (default), sum, max). It is also used
@@ -223,7 +225,7 @@ Hahsler, M. (2016) Grouping association rules using lift. In C. Iyigun, R. Mogha
 }
 \examples{
 data(Groceries)
-rules <- apriori(Groceries, parameter=list(support=0.005, confidence=0.5))
+rules <- apriori(Groceries, parameter=list(support=0.001, confidence=0.8))
 rules
 
 ## Scatterplot
@@ -243,7 +245,7 @@ plot(rules, shading="order", control = list(main = "Two-key plot",
   col=rainbow(max(size(rules))-1L)))
 
 ## The following techniques work better with fewer rules
-subrules <- subset(rules, lift>2.5)
+subrules <- subset(rules, lift>5)
 subrules
   
 ## 2D matrix with shading
@@ -270,7 +272,7 @@ plot(rules, method="grouped",
 ## try: sel <- plot(rules, method="grouped", interactive=TRUE)
 
 ## graphs only work well with very few rules
-subrules2 <- sample(rules, 10)
+subrules2 <- sample(subrules, 25)
 plot(subrules2, method="graph")
 plot(subrules2, method="graph", 
   control = list(nodeCol = grey.colors(10), edgeCol = grey(.7), alpha = 1))

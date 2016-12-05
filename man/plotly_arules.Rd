@@ -37,7 +37,7 @@ The plotly object (plotly_hash).
 \dontrun{ 
 library(plotly)
 data(Groceries)
-rules <- apriori(Groceries, parameter=list(support=0.005, confidence=0.5))
+rules <- apriori(Groceries, parameter=list(support=0.001, confidence=0.8))
 rules
 
 # interactive scatter plot visualization

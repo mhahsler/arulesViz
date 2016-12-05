@@ -257,7 +257,8 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
     if(!control$interactive) {
       if(control$engine=="graphviz") {
         if(!.installed("Rgraphviz")) stop ("Package Rgraphviz needed. Please install from Bioconductor!")
-        
+       
+        requireNamespace("Rgraphviz") 
         gNEL <- igraph::igraph.to.graphNEL(g)
         
         if(is.null(control$layout)) control$layout <- "neato"
@@ -475,6 +476,7 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
       if(control$engine=="graphviz") {
         if(!.installed("Rgraphviz")) stop ("Package Rgraphviz needed!")
         
+        requireNamespace("Rgraphviz") 
         gNEL <- igraph::igraph.to.graphNEL(g)
         
         if(is.null(control$layout)) control$layout <- "dot"

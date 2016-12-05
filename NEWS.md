@@ -4,10 +4,12 @@
 * arules_plotly shows correct rule indices for too large rule sets. 
 * arules_plotly implements now jitter to reduce overplotting (defaults
     to .1 if overplotting would occur)
-* regular scatter plot also defaults jitter to .1 if overplotting would occur.
+* regular scatter plot also defaults jitter to .2 if overplotting would occur.
 * plot method "grouped" now shows the most interesting items instead of the
-  most frequent items to represent antecedents.
-* scatterplot now handled Inf by a warning.
+  most frequent items to represent antecedents. Also, if more than 10 RHS
+  items are found, then only the 10 most important are shown (see control 
+  argument rhs_max)
+* scatterplot now handles Inf with a warning.
 
 # Changes in version 1.2-0 (10/02/2016)
 

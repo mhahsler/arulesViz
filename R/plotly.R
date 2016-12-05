@@ -132,14 +132,16 @@ plotly_arules <- function(x, method = "scatterplot",
     x <- tail(x, n = max, by = measure, decreasing = FALSE)
   }
   
-  m <- rulesAsMatrix(x, measure = measure)
+  m <- rulesAsMatrix(x, measure = measure, itemSep= ',<BR>&nbsp;&nbsp;', 
+    setStart = '<B>{', setEnd = '}</B>')
+  
   if(reorder) {
     o <- .reorder(m, method = "TSP")
     m <- seriation::permute(m, o)
   }
 
   
-  txt <- t(outer(colnames(m), rownames(m), paste, sep = ' &rArr; '))
+  txt <- t(outer(colnames(m), rownames(m), paste, sep = '<BR>&nbsp;&nbsp; => '))
   txt[] <- paste('<B>', txt, '</B>', '<BR>',measure, ': ', signif(m, precision), sep = '')
   txt[is.na(m)] <- NA
   

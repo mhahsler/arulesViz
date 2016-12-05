@@ -25,6 +25,7 @@ grouped_matrix_arules <- function(rules, measure, shading, control=NULL, ...){
   control <- .get_parameters(control, list(
     main = paste("Grouped Matrix for", length(rules), "Rules"),
     k = 20,
+    rhs_max = 10,
     lhs_items = 2,
     aggr.fun=median, 
     ## fix lift so serveral plots are comparable (NA: take max)
@@ -62,7 +63,8 @@ grouped_matrix_arules <- function(rules, measure, shading, control=NULL, ...){
     row.names = c("inspect","zoom in", "zoom out", "end"),
     active = rep(FALSE, 4),
     x = c(0.3, 0.5, 0.7, 0.9),
-    y = I(rep(unit(-3, "lines"), 4)),
+    y = I(rep(unit(0, "lines"), 4)),
+    #y = I(rep(unit(-3, "lines"), 4)),
     w = I(rep(unit(3.5, "lines"), 4)),
     h = I(rep(unit(1, "lines"), 4))
   )
@@ -266,13 +268,23 @@ inspect.grouped_matrix <- function(x, cluster, measure="lift") {
 grouped_matrix_plot_int <- function(x, y, order = NULL, options = NULL) {
   if (!is.matrix(x)) 
     stop("Argument 'x' must be a matrix.")
-  
+
   if (!is.null(options$xlab)) rownames(x) <- options$xlab
   if (!is.null(options$ylab)) colnames(x) <- options$ylab
   
   if (!is.null(order)) {
     x <- permute(x, order)
     y <- permute(y, order)
+  }
+  
+  ### only show the top RHS
+  suppressed_rhs <- 0
+  if(!is.null(options$rhs_max) && 
+      options$rhs_max > 0 && 
+      nrow(x) > options$rhs_max) {
+    suppressed_rhs <- nrow(x) - options$rhs_max
+    x <- x[1:options$rhs_max, , drop=FALSE]
+    y <- y[1:options$rhs_max, , drop = FALSE]
   }
   
   if (options$reverse) {
@@ -318,7 +330,8 @@ grouped_matrix_plot_int <- function(x, y, order = NULL, options = NULL) {
     width = unit(1, "npc")-(rightSpace+unit(3+4,"lines")), 
     height = unit(1, "npc")-(topSpace+unit(4+4+3,"lines")),
     #xscale = c(1, nrow(x)), yscale = c(1, ncol(x)), 
-    xscale = c(.5, nrow(x)+.5), yscale = c(.5, ncol(x)+.5), 
+    #xscale = c(.5, nrow(x)+.5), yscale = c(.5, ncol(x)+.5), 
+    xscale = c(.5, nrow(x)+.5), yscale = c(0, ncol(x)+.5), 
     default.units = "native",
     #gp = options$gp_labels,
     name="grouped_matrix"))
@@ -359,18 +372,38 @@ grouped_matrix_plot_int <- function(x, y, order = NULL, options = NULL) {
     just = "left", 
     default.units = "native",
     gp = options$gp_labels)
+
+  if(suppressed_rhs > 0 && options$reverse) 
+    grid.text(
+      paste0("+ ", suppressed_rhs, " supressed"), 
+      x = xLabPos, y = 0, 
+      just = "left", 
+      default.units = "native",
+      gp = options$gp_labels)
   
+   
   ## add lhs, rhs
-  grid.text("Items in LHS Group", 
-    x = unit(1, "native")-unit(1,"lines"), y = yLabPos, 
-    rot = 90, just = "left", 
-    default.units = "native", 
-    gp = options$gp_labs)
-  grid.text("RHS", x = xLabPos,  
-    y = unit(ncol(x), "native")+unit(1,"lines"), 
-    just = "left", 
-    default.units = "native", gp = options$gp_labs)
-  
+  if(options$reverse) {
+    grid.text("Items in LHS Group", 
+      x = unit(1, "native")-unit(1,"lines"), y = yLabPos, 
+      rot = 90, just = "left", 
+      default.units = "native", 
+      gp = options$gp_labs)
+    grid.text("RHS", x = xLabPos,  
+      y = unit(ncol(x), "native")+unit(1,"lines"), 
+      just = "left", 
+      default.units = "native", gp = options$gp_labs)
+  }else{
+    grid.text("RHS", 
+      x = unit(1, "native")-unit(1,"lines"), y = yLabPos, 
+      rot = 90, just = "left", 
+      default.units = "native", 
+      gp = options$gp_labs)
+    grid.text("Items in LHS Group", x = xLabPos,  
+      y = unit(ncol(x), "native")+unit(1,"lines"), 
+      just = "left", 
+      default.units = "native", gp = options$gp_labs)
+  }
   
   
   upViewport(1)

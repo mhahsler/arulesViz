@@ -288,7 +288,7 @@ scatterplot_int <- function(rules, measure, shading, control, ...){
   control$jitter <- control$jitter[1]
   if(is.na(control$jitter) && any(duplicated(x))) {
     #warning("To reduce overplotting, jitter is set to 1!")
-    control$jitter <- .1
+    control$jitter <- .2
     }
    
   if(!is.na(control$jitter) && control$jitter>0) {
