@@ -57,9 +57,6 @@ plotly_arules(rules)
 ```
 
 <iframe src="https://rawgit.com/mhahsler/arulesViz/master/README/plotly_arules.html" width="100%" height="500">
-
-<a href="https://rawgit.com/mhahsler/arulesViz/master/README/plotly_arules.html">[Click for Output]</a>
-
 </iframe>
 
 
@@ -69,9 +66,6 @@ inspectDT(rules)
 ```
 
 <iframe src="https://rawgit.com/mhahsler/arulesViz/master/README/inspectDT.html" width="100%" height="800">
-
-<a href="https://rawgit.com/mhahsler/arulesViz/master/README/inspectDT.html">[Click for Output]</a>
-
 </iframe>
 
 ## References
