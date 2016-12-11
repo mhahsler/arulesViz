@@ -1,9 +1,7 @@
 \name{saveAsGraph}
 \Rdversion{1.1}
 \alias{saveAsGraph}
-\title{
-Save rules or itemsets as a graph description.
-}
+\title{Save rules or itemsets as a graph description}
 \description{
 This function 
 saves a rule sat as a graph description in different formats 

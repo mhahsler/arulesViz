@@ -4,7 +4,7 @@
 \alias{plot.itemsets}
 \alias{plot.rules}
 \alias{plot.grouped_matrix}
-\title{Plot method to visualize association rules and itemsets}
+\title{Visualize Association Rules and Itemsets}
 \description{
 This is the S3 method to visualize association rules and itemsets.
 Implemented are several popular visualization methods 

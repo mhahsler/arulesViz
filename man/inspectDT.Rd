@@ -3,7 +3,7 @@
 \alias{inspect}
 \alias{inspectDT}
 \alias{datatable}
-\title{Inspect Associations Interactively using datatable}
+\title{Inspect Associations Interactively Using datatable}
 \description{
 Uses \pkg{datatable} to create a HTML table widget using the DataTables 
 library. Rules can be interactively filtered and sorted.

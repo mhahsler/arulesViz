@@ -8,4 +8,6 @@ proj$
 ^.*\.Rproj$
 ^LICENSE
 ^README/
-Work
+^Work/
+_pkgdown
+^docs/
