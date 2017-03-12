@@ -59,6 +59,8 @@ plotly_arules(rules)
 <iframe src="https://rawgit.com/mhahsler/arulesViz/master/README/plotly_arules.html" width="100%" height="500">
 </iframe>
 
+[Open example output.](https://rawgit.com/mhahsler/arulesViz/master/README/plotly_arules.html)
+
 
 ### Interactive inspect with datatable
 ```R
@@ -67,6 +69,8 @@ inspectDT(rules)
 
 <iframe src="https://rawgit.com/mhahsler/arulesViz/master/README/inspectDT.html" width="100%" height="800">
 </iframe>
+
+[Open example output.](https://rawgit.com/mhahsler/arulesViz/master/README/inspectDT.html)
 
 ## References
 
