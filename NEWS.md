@@ -1,4 +1,4 @@
-# arulesViz 1.2-0.1 (xx/xx/2016)
+# arulesViz 1.2-1 (03/12/2017)
 
 * arules_plotly uses now signif instead of round for quality measures. 
 * arules_plotly shows correct rule indices for too large rule sets. 
