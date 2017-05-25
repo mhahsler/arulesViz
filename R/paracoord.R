@@ -35,13 +35,15 @@ paracoord_arules <- function(x, measure= "support", shading = "lift",
   
   ## remove short rules
   x <- x[size(x)>1]
+  if(length(x)<1) stop("No rules of length 2 or longer.")
+  
   
   ## sort rules to minimize occlusion
   x <- sort(x, by=shading,  decreasing = FALSE)
   lwd <- map(quality(x)[[measure]], c(1,5))
-  col <- .col_picker(map(quality(x)[[shading]]), control$col, 
+  col <- .col_picker(map(quality(x)[[shading]]), rev(control$col), 
     alpha = control$alpha)
-  
+   
   l <- LIST(lhs(x))
   r <- LIST(rhs(x))
   u <- union(unlist(l), unlist(r))
@@ -55,14 +57,14 @@ paracoord_arules <- function(x, measure= "support", shading = "lift",
     length(x) <- maxLenLHS
     rev(x) ## so NAs are to the left (we could also use na.last for sort)
   }))
+  if(nrow(pl) == 1) pl <- t(pl)
   
-  ## make the items increasing
-  pl <- t(apply(pl, MARGIN=1, sort, na.last=FALSE, decreasing=FALSE))
   
-  ## RHS is always 1 for now
+  ## RHS is always a single item for now
   pr <- sapply(r, FUN = function(x)  match(x, u))
   
   m <- cbind(pl,pr)
+  colnames(m) <- c(ncol(pl):1, "rhs")
   
   if(control$reorder) {
     count <- countCrossovers(m)
@@ -86,7 +88,9 @@ paracoord_arules <- function(x, measure= "support", shading = "lift",
       order_tmp[i] <- order[j]
       
       pl_tmp <- matrix(order_tmp[pl], nrow=nrow(pl))
-      pl_tmp <- t(apply(pl_tmp, MARGIN=1, sort, na.last=FALSE, decreasing=FALSE))
+      #pl_tmp <- t(apply(pl_tmp, MARGIN=1, sort, na.last=FALSE, decreasing=FALSE))
+      #if(nrow(pl_tmp) == 1) pl_tmp <- t(pl_tmp)
+      
       pr_tmp <- order_tmp[pr]
       
       count_tmp <- countCrossovers(cbind(pl_tmp, pr_tmp))
@@ -100,15 +104,12 @@ paracoord_arules <- function(x, measure= "support", shading = "lift",
       }
     }
     
-    pl <- matrix(order[pl], nrow=nrow(pl))
-    pl <- t(apply(pl, MARGIN=1, sort, na.last=FALSE, decreasing=FALSE))
+    pl[] <- order[pl]
     pr <- order[pr]
+    u <- u[order(order)]
     
     m <- cbind(pl,pr)
     colnames(m) <- c(ncol(pl):1, "rhs")
-    
-    u <- u[order]
-    
   }
   
   

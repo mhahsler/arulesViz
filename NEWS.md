@@ -1,14 +1,23 @@
+# arulesViz 1.2-1.1 (xx/xx/2017)
+
+## Bug Fix
+* Fixed item labels order in reordered parallel coordinates plot 
+    (reported by Yvi24)
+
+
 # arulesViz 1.2-1 (03/12/2017)
 
-* arules_plotly uses now signif instead of round for quality measures. 
-* arules_plotly shows correct rule indices for too large rule sets. 
-* arules_plotly implements now jitter to reduce overplotting (defaults
-    to .1 if overplotting would occur)
-* regular scatter plot also defaults jitter to .2 if overplotting would occur.
+## New features
+
 * plot method "grouped" now shows the most interesting items instead of the
   most frequent items to represent antecedents. Also, if more than 10 RHS
   items are found, then only the 10 most important are shown (see control 
-  argument rhs_max)
+  argument rhs_max).
+* arules_plotly uses now signif instead of round for quality measures. 
+* arules_plotly implements now jitter to reduce overplotting (defaults
+    to .1 if overplotting would occur).
+* arules_plotly shows correct rule indices for too large rule sets. 
+* scatterplot also defaults jitter to .2 if overplotting would occur.
 * scatterplot now handles Inf with a warning.
 
 # arulesViz 1.2-0 (10/02/2016)
