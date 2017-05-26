@@ -21,7 +21,7 @@ paracoord_arules <- function(x, measure= "support", shading = "lift",
   control=list(), ...) {
   
   control <- .get_parameters(control, list(
-    main =paste("Parallel coordinates plot for", length(x), "rules"),
+    main = paste("Parallel coordinates plot for", length(x), "rules"),
     reorder = FALSE,
     interactive = FALSE,
     gp_labels = gpar(),
@@ -53,11 +53,9 @@ paracoord_arules <- function(x, measure= "support", shading = "lift",
   pl <- t(sapply(l, FUN = function(x)  {
     x <- match(x, u)
     # reordering items of antecedent
-    #if(control$reorder) x <- sort(x, decreasing = TRUE)
     length(x) <- maxLenLHS
     rev(x) ## so NAs are to the left (we could also use na.last for sort)
   }))
-  if(nrow(pl) == 1) pl <- t(pl)
   
   
   ## RHS is always a single item for now
@@ -66,7 +64,8 @@ paracoord_arules <- function(x, measure= "support", shading = "lift",
   m <- cbind(pl,pr)
   colnames(m) <- c(ncol(pl):1, "rhs")
   
-  if(control$reorder) {
+  ### reduce crossovers
+  if(control$reorder && length(x)>1) {
     count <- countCrossovers(m)
     noswapcount <- 0
     order <- seq(n)
@@ -88,9 +87,6 @@ paracoord_arules <- function(x, measure= "support", shading = "lift",
       order_tmp[i] <- order[j]
       
       pl_tmp <- matrix(order_tmp[pl], nrow=nrow(pl))
-      #pl_tmp <- t(apply(pl_tmp, MARGIN=1, sort, na.last=FALSE, decreasing=FALSE))
-      #if(nrow(pl_tmp) == 1) pl_tmp <- t(pl_tmp)
-      
       pr_tmp <- order_tmp[pr]
       
       count_tmp <- countCrossovers(cbind(pl_tmp, pr_tmp))

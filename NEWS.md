@@ -2,7 +2,7 @@
 
 ## Bug Fix
 * Fixed item labels order in reordered parallel coordinates plot 
-    (reported by Yvi24)
+    (reported by Yvi24).
 
 
 # arulesViz 1.2-1 (03/12/2017)
