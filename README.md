@@ -16,7 +16,8 @@ install.packages("arulesViz")
 ```
 __Current development version:__ Download package from [AppVeyor](https://ci.appveyor.com/project/mhahsler/arulesViz/build/artifacts) or install from GitHub (needs devtools).
 ```R 
-install_git("mhahsler/arulesViz")
+library("devtools")
+install_github("mhahsler/arulesViz")
 ```
 This might also require the development version of [arules](http://github.com/mhahsler/arules).
 
