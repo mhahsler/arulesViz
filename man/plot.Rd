@@ -6,18 +6,21 @@
 \alias{plot.grouped_matrix}
 \title{Visualize Association Rules and Itemsets}
 \description{
-This is the S3 method to visualize association rules and itemsets.
+Methods (S3) to visualize association rules and itemsets.
 Implemented are several popular visualization methods 
 including scatter plots with shading (two-key plots), 
 graph based visualizations, doubledecker plots, etc.
 
-Interactive plotting with plotly is available with \code{\link{plotly_arules}}.
+Many plots can use different rendering engines including
+static standard plots (mostly using \pkg{grid}), 
+standard plots with interactive manipulation 
+and interactive HTML widget-based visualizations.
 }
 \usage{
 \method{plot}{rules}(x, method = NULL, measure = "support", shading = "lift", 
-    interactive = FALSE, data = NULL, control = NULL, ...)
+    interactive = FALSE, data = NULL, control = NULL, engine = "default", ...)
 \method{plot}{itemsets}(x, method = NULL, measure = "support", shading = NA,
-    interactive=FALSE, data = NULL, control = NULL, ...)
+    interactive=FALSE, data = NULL, control = NULL, engine = "default", ...)
 }
 \arguments{
   \item{x}{ an object of class "rules" or "itemsets". }
@@ -38,21 +41,37 @@ Interactive plotting with plotly is available with \code{\link{plotly_arules}}.
   \code{NA} can be often used to suppress shading.}
   
   \item{interactive}{ enable interactive exploration (not implemented by 
-  all methods).}
+  all methods). See also parameter \code{engine} below. }
   
   \item{control}{ a list of control parameters for the plot. The available
-  control parameters depends on the visualization technique (see Details).}
+  control parameters depend on the used visualization method (see Details).}
   
   \item{data}{  the dataset (class "transactions") 
   used to generate the rules/itemsets. Only 
   "mosaic" and "doubledecker" require the original data.}
   
-  \item{\dots}{ further arguments are usually passed on to the low level plotting function. For scatterplot it is added for convenience to the control list (see above).}
+  \item{engine}{ a string indicating the plotting engine used to 
+    render the plot. 
+    The "default" engine uses (mostly) \pkg{grid}, 
+    but some plots can produce interactive HTML widgets using engine 
+    "htmlwidget". These widgets can be saved as stand-alone web pages 
+    (see Examples). HTML widgets tend to get very slow or unresponsive for 
+    too many rules. To prevent this situation, the control parameter 
+    \code{max} sets a limit, and the user is warned if the limit is reached. 
+  }
+  
+  \item{\dots}{ further arguments are usually passed on to the low level plotting function. For several plotting methods, these arguments are added for convenience to the \code{control} list.}
 }
 \details{
 Most visualization techniques are described by Bruzzese and Davino (2008),
 however, we added more color shading, reordering and interactive features.
-Many visualization methods take extra parameters as a list in the control parameter. Some of the parameters are described below. Use verbose mode with, e.g., \code{plot(rules, method = "graph", control = list(verbose = TRUE))} to get a complete list of parameters and theit default values. 
+Many visualization methods take extra parameters as the \code{control} parameter list. Although, we have tried to keep control parameters consistent, the available control parameters vary (slightly) from visualization method to visualization method. A complete list of parameters with default
+values can be obtained using verbose mode. For example, 
+
+\code{plot(rules, method = "graph", control = list(verbose = TRUE))} 
+
+prints a complete list of control parameters for method "graph" 
+(default engine).
 
 The following visualization method are available:
 
@@ -65,44 +84,19 @@ There is a special value for shading called "order" which produces a
 two-key plot where the color of the points represents the length (order) 
 of the rule.
 
-Interactive manipulations are available.
-
-The list of control parameters for this method is: 
-\describe{
-\item{"main"}{plot title}
-\item{"pch"}{ use filled symbols: 20--25}
-\item{"cex"}{symbol size}
-\item{"xlim","ylim"}{limits}
-\item{"jitter"}{a number greater than 0 adds jitter to the points. If overplotting would occur, jitter defaults to .1.}
-\item{"col"}{color palette}
-}
-
+Interactive manipulations are available. 
+Engine "htmlwidget" is available to produce an interactive web-based
+visualization (uses \pkg{plotly}).
 }
 
 \item{"matrix", "matrix3D"}{ 
 Arranges the association rules as a matrix with the itemsets in the antecedents
-on one axis and the itemsets in the consequents on the other.  The interest
-measure is either visualized by a color (darker means a higher value for the
+on one axis and the itemsets in the consequents on the other.  The
+measure of interestingness (first element of \code{measure}) is either visualized by a color (darker means a higher value for the
 measure) or as the height of a bar (method "matrix3D").
 
-Currently there is no interactive version available.
-
-The list of control parameters for this method is:
-\describe{
-\item{"main"}{plot title}
-\item{"type"}{defines the way the data is rendered: "grid", "image" 
-or "3D" (scatterplot3d)}
-\item{"reorder"}{ if \code{TRUE} then the itemsets on the x and y-axes
-are reordered to bring rules with similar values for the interest measure
-closer together and make the plot clearer.}
-\item{"orderBy"}{specifies the measure of
-interest for reordering (default is the visualized measure)}
-\item{"reorderMethod","reorderControl","reorderDist"}{seriation method, control arguments and distance method (default "euclidean")
-used for reordering (see \code{seriate()} method in \pkg{seriation})}
-\item{"col"}{ a vector of n colors used for the plot (default: 100 heat colors)}
-\item{"xlim","ylim"}{limits}
-}
-
+Currently there is no "default" interactive version available,
+but engine "htmlwidget" produces an interactive widget (uses \pkg{plotly}).
 }
 
 \item{"grouped"}{
@@ -114,11 +108,9 @@ in the group. Balloons
 in the matrix are used to represent with what consequent the antecedents are 
 connected.
 
-Interactive manipulations are available. They can be used to zoom into groups
-and identify rules.
+Interactive manipulations (zooming into groups and identifying rules) are available. 
 
-
-The list of control parameters for this method is:
+The list of control parameters for this method includes:
 \describe{
 \item{"main"}{plot title}
 \item{"k"}{number of antecedent groups (default: 20)}
@@ -136,56 +128,26 @@ to reorder the balloons in the plot.}
 }
 
 \item{"graph"}{
-Represents the rules (or itemsets) as a graph.
+Represents the rules (or itemsets) as a graph with items, itemsets, and
+rules represented as vertices.
 
-Control arguments are: 
-\describe{
-\item{"main"}{plot title}
-\item{"cex"}{cex for labels}
-\item{"itemLabels"}{display item/itemset names instead of ids (\code{TRUE})}
-\item{"edgeCol", "nodeCol"}{color palettes for edges and nodes.}
-\item{"measureLabels"}{display values of interest measures (\code{FALSE})}
-\item{"precision"}{ number of digits for numbers in plot.}
-\item{"type"}{vertices represent: "items" (default) or "itemsets"}
-\item{"engine"}{graph layout engine: "igraph" (default) or "graphviz"}
-\item{"layout"}{layout algorithm defined in \pkg{igraph} or \pkg{Rgraphviz}
-    (default: igraph::nicely which usually does a Fruchterman-Reingold layout 
-    for engine igraph and "dot"/"neato" for graphviz)}
-\item{"arrowSize"}{[0,1]}
-\item{"alpha"}{ alpha transparency value (default .8; set to 1 for no transparency)}
-}
-
-For the igraph engine the used plot function is \code{plot.igraph} 
-in \pkg{igraph}. 
-For graphviz the function \code{plot} in
-\pkg{Rgraphviz} is used. Note that Rgraphviz is available at 
-\url{http://www.bioconductor.org/}.
-For the
-interactive version \code{tkplot} in \pkg{igraph} is always used.
-
+Several engines are available. The default engine uses \pkg{igraph} (\code{plot.igraph} and \code{tkplot} for the interactive visualization). 
 \code{...} arguments are passed on to the respective plotting function (use for color, etc.).
+
+Alternatively, the engines "graphviz" (\pkg{Rgraphviz}) and "htmlwidget" (\pkg{visNetwork}) are available.
+Note that Rgraphviz has to be installed seperately from 
+\url{http://www.bioconductor.org/}.
 }
 
 \item{"doubledecker", "mosaic"}{
 Represents a single rule as a doubledecker or mosaic plot.
-Parameter data has to be specified to compute the needed contingency
-table.
-Available control parameters are:
-\describe{
-\item{"main"}{plot title}
-}
+Parameter \code{data} has to be specified to compute the needed contingency
+table. No interactive version is available.
 }
 
 \item{"paracoord"}{
 Represents the rules (or itemsets) as a parallel coordinate plot.
 Currently there is no interactive version available.
-Available control parameters are:
-\describe{
-\item{"main"}{plot title}
-\item{"reorder"}{reorder to minimize crossing lines.}
-\item{"alpha"}{ alpha transparency value}
-}
-
 }
 
 \item{"iplots"}{
@@ -199,8 +161,8 @@ several histograms. Interactive manipulations are available.
 }
 \value{
 Several interactive plots return a set of selected rules/itemsets. Other plots
-might return other data structures. For example graph-based
-plots return the graph (invisibly).
+might return other data structures. For example, graph-based
+plots return the graph (invisibly). Engine "htmlwidget" always returns an object of class htmlwidget. 
 }
 \author{
 Michael Hahsler and Sudheer Chelluboina. Some visualizations are based on 
@@ -229,25 +191,37 @@ rules <- apriori(Groceries, parameter=list(support=0.001, confidence=0.8))
 rules
 
 ## Scatterplot
+## -----------
 plot(rules)
-## try: sel <- plot(rules, interactive=TRUE)
 
 ## Scatterplot with custom colors
 library(colorspace) # for sequential_hcl
 plot(rules, control = list(col=sequential_hcl(100)))
 plot(rules, control = list(col=grey.colors(50, alpha =.8)))
-    
-## see all control options
+
+## See all control options using verbose
 plot(rules, control = list(verbose = TRUE))
+
+## Interactive plot (selected rules are returned)
+\dontrun{
+sel <- plot(rules, interactive = TRUE)}
+
+## Create a html widget for interactive visualization
+\dontrun{
+plot(rules, engine = "htmlwidget")}
 
 ## Two-key plot is a scatterplot with shading = "order"
 plot(rules, shading="order", control = list(main = "Two-key plot", 
   col=rainbow(max(size(rules))-1L)))
 
+  
+## Matrix shading
+## --------------
+
 ## The following techniques work better with fewer rules
 subrules <- subset(rules, lift>5)
 subrules
-  
+
 ## 2D matrix with shading
 plot(subrules, method="matrix", measure="lift")
 plot(subrules, method="matrix", measure="lift", control=list(reorder=TRUE))
@@ -256,58 +230,94 @@ plot(subrules, method="matrix", measure="lift", control=list(reorder=TRUE))
 plot(subrules, method="matrix3D", measure="lift")
 plot(subrules, method="matrix3D", measure="lift", control=list(reorder=TRUE))
 
-## matrix with two measures
+## Matrix with two measures
 plot(subrules, method="matrix", measure=c("lift", "confidence"))
 plot(subrules, method="matrix", measure=c("lift", "confidence"), 
 	control=list(reorder=TRUE))
 
-## try: plot(subrules, method="matrix", measure="lift", interactive=TRUE, 
-##		control=list(reorder=TRUE))
+## Interactive matrix plot (default interactive and as a html widget)
+\dontrun{
+plot(subrules, method="matrix", measure="lift", interactive=TRUE, 
+		control=list(reorder=TRUE))
+plot(subrules, method="matrix", measure="lift", engine = "htmlwidget",
+    control=list(reorder=TRUE))}
 
-## grouped matrix plot
+## Grouped matrix plot
+## -------------------
+
 plot(rules, method="grouped")
 plot(rules, method="grouped", 
   control = list(col = grey.colors(10), 
     gp_labels= gpar(col = "blue", cex=1, fontface="italic")))
-## try: sel <- plot(rules, method="grouped", interactive=TRUE)
 
-## graphs only work well with very few rules
+## Interactive grouped matrix plot
+\dontrun{
+sel <- plot(rules, method="grouped", interactive=TRUE)}
+
+## Graphs
+## ------
+
+## Graphs only work well with very few rules
 subrules2 <- sample(subrules, 25)
+
 plot(subrules2, method="graph")
+
+## Custom colors
 plot(subrules2, method="graph", 
   control = list(nodeCol = grey.colors(10), edgeCol = grey(.7), alpha = 1))
+
 ## igraph layout generators can be used (see ? igraph::layout_)
 plot(subrules2, method="graph", control=list(layout=igraph::in_circle()))
 plot(subrules2, method="graph", control=list(
   layout=igraph::with_graphopt(spring.const=5, mass=50)))
 
-plot(subrules2, method="graph", control=list(type="itemsets"))
-## try: plot(subrules2, method="graph", interactive=TRUE)
-## try: plot(subrules2, method="graph", control=list(engine="graphviz"))
+## Graph rendering using Graphviz
+\dontrun{
+plot(subrules2, method="graph", engine="graphviz")}
 
+## Default interactive plot (using igraph's tkplot)
+\dontrun{
+plot(subrules2, method="graph", interactive=TRUE)}
 
-## parallel coordinates plot
+## Interactive graph as a html widget
+\dontrun{
+plot(subrules2, method="graph", engine="htmlwidget")}
+
+## Parallel coordinates plot
+## -------------------------
+
 plot(subrules2, method="paracoord")
 plot(subrules2, method="paracoord", control=list(reorder=TRUE))
 
-## Doubledecker plot only works for a single rule
+## Doubledecker plot 
+## -----------------
+
+## Note: only works for a single rule
 oneRule <- sample(rules, 1)
 inspect(oneRule)
 plot(oneRule, method="doubledecker", data = Groceries)
 
-## use iplots (experimental)
-## try: sel <- plot(rules, method="iplots", interactive=TRUE)
+## Itemsets
+## --------
 
-
-## for itemsets
 itemsets <- eclat(Groceries, parameter = list(support = 0.02, minlen=2))
 plot(itemsets)
 plot(itemsets, method="graph")
 plot(itemsets, method="paracoord", control=list(alpha=.5, reorder=TRUE))
 
-## add more quality measures to use for the scatterplot
+## Add more quality measures to use for the scatterplot
+## ----------------------------------------------------
+
 quality(itemsets) <- interestMeasure(itemsets, trans=Groceries)
 head(quality(itemsets))
 plot(itemsets, measure=c("support", "allConfidence"), shading="lift")
+
+## Save HTML widget as web page
+## ----------------------------
+\dontrun{
+p <- plotly_arules(rules)
+htmlwidgets::saveWidget(p, "arules.html", selfcontained = FALSE)
+browseURL("arules.html")}
+# Note: selfcontained seems to make the browser slow.
 }
 \keyword{ hplot }

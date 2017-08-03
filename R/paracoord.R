@@ -19,11 +19,12 @@
 
 paracoord_arules <- function(x, measure= "support", shading = "lift", 
   control=list(), ...) {
-  
+
   control <- .get_parameters(control, list(
     main = paste("Parallel coordinates plot for", length(x), "rules"),
     reorder = FALSE,
     interactive = FALSE,
+    engine = "default",
     gp_labels = gpar(),
     newpage = TRUE,
     col = default_colors(100),
@@ -32,7 +33,13 @@ paracoord_arules <- function(x, measure= "support", shading = "lift",
     verbose = FALSE
   ))
   
+  if(pmatch(control$engine, c("default"), nomatch = 0) == 0)  
+    stop("Unknown engine for parallel coordinates plot '", control$engine, 
+      "' - Valid engine: 'default'.")
+    
   
+  if(control$interactive) stop("Interactive mode not available for parallel coordinates plot.")
+   
   ## remove short rules
   x <- x[size(x)>1]
   if(length(x)<1) stop("No rules of length 2 or longer.")
@@ -139,11 +146,20 @@ paracoord_items <- function(x, measure= "support", shading = NULL,
     main =paste("Parallel coordinates plot for", 
       length(x), "itemsets"),
     reorder = FALSE,
+    engine = "default",
     interactive = FALSE,
     gp_labels = gpar(),
     newpage = TRUE,
     alpha = NULL
   ))
+  
+  if(pmatch(control$engine, c("default"), nomatch = 0) == 0)  
+    stop("Unknown engine for parallel coordinates plot '", control$engine, 
+      "' - Valid engine: 'default'.")
+    
+  
+  if(control$interactive) stop("Interactive mode not available for parallel coordinates plot.")
+   
   
   
   ## remove single items

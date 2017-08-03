@@ -17,7 +17,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 plot.rules <- function(x, method = NULL, measure = "support", 
-  shading = "lift", interactive = FALSE, data = NULL, control = NULL, ...) {
+  shading = "lift", interactive = FALSE, data = NULL, control = NULL, 
+  engine = "default", ...) {
   ## methods
   methods <- c(
     "matrix",       
@@ -36,10 +37,11 @@ plot.rules <- function(x, method = NULL, measure = "support",
   
   if(is.null(method)) methodNr <- 6
   else methodNr <- pmatch(tolower(method), tolower(methods))
-  if(is.na(methodNr)) stop (paste("Unknown method:",sQuote(method)))
+  if(is.na(methodNr)) stop (paste("Unknown method:",sQuote(method), "\nAvailable methods:", paste(methods, collapse = ", ")))
   
-  ## add interactive
-  control$interactive <- interactive    
+  ## add interactive and engine
+  if(is.null(control$interactive)) control$interactive <- interactive    
+  if(is.null(control$engine)) control$engine <- engine
   
   ## work horses
   if (methodNr == 1) matrix_arules(x, measure = measure, control,...)
@@ -70,7 +72,7 @@ plot.rules <- function(x, method = NULL, measure = "support",
   }
 }
 
-plot.itemsets <- function(x, method = NULL, measure = "support", shading = NA, interactive=FALSE, data = NULL, control = NULL, ...) {
+plot.itemsets <- function(x, method = NULL, measure = "support", shading = NA, interactive=FALSE, data = NULL, control = NULL, engine = "default", ...) {
   ## methods
   methods <- c(
     "graph",
@@ -82,13 +84,14 @@ plot.itemsets <- function(x, method = NULL, measure = "support", shading = NA, i
   
   if(is.null(method)) methodNr <- 3
   else methodNr <- pmatch(tolower(method), tolower(methods))
-  if(is.na(methodNr)) stop (paste("Unknown method:",sQuote(method)))
+  if(is.na(methodNr)) stop (paste("Unknown method:",sQuote(method), "\nAvailable methods:", paste(methods, collapse = ", ")))
   
   ## add interactive
-  control$interactive <- interactive    
+  if(is.null(control$interactive)) control$interactive <- interactive    
+  if(is.null(control$engine)) control$engine <- engine
   
   ## work horses
-  if (methodNr == 1) graph_arules_is(x, measure = measure,
+  if (methodNr == 1) graph_arules(x, measure = measure,
     control= control, ...)
   else if (methodNr == 2) paracoord_items(x, measure = measure,
     control= control, ...)

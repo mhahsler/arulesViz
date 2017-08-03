@@ -17,10 +17,18 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 matrix_arules <- function(rules, measure = "support", control = NULL, ...){
+ 
+  ### FIXME: fix max and control & reorder!
+  if(pmatch(control$engine, c("plotly", "htmlwidget"), nomatch = 0) >0) { 
+    return(matrix_plotly(rules, measure = measure, control = control, ...)) 
+  }
   
+  if(pmatch(control$engine, c("default"), nomatch = 0) != 1) stop("Unknown engine for scatterplot: '", control$engine, "' Valid engines: 'default', 'plotly', 'htmlwidget'.")
+   
   control <- .get_parameters(control, list(
     main = paste("Matrix with",length(rules),"rules"),
     #col = gray.colors(100, 0.3, .8),
+    engine = "default",
     col = default_colors(100),
     zlim = NULL,
     axes = TRUE,

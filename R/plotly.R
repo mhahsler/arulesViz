@@ -21,13 +21,12 @@
 #plot <- function(x, method = NULL, measure = "support", 
 #  shading = "lift", interactive = FALSE, data = NULL, control = NULL, ...) {
 
-# FIXME: also for itemsets 
 
 plotly_arules <- function(x, method = "scatterplot", 
   measure = c("support", "confidence"), shading = "lift", 
   max = 1000, ...) {
   
-  if(!is(x, "rules")) stop("x has to be a set of rules.")
+  if(!is(x, "associations")) stop("x has to be a set of rules.")
   
   methods <- c("scatterplot", "two-key plot", "matrix")
   
@@ -48,27 +47,57 @@ plotly_arules <- function(x, method = "scatterplot",
   measure <- qnames[pmatch(measure, qnames, duplicates.ok = TRUE)]
   shading <- qnames[pmatch(shading, qnames)]
   
-  if(methodNr == 1) .plotly_scatter(x, measure, shading, max = max, ...)
-  else .plotly_matrix(x, shading, max = max, ...)
+  if(methodNr == 1) 
+    .plotly_scatter(x, measure, shading, max = max, ...)
+  else 
+    .plotly_matrix(x, shading, max = max, ...)
+}
+
+## Interface used by plot
+scatterplot_plotly <- function(x,
+  measure = measure, shading = shading, control = control, ...) {
+  
+  control <- c(control, list(...))  
+  
+  control <- .get_parameters(control, list(
+    interactive = TRUE,
+    engine = "htmlwidget",
+    max = 1000,
+    colors = default_colors(2), 
+    jitter = NA, 
+    precision = 3,
+    marker = list()
+  ))
+  
+  quality(x)[["order"]] <- size(x) 
+  qnames <- names(quality(x))
+  measure <- qnames[pmatch(measure, qnames, duplicates.ok = TRUE)]
+  shading <- qnames[pmatch(shading, qnames)]
+ 
+  .plotly_scatter(x, measure, shading, control$colors, control$jitter, control$precision, control$max, control$marker)
 }
 
 .plotly_scatter <- function(x, 
   measure = c("support", "confidence"), shading = "lift", 
-  colors = default_colors(2), jitter = NA, precision = 3, max = 1000, ...) {
+  colors = default_colors(2), jitter = NA, precision = 3, 
+  max = 1000, marker = list(), ...) {
 
   colors <- rev(colors) 
  
   ### order (overplotting) and check for max 
-  o <- order(quality(x)[[shading]], decreasing = FALSE)
+  if(!is.na(shading)) o <- order(quality(x)[[shading]], decreasing = FALSE)
+  else o <- 1:length(x)
+  
   if(length(o) > max) {
     warning("too many rules supplied only plotting the best ", 
-      max, " rules using ", shading, " (change parameter max if needed)")
+      max, " rules using measure ", shading, " (change parameter max if needed)")
     o <- tail(o, n = max)
   }
   
   x <- x[o]
-  q <- quality(x)[, c(measure, shading)]
-
+  if(!is.na(shading)) q <- quality(x)[, c(measure, shading)]
+  else q <- quality(x)[, measure]
+  
   for(i in 1:ncol(q)) {
     infin <- is.infinite(q[[i]])
     if(any(infin)) {
@@ -78,18 +107,23 @@ plotly_arules <- function(x, method = "scatterplot",
     }
   } 
     
-  l <- labels(x, itemSep= ',<BR>&nbsp;&nbsp;', 
+  if(is(x, "rules")) l <- labels(x, itemSep= ',<BR>&nbsp;&nbsp;', 
     ruleSep = '<BR>&nbsp;&nbsp; => ', 
     setStart = '<B>{', setEnd = '}</B>')
+  else l <- labels(x, itemSep= ',<BR>&nbsp;&nbsp;', 
+    setStart = '<B>{', setEnd = '}</B>')
+  
   
   txt <- paste(paste0('[', o,']<BR>'), l, 
     paste('<BR><BR>', measure[1], ": ", signif(q[, measure[1]], precision), sep = ""),
     paste('<BR>', measure[2], ": ", signif(q[, measure[2]], precision), sep =""),
-    paste('<BR>', shading, ": ", 
-      if(is.numeric(q[, shading])) signif(q[, shading], precision) 
-      else q[, shading], sep="")
+    if(!is.na(shading)){ 
+      paste('<BR>', shading, ": ", 
+        if(is.numeric(q[, shading])) signif(q[, shading], precision) 
+        else q[, shading], sep="")
+      } else "" 
   )
- 
+  
   ### add x/y-jitter
   jitter <- jitter[1]
   if(is.na(jitter) && any(duplicated(q[,measure]))) {
@@ -99,18 +133,23 @@ plotly_arules <- function(x, method = "scatterplot",
   if(!is.na(jitter) && jitter>0) 
     for(m in measure) q[[m]] <- jitter(q[[m]], factor = jitter, amount = 0)
 
-  if(shading == "order")
+  if(is.na(shading)) 
+    p <- plot_ly(q, type = "scatter", x = q[,measure[1]], y = q[,measure[2]], 
+      hoverinfo = 'text', text = txt,
+      mode = 'markers', marker = marker 
+    ) 
+  else if(shading == "order")
     p <- plot_ly(q, type = "scatter", x = q[,measure[1]], y = q[,measure[2]], 
       hoverinfo = 'text', text = txt, 
       color = as.ordered(q[,shading]),
-      mode = 'markers', marker = list(...) 
+      mode = 'markers', marker = marker 
     ) 
   else
     p <- plot_ly(q, type = "scatter", x = q[,measure[1]], y = q[,measure[2]], 
       hoverinfo = 'text', text = txt, 
       color = q[,shading], colors = colors,
       mode = 'markers', 
-      marker = list(colorbar = list(title = shading), ...)
+      marker = c(list(colorbar = list(title = shading)), marker)
     ) 
   
   
@@ -119,6 +158,26 @@ plotly_arules <- function(x, method = "scatterplot",
     yaxis = list(title = measure[2])
   )
 }
+
+## interface for plot
+matrix_plotly <- function(x, measure, shading, control, ...) {
+  
+  control <- c(control, list(...))  
+  
+  control <- .get_parameters(control, list(
+    interactive = TRUE,
+    engine = "htmlwidget",
+    max = 1000,
+    colors = default_colors(2), 
+    reorder = TRUE,
+    precision = 3
+  ))
+  
+  qnames <- names(quality(x))
+  measure <- qnames[pmatch(measure, qnames, duplicates.ok = TRUE)]
+  
+  .plotly_matrix(x, measure[1], reorder = control$reorder, 
+    colors = control$colors, precision = control$precision, max = control$max) }
 
 .plotly_matrix <- function(x, measure = "lift", reorder = TRUE, 
   #colors = colorRamp(c("grey", "red"))) {

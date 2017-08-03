@@ -42,9 +42,13 @@ grouped_matrix_arules <- function(rules, measure, shading, control=NULL, ...){
     gp_lines  = gpar(col="gray", lty=3),
     newpage=TRUE,
     interactive = FALSE,
-    max.shading=NA
+    max.shading=NA,
+    engine = "default"
   ))
   
+  if(pmatch(control$engine, c("default"), nomatch = 0) == 0)  
+    stop("Unknown engine for grouped matrix plot: '", control$engine, 
+      "' - Valid engine: 'default'.")
   
   x <- grouped_matrix_int(rules, measure, shading, control) 
   

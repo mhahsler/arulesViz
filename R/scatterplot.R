@@ -22,9 +22,17 @@ scatterplot_arules <- function(rules, measure = c("support","confidence"),
   
   control <- c(control, list(...))  
   
+  if(pmatch(control$engine, c("plotly", "htmlwidget"), nomatch = 0) >0) { 
+    return(scatterplot_plotly(rules, measure = measure,
+      shading = shading, control = control)) ### control has max
+  }
+ 
+  if(pmatch(control$engine, c("default"), nomatch = 0) != 1) stop("Unknown engine for scatterplot: '", control$engine, "' Valid engines: 'default', 'plotly', 'htmlwidget'.")
+   
   control <- .get_parameters(control, list(
     main =paste("Scatter plot for", length(rules), class(rules)),
     interactive = FALSE,
+    engine = "default",
     pch = 19,
     cex = .5,
     xlim = NULL,
@@ -38,6 +46,8 @@ scatterplot_arules <- function(rules, measure = c("support","confidence"),
     newpage = TRUE,
     jitter = NA
   ))
+  
+  
   
   
   ## set zlim depending on measure...

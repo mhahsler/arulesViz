@@ -21,14 +21,13 @@ plotly_arules(x, method = "scatterplot", measure = c("support", "confidence"),
   \item{max}{ client side processing in plotly is expensive. We restrict the 
   number of rules to the max best rules (according to the measure used for shading.)}
   \item{\dots}{ The following additional arguments can be used: \code{colors} to specify a color palette, \code{precision}
-    to specify the precision used for printing quality measures, and
+    to specify the precision used for printing quality measures,
     \code{jitter} to reduce overplotting in scatterplots 
-    (defaults to .1 if overplotting would occur).
-    Further arguments are passed on to \code{plot_ly()} as
-    markter attributes (e.g., size, symbol and opacity).}
+    (defaults to .1 if overplotting would occur), and \code{marker} with 
+    a list of markter attributes (e.g., size, symbol and opacity).}
 }
 \value{
-The plotly object (plotly_hash).
+The plotly object (plotly_hash) which can be saved as a htmlwidget.
 }
 %\details{}
 %\references{}
@@ -46,7 +45,8 @@ plotly_arules(rules, measure = c("support", "lift"), shading = "confidence")
 plotly_arules(rules, method = "two-key plot")
 
 # add jitter, change color and markers and add a title
-plotly_arules(rules, jitter = 10, opacity = .7, size = 10, symbol = 1, 
+plotly_arules(rules, jitter = 10, 
+  marker = list(opacity = .7, size = 10, symbol = 1), 
   colors = c("blue", "green")) %>% layout(title = "Some Grocery Rules")
 
 

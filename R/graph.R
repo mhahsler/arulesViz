@@ -23,16 +23,32 @@
   c(rgb(.4,.8,.4, alpha), rgb(.6,.6,.8, alpha))
 }
 
-
-
-graph_arules <- function(rules, measure = "support", shading = "lift", 
+graph_arules <- function(x, measure = "support", shading = "lift", 
   control=NULL, ...) {
+  
+  ### FIXME: fix max and control
+  if(pmatch(control$engine, c("visNetwork", "htmlwidget"), nomatch = 0) >0) { 
+    return(visNetwork_arules(x, measure = measure, shading = shading,
+      control = control, ...))
+  }
+ 
+  ## check if shading measure is available
+  if(is.null(quality(x)[[shading]])) shading <- NA
+   
+  if(pmatch(control$engine, c("default", "igraph", "graphviz"), 
+    nomatch = 0) == 0)  
+    stop("Unknown engine for graph: '", control$engine, 
+      "'\nValid engines: 'default' (same as 'igraph'), 'htmlwidget' (same as 'visNetwork'), 'graphviz'.")
+  
+  if(pmatch(control$engine, c("default"), nomatch = 0) == 1) 
+    control$engine <- "igraph"
   
   .font.family <- par()$family
   if(.font.family=="") .font.family <- "sans"
   
   control <- .get_parameters(control, list(
-    main = paste("Graph for", length(rules), "rules"),
+    main = paste("Graph for", min(length(x), 
+      if(!is.null(control$max)) control$max else 100), class(x)),
     nodeColors = .nodeColors(
       if(!is.null(control$alpha)) control$alpha else .5),
     nodeCol = default_colors(100),
@@ -49,9 +65,18 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
     arrowSize = .5,
     interactive = FALSE,
     engine = "igraph",
-    plot = TRUE
+    plot = TRUE,
+    max = 100
   ))
+ 
   
+  if(length(x) > control$max) {
+    warning("too many ", class(x), " supplied only plotting the best ", 
+      control$max, " ", class(x), " using ", sQuote(measure), 
+      " (change control parameter max if needed)")
+    x <- tail(x, n = control$max, by = measure, decreasing = FALSE)
+  }
+    
   opar <- par(mar = c(0,0.1,4,0.1))
   on.exit(par(opar))
   
@@ -61,24 +86,27 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
     && is.null(control$layout))) {
     control$layout <- igraph::nicely()
   }
-  
+ 
+  ## bipartite graph for rules 
   if(control$type=="bipartite") {
+    if(class(x) != "rules") stop("type bipartite only available for rules!")
+    
     ## make bipartite graph
-    leftHandSide <- as.factor(labels(lhs(rules)))
-    rightHandSide <- as.factor(labels(rhs(rules)))
-    names(leftHandSide) <- paste("l",as.integer(leftHandSide),sep='')
-    names(rightHandSide) <- paste("r",as.integer(rightHandSide),sep='')
+    leftHandSide <- as.factor(labels(lhs(x)))
+    rightHandSide <- as.factor(labels(rhs(x)))
+    names(leftHandSide) <- paste("l",as.integer(leftHandSide), sep='')
+    names(rightHandSide) <- paste("r",as.integer(rightHandSide), sep='')
     e.list <- cbind(names(leftHandSide), names(rightHandSide))
     
     v <- data.frame(
-      name=c(paste("l", 1:length(levels(leftHandSide)),sep=''),
-        paste("r", 1:length(levels(rightHandSide)),sep='')),
+      name=c(paste("l", 1:length(levels(leftHandSide)), sep=''),
+        paste("r", 1:length(levels(rightHandSide)), sep='')),
       label=c(levels(leftHandSide), levels(rightHandSide)))
     
     g <- igraph::graph.data.frame(e.list, directed=TRUE, vertices=v)
     
-    for(m in names(quality(rules))) {
-      g <- igraph::set.edge.attribute(g, m, value=quality(rules)[[m]])
+    for(m in names(quality(x))) {
+      g <- igraph::set.edge.attribute(g, m, value=quality(x)[[m]])
     }
     
     if(!control$plot) return(g)
@@ -99,7 +127,7 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
     e.width <- 1
     m <- NA
     if(!is.na(measure)) {
-      m <- quality(rules)[[measure]]
+      m <- quality(x)[[measure]]
       e.width <- map(m, c(.5,3))
     }
     
@@ -107,7 +135,7 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
     e.color <- .col_picker(.3, control$nodeCol, control$alpha)
     s <- NA
     if(!is.na(shading)) {
-      s <- quality(rules)[[shading]]
+      s <- quality(x)[[shading]]
       e.color <- .col_picker(map(s, c(0.9,0.1)), control$nodeCol, 
         alpha=control$alpha)
     }
@@ -132,7 +160,7 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
     
     if(!is.na(shading)) legend <- paste(legend,
       "color: ", shading, " (",
-      paste(round(range(s),control$precision), collapse=' - '), ")",
+      paste(round(range(s), control$precision), collapse=' - '), ")",
       sep ='')
     
     v.color <-  .nodeColors(.5)[c( 
@@ -160,8 +188,8 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
         edge.arrow.size=control$arrowSize,
         main=control$main
       )
-      
       mtext(legend, adj=1,cex=control$cex*.8)
+      
     }else {
       igraph::tkplot(g, ...,
         #layout=control$layout(g, params=control$layoutParams),
@@ -182,20 +210,22 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
     
     return(invisible(g))
     
+  ## plot itemsets for rules
   } else if(control$type=="itemsets") {
+    if(class(x) != "rules") stop("type itemsets only available for rules!")
     
-    itemsets <- c(lhs(rules),rhs(rules))
+    itemsets <- c(lhs(x), rhs(x))
     itemsetLabels <- as.factor(labels(itemsets))
     v.labels <- data.frame(
       name=1:length(levels(itemsetLabels)),
       label=levels(itemsetLabels ), 
       stringsAsFactors = FALSE)
-    e.list <- matrix(as.integer(itemsetLabels), nrow = length(rules))
+    e.list <- matrix(as.integer(itemsetLabels), nrow = length(x))
     
     g <- igraph::graph.data.frame(e.list, directed=TRUE, vertices=v.labels)
     
-    for(m in names(quality(rules))) {
-      g <- igraph::set.edge.attribute(g, m, value=quality(rules)[[m]])
+    for(m in names(quality(x))) {
+      g <- igraph::set.edge.attribute(g, m, value=quality(x)[[m]])
     }
     
     if(!control$plot) return(g)
@@ -216,14 +246,14 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
     e.width <- 1
     m <- NA
     if(!is.na(measure)) {
-      m <- quality(rules)[[measure]]
+      m <- quality(x)[[measure]]
       e.width <- map(m, c(.5,3))
     }
     
     e.color <- .col_picker(.3, control$edgeCol, control$alpha)
     s <- NA
     if(!is.na(shading)) {
-      s <- quality(rules)[[shading]]
+      s <- quality(x)[[shading]]
       e.color <- .col_picker(map(s, c(0.9,0.1)), control$edgeCol, 
         alpha=control$alpha)
     }
@@ -377,39 +407,52 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
     }
     return(invisible(g))
     
+    
+  ## this is the default plot for itemsets and rules  
   } else if(control$type=="items") {
     
-    ### find used items
-    itemNodes <- which(itemFrequency(items(generatingItemsets(rules)), 
-      type="absolute") >0)
+    ## find used items
+    if(class(x) == "rules") 
+      itemNodes <- which(itemFrequency(items(generatingItemsets(x)), 
+        type = "absolute") >0)
+    else 
+      itemNodes <- which(itemFrequency(items(x), 
+        type = "absolute") >0)
     
-    ruleNodes <- paste("r", 1:length(rules), sep='')
+    ## association nodes (rules or itemsets) 
+    assocNodes <- paste("assoc", 1:length(x), sep='')
     
-    lhs <- LIST(lhs(rules), decode=FALSE)
-    rhs <- LIST(rhs(rules), decode=FALSE)
+    ## add rhs for rules  
+    if(class(x) == "rules") {
+      lhs <- LIST(lhs(x), decode=FALSE)
+      from_lhs <- unlist(lhs)
+      to_lhs <- assocNodes[rep(1:length(x), sapply(lhs, length))]
+      rhs <- LIST(rhs(x), decode=FALSE)
+      to_rhs <- unlist(rhs)
+      from_rhs <- assocNodes[rep(1:length(x), sapply(rhs, length))]
+    } else { ### not used fro itemsets
+      lhs <- LIST(items(x), decode=FALSE)
+      from_lhs <- unlist(lhs)
+      to_lhs <- assocNodes[rep(1:length(x), sapply(lhs, length))]
+      from_rhs <- integer(0)
+      to_rhs <- integer(0)
+    }
     
-    from_lhs <- unlist(lhs)
-    to_lhs <- ruleNodes[rep(1:length(rules), sapply(lhs, length))]
-    
-    to_rhs <- unlist(rhs)
-    from_rhs <- ruleNodes[rep(1:length(rules), sapply(rhs, length))]
-    
-    type <- c(rep(1, length(itemNodes)), rep(2, length(ruleNodes)))
-    
-    nodeLabels <- c(itemLabels(rules)[itemNodes], rep("", length(ruleNodes)))
+    type <- c(rep(1, length(itemNodes)), rep(2, length(assocNodes)))
+    nodeLabels <- c(itemLabels(x)[itemNodes], rep("", length(assocNodes)))
     
     e.list <- cbind(c(from_lhs, from_rhs), c(to_lhs, to_rhs))
     v.labels <- data.frame(
-      name=c(as.character(itemNodes), ruleNodes),
-      label=nodeLabels,
+      name = c(as.character(itemNodes), assocNodes),
+      label = nodeLabels,
       stringsAsFactors = FALSE)
     
     g <- igraph::graph.data.frame(e.list, directed=TRUE, vertices=v.labels)
     
     ## add quality measures
-    for(m in names(quality(rules))) {
+    for(m in names(quality(x))) {
       g <- igraph::set.vertex.attribute(g, m, which(type==2)-1, 
-        quality(rules)[[m]])
+        quality(x)[[m]])
     }
     
     if(!control$plot) return(g)
@@ -431,19 +474,19 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
     
     m <- NA
     if(!is.na(measure)) {
-      m <- quality(rules)[[measure]]
+      m <- quality(x)[[measure]]
       v.size <- c(rep(15, length(itemNodes)),
         map(m, c(5,20)))
     }
     
     s <- NA
     if(!is.na(shading)) {
-      s <- quality(rules)[[shading]]
+      s <- quality(x)[[shading]]
       v.color <- c(rep(control$nodeColors[1], length(itemNodes)),
         .col_picker(map(s, c(0.9,0.1)), control$nodeCol, 
           alpha=control$alpha)) 
     } else v.color <- c(rep(control$nodeColors[1], length(itemNodes)),
-      .col_picker(rep(.5, length(rules)), control$nodeCol, 
+      .col_picker(rep(.5, length(x)), control$nodeCol, 
         alpha=control$alpha))
       
     
@@ -469,9 +512,6 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
       paste(round(range(s),control$precision), collapse=' - '), ")",
       sep ='')
     
-    
-    
-    
     if(!control$interactive) {
       if(control$engine=="graphviz") {
         if(!.installed("Rgraphviz")) stop ("Package Rgraphviz needed!")
@@ -488,13 +528,19 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
         att$graph$mclimit <- 1 #dot
         
         ## TODO: plot edge labels
+        s <- NA
+        if(!is.na(shading)) {
+          s <- quality(x)[[shading]]
+          v.color <- c(rep(control$nodeColors[1], length(itemNodes)),
+            .col_picker(map(s, c(0.9,0.1)), control$nodeCol, 
+              alpha=control$alpha)) 
+        } else v.color <- c(rep(control$nodeColors[1], length(itemNodes)),
+          .col_picker(rep(.5, length(x)), control$nodeCol, 
+            alpha=control$alpha))
         
         if(control$itemLabels) {
           nAttrs <- Rgraphviz::makeNodeAttrs(gNEL, 
-            fillcolor = c(rep(control$nodeColors[1], 
-              length(itemNodes)), 
-              .col_picker(map(s, c(0.9,0.1)), control$nodeCol, 
-                alpha=control$alpha)), 
+            fillcolor = v.color, 
             label = nodeLabels,
             shape = c("box", "circle")[type], 
             width=c(rep(.75, length(itemNodes)), 
@@ -502,10 +548,7 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
             fixedsize=FALSE)
         } else {
           nAttrs <- Rgraphviz::makeNodeAttrs(gNEL, 
-            fillcolor = c(rep(control$nodeColors[1],
-              length(itemNodes)),
-              .col_picker(map(s, c(0.9,0.1)), control$nodeCol, 
-                alpha=control$alpha)),
+            fillcolor = v.color,
             shape = c("box", "circle")[type],
             width=c(rep(.75, length(itemNodes)),
               map(m, c(0.5,1.2))),
@@ -574,177 +617,3 @@ graph_arules <- function(rules, measure = "support", shading = "lift",
   
 }
 
-graph_arules_is <- function(itemsets, measure = "support", shading = NULL, 
-  control=NULL, ...) {
-  
-  .font.family <- par()$family
-  if(.font.family=="") .font.family <- "sans"
-  
-  control <- .get_parameters(control, list(
-    main = paste("Graph for", length(itemsets), "itemsets"),
-    nodeCol = grey_hcl(100),
-    edgeCol = heat_hcl(100),
-    #itemLabels = TRUE,	    ### not implemented yet
-    #measureLabels = FALSE,
-    cex = 1,
-    precision = 3,
-    type = "items",
-    layout = NULL,
-    layoutParams = list(),
-    engine = "igraph",
-    alpha = .5,
-    arrowSize = .5,
-    interactive = FALSE,
-    plot = TRUE
-  ))
-  
-  opar <- par(mar = c(0,0.1,4,0.1))
-  on.exit(par(opar))
-  
-  ### default layout for igraph
-  if(control$interactive  || (control$engine == "igraph" 
-    && is.null(control$layout))) {
-    control$layout <- igraph::nicely()
-  }
-  
-  
-  if(control$type=="items") {
-    
-    sets <- paste('s', as.character(1:length(itemsets)), sep='')
-    items <- LIST(items(itemsets))
-    e.list <- cbind(unlist(items),rep(sets, size(itemsets)))
-    items <- unique(unlist(items))
-    type <- c(rep(1,length(sets)), rep(2,length(items)))
-    v.labels <- data.frame(
-      name=c(sets,items),
-      label=c(sets,items),
-      stringsAsFactors = FALSE)
-    
-    
-    v <- v.labels[,2]
-    v[type==1] <- ''
-    
-    g <- igraph::graph.data.frame(e.list, directed=TRUE, vertices=v.labels)
-    
-    for(m in names(quality(itemsets))) {
-      g <- igraph::set.vertex.attribute(g, m, 
-        (1:length(itemsets)), value=quality(itemsets)[[m]])
-    }
-    
-    if(!control$plot) return(g)
-    
-    
-    v.shape <- c("circle","none")[type]
-    v.color <- .col_picker(.8, control$nodeCol, control$alpha)
-    
-    e.width <- 1
-    e.color <- .col_picker(.3, control$edgeCol, control$alpha)
-    e.label <- NA
-    
-    m <- NA
-    if(!is.na(measure)) {
-      m <- quality(itemsets)[[measure]]
-      v.size <- c(map(m, c(5,20)), 
-        rep(15, length(items)))
-      #v.color <- c(control$nodeCol(map(m, c(0.9,0.1)), alpha=control$alpha), 
-      #	    rep(NA, length(items)))
-    }
-    
-    
-    
-    legend <- ''
-    if(!is.na(measure))
-      legend <- paste(legend, "size: ", measure[1], " (",
-        paste(round(range(m),control$precision), collapse=' - '), ")\n",
-        sep='')
-    
-    if(!control$interactive) {
-      if(control$engine=="graphviz") {
-        if(!.installed("Rgraphviz")) stop ("Package Rgraphviz needed. Please install from Bioconductor!")
-        
-        gNEL <- igraph::igraph.to.graphNEL(g)
-        
-        if(is.null(control$layout)) control$layout <- "dot"
-        
-        nAttrs <- Rgraphviz::makeNodeAttrs(gNEL, 
-          fillcolor = control$nodeColors[type], 
-          #    label = nodeLabels,
-          shape = c("circle","box")[type], 
-          width=c(c(map(m, c(.1,2))), rep(.75, length(items))), 
-          fixedsize=c(TRUE, FALSE)[type])
-        
-        sgL <- list(list(graph = graph::subGraph(as.character(sets), gNEL), 
-          cluster = TRUE,
-          attrs = c(rank = "sink")))
-        att <- list(graph = list(
-          rankdir = "LR", #dot
-          rank = "min", #dot
-          ranksep = .75, #dot
-          mclimit = 1 #dot
-        ),
-          edge=list(
-            len = 2, #neato
-            color = rgb(0,0,0,control$alpha)
-          ))
-        
-        ## TODO: plot edge/item labels
-        
-        ## plot whines about zero length arrows
-        suppressWarnings(pl <- Rgraphviz::plot(gNEL, control$layout, 
-          subGList = sgL,
-          nodeAttrs = nAttrs, 
-          attrs = att,
-          recipEdges="distinct", 
-          main=control$main))
-        
-        text(pl@boundBox@upRight@x, pl@boundBox@upRight@y*1.05,
-          legend, pos=2,cex=.8, xpd=NA)
-        
-        return(invisible(pl))
-        
-      }else{ ## igraph
- 
-             
-        plot(g, ...,
-        #  layout=control$layout(g, params=control$layoutParams),
-          layout=igraph::layout_(g, control$layout),
-          vertex.label.family=.font.family,
-          edge.label.family=.font.family,
-          vertex.shape=v.shape, 
-          vertex.label=v,
-          vertex.label.cex=control$cex,
-          vertex.label.color="black",
-          vertex.color = v.color,
-          vertex.size=v.size,
-          edge.width=e.width,
-          edge.label=e.label,
-          edge.label.cex=control$cex*.6,
-          edge.arrow.size=control$arrowSize,
-          main=control$main
-        )
-        
-        mtext(legend, adj=1,cex=control$cex*.8)
-      }
-    }else{
-      
-      igraph::tkplot(g, ...,
-        #layout=control$layout(g, params=control$layoutParams),
-        layout=igraph::layout_(g, control$layout),
-        vertex.shape=v.shape, 
-        vertex.label=v,
-        #vertex.label.cex=.7,
-        #vertex.label.color="black",
-        vertex.color = v.color,
-        vertex.size=v.size,
-        #edge.width=e.width,
-        edge.label=e.label,
-        #edge.label.cex=.5,
-        edge.color=e.color,
-        #main=control$main
-      )
-      
-    }
-    
-    return(invisible(g))
-  }
-}

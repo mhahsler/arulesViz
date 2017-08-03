@@ -6,7 +6,7 @@ Authors@R: c(person("Michael", "Hahsler", role = c("aut", "cre", "cph"),
                 email = "mhahsler@lyle.smu.edu"),
             person("Sudheer", "Chelluboina", role = c("ctb")))
 Depends: arules (>= 1.4.1), grid
-Imports: scatterplot3d, vcd, seriation, igraph (>= 1.0.0), graphics, methods, utils, grDevices, stats, colorspace, DT, plotly
+Imports: scatterplot3d, vcd, seriation, igraph (>= 1.0.0), graphics, methods, utils, grDevices, stats, colorspace, DT, plotly, visNetwork
 Suggests: graph, Rgraphviz, iplots
 Description: Extends package arules with various visualization techniques for association rules and itemsets. The package also includes several interactive visualizations for rule exploration.
 License: GPL-3

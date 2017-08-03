@@ -1,5 +1,13 @@
 # arulesViz 1.2-1.1 (xx/xx/2017)
 
+## New features
+* Introduced engine parameter for plot which can be used to create htmlWidgets.
+    Matrices and scatterplots use plotly and graphs are plotted 
+    using visNetwork.
+
+## Changes
+* Some work on unifying the interface for plot more.
+
 ## Bug Fix
 * Fixed item labels order in reordered parallel coordinates plot 
     (reported by Yvi24).
