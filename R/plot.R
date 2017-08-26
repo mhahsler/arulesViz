@@ -16,9 +16,12 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-plot.rules <- function(x, method = NULL, measure = "support", 
-  shading = "lift", interactive = FALSE, data = NULL, control = NULL, 
-  engine = "default", ...) {
+plot.rules <- function(x, method = NULL, 
+  measure = "support", shading = "lift", 
+  interactive = NULL, engine = "default", 
+  data = NULL, control = NULL, 
+  ...) {
+  
   ## methods
   methods <- c(
     "matrix",       
@@ -37,14 +40,20 @@ plot.rules <- function(x, method = NULL, measure = "support",
   
   if(is.null(method)) methodNr <- 6
   else methodNr <- pmatch(tolower(method), tolower(methods))
-  if(is.na(methodNr)) stop (paste("Unknown method:",sQuote(method), "\nAvailable methods:", paste(methods, collapse = ", ")))
+  if(is.na(methodNr)) stop (paste("Unknown method:",sQuote(method), "\nAvailable methods:", paste(sQuote(methods), collapse = ", ")))
   
   ## add interactive and engine
-  if(is.null(control$interactive)) control$interactive <- interactive    
+  if(!is.null(interactive)) {
+    warning("The parameter interactive is deprecated. Use engine='interactive' instead.")
+    if(engine == "default" && interactive) engine <- "interactive"
+  } else { 
+    interactive <- FALSE
+  }
+   
   if(is.null(control$engine)) control$engine <- engine
   
   ## work horses
-  if (methodNr == 1) matrix_arules(x, measure = measure, control,...)
+  if (methodNr == 1) matrix_arules(x, measure = shading, control,...)
   else if (methodNr == 2) doubledecker_arules(x, measure = measure, 
     data = data, c(control, list(type="mosaic")), ...)
   else if (methodNr == 3) doubledecker_arules(x, measure = measure, 
@@ -63,8 +72,11 @@ plot.rules <- function(x, method = NULL, measure = "support",
   else if (methodNr == 8) scatterplot_arules(x, 
     measure = c("support", "confidence"), shading = "order", 
     control, ...)
-  else if (methodNr == 9) matrix_arules(x, measure = measure, 
-    control = c(control, list(type="3d")), ...)
+  else if (methodNr == 9) {
+    warning("method 'matrix3D' is deprecated use method 'matrix' with engine '3d'")
+    control$engine <- "3d"
+    matrix_arules(x, measure = shading, control = control, ...)
+  }
   else if (methodNr == 10) {
     if(length(measure)<2) measure[2] <- "confidence"
     iplot_arules(x, measure = measure, 
@@ -72,7 +84,11 @@ plot.rules <- function(x, method = NULL, measure = "support",
   }
 }
 
-plot.itemsets <- function(x, method = NULL, measure = "support", shading = NA, interactive=FALSE, data = NULL, control = NULL, engine = "default", ...) {
+plot.itemsets <- function(x, method = NULL, 
+  measure = "support", shading = NA, 
+  interactive=NULL, engine = "default",
+  data = NULL, control = NULL, ...) {
+  
   ## methods
   methods <- c(
     "graph",
@@ -80,15 +96,21 @@ plot.itemsets <- function(x, method = NULL, measure = "support", shading = NA, i
     "scatterplot"
   )
   
+  ## add interactive and engine
+  if(is.null(control$engine)) control$engine <- engine
+  if(!is.null(interactive)) {
+    warning("The parameter interactive is deprecated. Use engine='interactive' instead.")
+    if(engine == "default" && interactive) engine <- "interactive"
+  } else { 
+    interactive <- FALSE
+  }
+    
   if(length(x)<1) stop("x contains 0 itemsets!")
   
   if(is.null(method)) methodNr <- 3
   else methodNr <- pmatch(tolower(method), tolower(methods))
-  if(is.na(methodNr)) stop (paste("Unknown method:",sQuote(method), "\nAvailable methods:", paste(methods, collapse = ", ")))
+  if(is.na(methodNr)) stop (paste("Unknown method:",sQuote(method), "\nAvailable methods:", paste(sQuote(methods), collapse = ", ")))
   
-  ## add interactive
-  if(is.null(control$interactive)) control$interactive <- interactive    
-  if(is.null(control$engine)) control$engine <- engine
   
   ## work horses
   if (methodNr == 1) graph_arules(x, measure = measure,

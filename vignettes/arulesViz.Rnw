@@ -280,7 +280,7 @@ following interface:
 
 <<eval=FALSE>>=
 plot(x, method = NULL, measure = "support", shading = "lift",
-  interactive = FALSE, data = NULL, control = NULL, ...)
+  interactive = FALSE, data = NULL, control = NULL, engine = "default", ...)
 @
 
 where \code{x} is the set of rules to be visualized,
@@ -291,7 +291,12 @@ used by the plot,
 explore or just present the rules,
 \code{data} can contain the transaction data set used to mine the
 rules (only necessary for some methods) and \code{control} is a list
-with further control arguments to customize the plot.
+with further control arguments to customize the plot. Using \code{engine},
+different plotting engines can be specified to render the plot.
+the default engine typically uses \pkg{grid}, many plots can also be 
+rendered using the engine \code{"htmlwidget"} resulting in an interactive 
+HTML widget.
+
 
 In the following sections we will introduce the different visualization
 methods implemented in \pkg{arulesViz} and demonstrate how easy it is to

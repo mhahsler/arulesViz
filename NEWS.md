@@ -7,6 +7,12 @@
 
 ## Changes
 * Some work on unifying the interface for plot more.
+* Parameter interactive is now deprecatred. Use engine = "interactive"
+    or engine = "htmlWidget" (where available).
+* matrix-based visualization: reordering now tries to order by measure of 
+  interestingness. The plot now uses shading instead of measure.
+* method graph does not support type anymore. Only items are now supported as 
+  vertices.
 
 ## Bug Fix
 * Fixed item labels order in reordered parallel coordinates plot 

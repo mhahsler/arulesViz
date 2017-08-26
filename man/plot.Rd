@@ -18,9 +18,9 @@ and interactive HTML widget-based visualizations.
 }
 \usage{
 \method{plot}{rules}(x, method = NULL, measure = "support", shading = "lift", 
-    interactive = FALSE, data = NULL, control = NULL, engine = "default", ...)
+    interactive = NULL, engine = "default", data = NULL, control = NULL, ...)
 \method{plot}{itemsets}(x, method = NULL, measure = "support", shading = NA,
-    interactive=FALSE, data = NULL, control = NULL, engine = "default", ...)
+    interactive = NULL, engine = "default", data = NULL, control = NULL, ...)
 }
 \arguments{
   \item{x}{ an object of class "rules" or "itemsets". }
@@ -40,8 +40,7 @@ and interactive HTML widget-based visualizations.
   (e.g., "support", "confidence", "lift"). The default is "lift".
   \code{NA} can be often used to suppress shading.}
   
-  \item{interactive}{ enable interactive exploration (not implemented by 
-  all methods). See also parameter \code{engine} below. }
+  \item{interactive}{ deprecated. See parameter \code{engine} below. }
   
   \item{control}{ a list of control parameters for the plot. The available
   control parameters depend on the used visualization method (see Details).}
@@ -53,9 +52,12 @@ and interactive HTML widget-based visualizations.
   \item{engine}{ a string indicating the plotting engine used to 
     render the plot. 
     The "default" engine uses (mostly) \pkg{grid}, 
-    but some plots can produce interactive HTML widgets using engine 
+    but some plots can produce interactive 
+    interactive grid visualizations using engine "interactive", or
+    HTML widgets using engine 
     "htmlwidget". These widgets can be saved as stand-alone web pages 
-    (see Examples). HTML widgets tend to get very slow or unresponsive for 
+    (see Examples). Note that HTML widgets tend to get very slow 
+    or unresponsive for 
     too many rules. To prevent this situation, the control parameter 
     \code{max} sets a limit, and the user is warned if the limit is reached. 
   }
@@ -89,14 +91,13 @@ Engine "htmlwidget" is available to produce an interactive web-based
 visualization (uses \pkg{plotly}).
 }
 
-\item{"matrix", "matrix3D"}{ 
+\item{"matrix"}{ 
 Arranges the association rules as a matrix with the itemsets in the antecedents
 on one axis and the itemsets in the consequents on the other.  The
 measure of interestingness (first element of \code{measure}) is either visualized by a color (darker means a higher value for the
-measure) or as the height of a bar (method "matrix3D").
-
-Currently there is no "default" interactive version available,
-but engine "htmlwidget" produces an interactive widget (uses \pkg{plotly}).
+measure) or as the height of a bar (engine "3d"). Interactive
+visualizations using engine "interactive" or "htmlwidget" (via \pkg{plotly})
+are available.
 }
 
 \item{"grouped"}{
@@ -204,7 +205,7 @@ plot(rules, control = list(verbose = TRUE))
 
 ## Interactive plot (selected rules are returned)
 \dontrun{
-sel <- plot(rules, interactive = TRUE)}
+sel <- plot(rules, engine = "interactive")}
 
 ## Create a html widget for interactive visualization
 \dontrun{
@@ -223,24 +224,18 @@ subrules <- subset(rules, lift>5)
 subrules
 
 ## 2D matrix with shading
-plot(subrules, method="matrix", measure="lift")
-plot(subrules, method="matrix", measure="lift", control=list(reorder=TRUE))
+plot(subrules, method="matrix")
 
 ## 3D matrix
-plot(subrules, method="matrix3D", measure="lift")
-plot(subrules, method="matrix3D", measure="lift", control=list(reorder=TRUE))
+plot(subrules, method="matrix", engine = "3d")
 
 ## Matrix with two measures
-plot(subrules, method="matrix", measure=c("lift", "confidence"))
-plot(subrules, method="matrix", measure=c("lift", "confidence"), 
-	control=list(reorder=TRUE))
+plot(subrules, method="matrix", shading=c("lift", "confidence"))
 
 ## Interactive matrix plot (default interactive and as a html widget)
 \dontrun{
-plot(subrules, method="matrix", measure="lift", interactive=TRUE, 
-		control=list(reorder=TRUE))
-plot(subrules, method="matrix", measure="lift", engine = "htmlwidget",
-    control=list(reorder=TRUE))}
+plot(subrules, method="matrix", engine="interactive")
+plot(subrules, method="matrix", engine="htmlwidget")}
 
 ## Grouped matrix plot
 ## -------------------
@@ -252,7 +247,7 @@ plot(rules, method="grouped",
 
 ## Interactive grouped matrix plot
 \dontrun{
-sel <- plot(rules, method="grouped", interactive=TRUE)}
+sel <- plot(rules, method="grouped", engine = "interactive")}
 
 ## Graphs
 ## ------
@@ -277,7 +272,7 @@ plot(subrules2, method="graph", engine="graphviz")}
 
 ## Default interactive plot (using igraph's tkplot)
 \dontrun{
-plot(subrules2, method="graph", interactive=TRUE)}
+plot(subrules2, method="graph", engine = "interactive")}
 
 ## Interactive graph as a html widget
 \dontrun{

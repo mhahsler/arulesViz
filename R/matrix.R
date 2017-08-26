@@ -16,32 +16,29 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-matrix_arules <- function(rules, measure = "support", control = NULL, ...){
+matrix_arules <- function(rules, measure = "lift", control = NULL, ...){
  
+  engines <- c("default", "interactive", "base", "3d", "plotly", "htmlwidget")
+  m <- pmatch(control$engine, engines, nomatch = 0)
+  if(m == 0) stop("Unknown engine: ", sQuote(control$engine), 
+    " Valid engines: ", paste(sQuote(engines), collapse = ", "))
+  control$engine <- engines[m] 
+  
   ### FIXME: fix max and control & reorder!
   if(pmatch(control$engine, c("plotly", "htmlwidget"), nomatch = 0) >0) { 
     return(matrix_plotly(rules, measure = measure, control = control, ...)) 
   }
   
-  if(pmatch(control$engine, c("default"), nomatch = 0) != 1) stop("Unknown engine for scatterplot: '", control$engine, "' Valid engines: 'default', 'plotly', 'htmlwidget'.")
-   
   control <- .get_parameters(control, list(
-    main = paste("Matrix with",length(rules),"rules"),
+    main = paste("Matrix with", length(rules), "rules"),
     #col = gray.colors(100, 0.3, .8),
     engine = "default",
     col = default_colors(100),
     zlim = NULL,
     axes = TRUE,
-    reorder = FALSE,
-    reorderBy = NULL,
-    reorderMethod = "TSP",
-    reorderControl = NULL,
-    reorderDist = "euclidean",
-    type = "grid",
-    newpage = TRUE,
-    interactive = FALSE
+    reorder = TRUE,
+    newpage = TRUE
   ))
-  
   
   ## somehow the colors are reversed
   control$col <- rev(control$col) 
@@ -50,12 +47,7 @@ matrix_arules <- function(rules, measure = "support", control = NULL, ...){
   if(length(measure) < 2) ret <- matrix_int(rules, measure, control, ...)
   else ret <- matrix_int2(rules, measure, control, ...)
   
-  
-  if(!control$interactive) return(invisible())
-  if(control$type != "grid") {
-    cat("Interactive mode not available for this method!\n")
-    return(invisible())
-  }
+  if(control$engine != "interactive") return(invisible())
   
   ## interactive mode
   cat("Interactive mode.\nIdentify rules by selecting them.\nEnd interactive mode by clicking outside the plotting area!\n")
@@ -90,16 +82,10 @@ matrix_arules <- function(rules, measure = "support", control = NULL, ...){
 matrix_int <- function(rules, measure, control, ...){
   m <- rulesAsMatrix(rules, measure)
   
-  
-  if(control$reorder == TRUE)
-  {
-    if(is.null(control$reorderBy)) mReorder <- m
-    else mReorder <- rulesAsMatrix(rules, control$reorderBy)
-    
-    order <- .reorder(mReorder, rules, method=control$reorderMethod,
-      control=control$reorderControl);
-    m <- permute(m, order)
-    
+  if(control$reorder == TRUE){
+    cm <- colMeans(m, na.rm = TRUE)
+    rm <- rowMeans(m, na.rm = TRUE)
+    m <- m[order(rm, decreasing = FALSE), order(cm, decreasing = TRUE)]
   }
   
   writeLines("Itemsets in Antecedent (LHS)")
@@ -108,7 +94,7 @@ matrix_int <- function(rules, measure, control, ...){
   print(rownames(m))
   
   
-  if (control$type == "image") {
+  if (control$engine == "base") {
     image(t(m), col = control$col, xlab = "Antecedent (LHS)", 
       ylab = "Consequent (RHS)", main = control$main, 
       sub=paste("Measure:", measure), axes=FALSE, ...)
@@ -118,7 +104,7 @@ matrix_int <- function(rules, measure, control, ...){
     }
     box()
   }
-  else if (control$type == "3d") {
+  else if (control$engine == "3d") {
     df <- cbind(which(!is.na(m), arr.ind=TRUE), as.vector(m[!is.na(m)]))
     scatterplot3d(df, zlab = measure, xlab="Consequent (RHS)", 
       ylab= "Antecedent (LHS)", main = control$main,

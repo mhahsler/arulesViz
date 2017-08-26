@@ -195,8 +195,9 @@ matrix_plotly <- function(x, measure, shading, control, ...) {
     setStart = '<B>{', setEnd = '}</B>')
   
   if(reorder) {
-    o <- .reorder(m, method = "TSP")
-    m <- seriation::permute(m, o)
+    cm <- colMeans(m, na.rm = TRUE)
+    rm <- rowMeans(m, na.rm = TRUE)
+    m <- m[order(rm, decreasing = FALSE), order(cm, decreasing = TRUE)]
   }
 
   
@@ -212,8 +213,10 @@ matrix_plotly <- function(x, measure, shading, control, ...) {
     hoverinfo = 'text',
     text = txt
   ) %>% 
-    layout(xaxis=list(title="LHS",showticklabels = FALSE, showgrid = FALSE), 
-      yaxis=list(title="RHS", showticklabels = FALSE, showgrid = FALSE)
+    layout(xaxis=list(title="LHS", showticklabels = FALSE, 
+      showgrid = TRUE, ticks = ""), 
+      yaxis=list(title="RHS", showticklabels = FALSE, 
+        showgrid = TRUE, ticks = "")
       #,margin=list(l=200, autoexpand=TRUE)
       #yaxis=list(title="RHS", showticklabels = FALSE, showgrid = FALSE)
     )
