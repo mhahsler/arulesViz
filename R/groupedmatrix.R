@@ -27,13 +27,15 @@ grouped_matrix_arules <- function(rules, measure, shading, control=NULL, ...){
   if(m == 0) stop("Unknown engine: ", sQuote(control$engine), 
     " Valid engines: ", paste(sQuote(engines), collapse = ", "))
   control$engine <- engines[m] 
-  
+ 
+  control <- c(control, list(...))
+
   control <- .get_parameters(control, list(
     main = paste("Grouped Matrix for", length(rules), "Rules"),
     k = 20,
     rhs_max = 10,
     lhs_items = 2,
-    aggr.fun=median, 
+    aggr.fun=mean, 
     ## fix lift so serveral plots are comparable (NA: take max)
     col = default_colors(100),
     reverse = TRUE, 
@@ -124,7 +126,7 @@ grouped_matrix_arules <- function(rules, measure, shading, control=NULL, ...){
       cat("Zooming in. This might take a while\n")
       
       ret <- grouped_matrix_arules(rulesSelected, measure, 
-        shading, control, ...)
+        shading, control)
       
       if(!identical(ret, "zoom out")) return(ret)
       

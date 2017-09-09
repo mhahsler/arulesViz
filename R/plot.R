@@ -30,7 +30,7 @@ plot.rules <- function(x, method = NULL,
     "graph",
     "paracoord",
     "scatterplot",	## standard
-    "grouped",
+    "grouped matrix",
     "two-key plot",
     "matrix3D",
     "iplots"
@@ -52,6 +52,8 @@ plot.rules <- function(x, method = NULL,
    
   if(is.null(control$engine)) control$engine <- engine
   
+  
+  
   ## work horses
   if (methodNr == 1) matrix_arules(x, measure = shading, control,...)
   else if (methodNr == 2) doubledecker_arules(x, measure = measure, 
@@ -69,9 +71,13 @@ plot.rules <- function(x, method = NULL,
   }
   else if (methodNr == 7) grouped_matrix_arules(x, measure= measure, 
     shading = shading, control=control, ...)
-  else if (methodNr == 8) scatterplot_arules(x, 
+  else if (methodNr == 8) { 
+    if(is.null(control$col)) control$col <- rainbow(max(size(x))-1L)
+    if(is.null(control$main)) control$main <- "Two-key plot"
+    scatterplot_arules(x, 
     measure = c("support", "confidence"), shading = "order", 
     control, ...)
+  }
   else if (methodNr == 9) {
     warning("method 'matrix3D' is deprecated use method 'matrix' with engine '3d'")
     control$engine <- "3d"

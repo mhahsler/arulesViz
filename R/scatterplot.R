@@ -226,7 +226,9 @@ scatterplot_int <- function(rules, measure, shading, control, ...){
     infin <- is.infinite(q[[i]])
     if(any(infin)) {
       replinfin <- signif(2 * max(q[[i]][!infin], na.rm = TRUE), 3)
-      warning(colnames(q)[i], " contains infinite values! Replaced by twice the max (", replinfin, ")!")
+      warning("plot: ", colnames(q)[i], 
+        " contains infinite values! Replaced by twice the max (", 
+        replinfin, ")!", call. = FALSE)
       q[[i]][infin] <- replinfin
     }
  }

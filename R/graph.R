@@ -33,10 +33,12 @@ graph_arules <- function(x, measure = "support", shading = "lift",
     " Valid engines: ", paste(sQuote(engines), collapse = ", "))
   control$engine <- engines[m] 
   
+  control <- c(control, list(...))
+  
   ### FIXME: fix max and control
   if(pmatch(control$engine, c("visNetwork", "htmlwidget"), nomatch = 0) >0) { 
     return(visNetwork_arules(x, measure = measure, shading = shading,
-      control = control, ...))
+      control = control))
   }
  
   ## check if shading measure is available
@@ -66,14 +68,15 @@ graph_arules <- function(x, measure = "support", shading = "lift",
     arrowSize = .5,
     engine = "igraph",
     plot = TRUE,
+    plot_options = list(),
     max = 100
   ))
  
   
   if(length(x) > control$max) {
-    warning("too many ", class(x), " supplied only plotting the best ", 
+    warning("plot: Too many ", class(x), " supplied. Only plotting the best ", 
       control$max, " ", class(x), " using ", sQuote(measure), 
-      " (change control parameter max if needed)")
+      " (change control parameter max if needed)", call. = FALSE)
     x <- tail(x, n = control$max, by = measure, decreasing = FALSE)
   }
   
@@ -248,7 +251,7 @@ graph_arules <- function(x, measure = "support", shading = "lift",
   }
   
   if(control$engine=="igraph") {
-    plot(g, ...,
+    do.call(plot, c(list(g,
       #layout=control$layout(g, params=control$layoutParams), 
       layout=igraph::layout_(g, control$layout), 
       vertex.label.family=.font.family,
@@ -265,14 +268,14 @@ graph_arules <- function(x, measure = "support", shading = "lift",
       edge.label.cex=control$cex*.6,
       edge.color=e.color,
       edge.arrow.size=control$arrowSize,
-      main=control$main
+      main=control$main), control$plot_options)
     )
     
     mtext(legend, adj=1,cex=control$cex*.8)
   }
   
   if(control$engine=="interactive") {
-    igraph::tkplot(g, ..., 
+    do.call(igraph::tkplot, c(list(g, 
       #layout=control$layout(g, params=control$layoutParams),
       layout=igraph::layout_(g, control$layout),
       #vertex.shape=v.shape, 
@@ -286,7 +289,7 @@ graph_arules <- function(x, measure = "support", shading = "lift",
       #edge.label.cex=.5,
       edge.color=e.color
       #main=control$main
-    )
+    ), control$plot_options))
   }
   
   return(invisible(g))

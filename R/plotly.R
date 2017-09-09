@@ -89,8 +89,9 @@ scatterplot_plotly <- function(x,
   else o <- 1:length(x)
   
   if(length(o) > max) {
-    warning("too many rules supplied only plotting the best ", 
-      max, " rules using measure ", shading, " (change parameter max if needed)")
+    warning("plot: Too many rules supplied. Only plotting the best ", 
+      max, " rules using measure ", shading, 
+      " (change parameter max if needed)", call. = FALSE)
     o <- tail(o, n = max)
   }
   
@@ -102,7 +103,7 @@ scatterplot_plotly <- function(x,
     infin <- is.infinite(q[[i]])
     if(any(infin)) {
       replinfin <- signif(2 * max(q[[i]][!infin], na.rm = TRUE), 3)
-      warning(colnames(q)[i], " contains infinite values! Replaced by twice the max (", replinfin, ")!")
+      warning("plot: ", colnames(q)[i], " contains infinite values! Replaced by twice the max (", replinfin, ")!", call. = FALSE)
       q[[i]][infin] <- replinfin
     }
   } 
@@ -186,8 +187,9 @@ matrix_plotly <- function(x, measure, shading, control, ...) {
   colors <- rev(colors)
   
   if(length(x) > max) {
-    warning("too many rules supplied only plotting the best ", 
-      max, " rules using ", measure, " (change parameter max if needed)")
+    warning("plot: Too many rules supplied. Only plotting the best ", 
+      max, " rules using ", measure, " (change parameter max if needed)", 
+      call. = FALSE)
     x <- tail(x, n = max, by = measure, decreasing = FALSE)
   }
   

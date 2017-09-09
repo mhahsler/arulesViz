@@ -141,7 +141,9 @@ paracoord_arules <- function(x, measure= "support", shading = "lift",
 
 paracoord_items <- function(x, measure= "support", shading = NULL,
   control=list(), ...) {
-  
+ 
+    control <- c(control, list(...))
+
   control <- .get_parameters(control, list(
     main =paste("Parallel coordinates plot for", 
       length(x), "itemsets"),

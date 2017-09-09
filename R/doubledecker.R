@@ -26,12 +26,15 @@ doubledecker_arules <- function(rules, measure ="support", data,
   
   if(length(rules) != 1) stop("only can visualize one rule.")
   if(is.null(data)) stop("data has to be specified, but is missing.")
-  
+
+  control <- c(control, list(...))
+
   control <- .get_parameters(control, list(
     main = "Doubledecker plot for 1 rule",
     type = "doubledecker",
     engine = "default",
-    interactive = FALSE
+    interactive = FALSE,
+    plot_options = list()
   ))
 
   if(control$interactive) stop("No interactive visualization available for doubledecker/mosaic plot.")
@@ -39,12 +42,12 @@ doubledecker_arules <- function(rules, measure ="support", data,
   table <- getTable(rules, data)
   
   if(control$type=="doubledecker")
-    doubledecker(table, margins=c(2,8,length(dim(table) + 2), 2), 
-      main = control$main, ...) 
+    do.call(doubledecker, c(list(table, margins=c(2,8,length(dim(table) + 2), 2), 
+      main = control$main), control$plot_options)) 
   else {
     control$main <- "Mosaic plot for 1 rule"
-    mosaic(table, highlighting = length(dim(table)),
-      main = control$main, ...)
+    do.call(mosaic, c(list(table, highlighting = length(dim(table)),
+      main = control$main), control$plot_options))
   }
 }
 

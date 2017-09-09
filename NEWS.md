@@ -1,4 +1,4 @@
-# arulesViz 1.2-1.1 (xx/xx/2017)
+# arulesViz 1.3-0 (09/07/2017)
 
 ## New features
 * Introduced engine parameter for plot which can be used to create htmlWidgets.
@@ -6,9 +6,11 @@
     using visNetwork.
 
 ## Changes
-* Some work on unifying the interface for plot more.
-* Parameter interactive is now deprecatred. Use engine = "interactive"
-    or engine = "htmlWidget" (where available).
+* Some work was done on unifying the interface for plot more resulting in a
+    slightly changed order of parameters.
+* Parameter interactive is now deprecated and will be removed in future
+    releases. Use engine = "interactive" or engine = "htmlWidget" 
+    (where available).
 * matrix-based visualization: reordering now tries to order by measure of 
   interestingness. The plot now uses shading instead of measure.
 * method graph does not support type anymore. Only items are now supported as 

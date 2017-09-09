@@ -21,7 +21,7 @@
 .nodots <- function(...) {
   l <- list(...)
   if(length(l) > 0L) warning("Unknown arguments: ",
-    paste(names(l), "=",l, collapse=", "))
+    paste(names(l), "=",l, collapse=", "), call. = FALSE)
 }
 
 .get_parameters <- function(parameter, defaults) {

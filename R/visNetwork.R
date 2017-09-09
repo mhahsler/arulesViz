@@ -42,7 +42,8 @@ visNetwork_arules <- function(x, measure = "support", shading = "lift",
     precision = 3,
     #type = "items",
     #layout = NULL,
-    layoutParams = list(),
+    igraphLayout = "layout_nicely",
+    #layoutParams = list(),
     #arrowSize = .5,
     interactive = TRUE,
     engine = "visNetwork", 
@@ -54,8 +55,9 @@ visNetwork_arules <- function(x, measure = "support", shading = "lift",
   ))
   
   if(length(x) > control$max) {
-    warning("too many rules supplied only plotting the best ", 
-      control$max, " rules using ", shading, " (change control parameter max if needed)")
+    warning("Too many rules supplied. Only plotting the best ", 
+      control$max, " rules using ", shading, 
+      " (change control parameter max if needed)", call. = FALSE)
     x <- tail(x, n = control$max, by = shading, decreasing = FALSE)
   }
   
@@ -122,7 +124,7 @@ visNetwork_arules <- function(x, measure = "support", shading = "lift",
   
   visNetwork(nodes = nodes, edges = edges) %>% 
     visNodes(scaling = list(label = list(enabled = TRUE))) %>%
-    visIgraphLayout() %>%
+    visIgraphLayout(layout = control$igraphLayout) %>%
     visOptions(highlightNearest = 
         list(enabled = TRUE, degree = control$degree_highlight, hover = TRUE), 
       nodesIdSelection = control$selection_menu

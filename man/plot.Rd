@@ -62,7 +62,7 @@ and interactive HTML widget-based visualizations.
     \code{max} sets a limit, and the user is warned if the limit is reached. 
   }
   
-  \item{\dots}{ further arguments are usually passed on to the low level plotting function. For several plotting methods, these arguments are added for convenience to the \code{control} list.}
+  \item{\dots}{ Further arguments are added for convenience to the \code{control} list.}
 }
 \details{
 Most visualization techniques are described by Bruzzese and Davino (2008),
@@ -100,7 +100,7 @@ visualizations using engine "interactive" or "htmlwidget" (via \pkg{plotly})
 are available.
 }
 
-\item{"grouped"}{
+\item{"grouped matrix"}{
 Grouped matrix-based visualization (Hahsler and Karpienko, 2016; Hahsler 2016). 
 Antecedents (columns) in the matrix are
 grouped using clustering. Groups are represented by the most
@@ -120,7 +120,7 @@ The list of control parameters for this method includes:
 \item{"lhs_items"}{number of LHS items shown (default: 2)}
 \item{"aggr.fun"}{aggregation function
 can be any function computing a scalar from a vector
-(e.g., min, mean, median (default), sum, max). It is also used
+(e.g., min, mean (default), median, sum, max). It is also used
 to reorder the balloons in the plot.}
 \item{"col"}{color palette (default is 100 heat colors.)}
 \item{"gp_labels", "gp_main", "gp_labs", "gp_lines"}{\code{gpar()} objects used to specify color, font and font size for
@@ -136,7 +136,7 @@ Several engines are available. The default engine uses \pkg{igraph} (\code{plot.
 \code{...} arguments are passed on to the respective plotting function (use for color, etc.).
 
 Alternatively, the engines "graphviz" (\pkg{Rgraphviz}) and "htmlwidget" (\pkg{visNetwork}) are available.
-Note that Rgraphviz has to be installed seperately from 
+Note that Rgraphviz has to be installed separately from 
 \url{http://www.bioconductor.org/}.
 }
 
@@ -198,10 +198,11 @@ plot(rules)
 ## Scatterplot with custom colors
 library(colorspace) # for sequential_hcl
 plot(rules, control = list(col=sequential_hcl(100)))
-plot(rules, control = list(col=grey.colors(50, alpha =.8)))
+plot(rules, col=sequential_hcl(100))
+plot(rules, col=grey.colors(50, alpha =.8))
 
 ## See all control options using verbose
-plot(rules, control = list(verbose = TRUE))
+plot(rules, verbose = TRUE)
 
 ## Interactive plot (selected rules are returned)
 \dontrun{
@@ -211,9 +212,8 @@ sel <- plot(rules, engine = "interactive")}
 \dontrun{
 plot(rules, engine = "htmlwidget")}
 
-## Two-key plot is a scatterplot with shading = "order"
-plot(rules, shading="order", control = list(main = "Two-key plot", 
-  col=rainbow(max(size(rules))-1L)))
+## Two-key plot (is a scatterplot with shading = "order")
+plot(rules, method = "two-key plot")
 
   
 ## Matrix shading
@@ -240,10 +240,10 @@ plot(subrules, method="matrix", engine="htmlwidget")}
 ## Grouped matrix plot
 ## -------------------
 
-plot(rules, method="grouped")
-plot(rules, method="grouped", 
-  control = list(col = grey.colors(10), 
-    gp_labels= gpar(col = "blue", cex=1, fontface="italic")))
+plot(rules, method="grouped matrix")
+plot(rules, method="grouped matrix", 
+  col = grey.colors(10), 
+  gp_labels = gpar(col = "blue", cex=1, fontface="italic"))
 
 ## Interactive grouped matrix plot
 \dontrun{
@@ -259,12 +259,12 @@ plot(subrules2, method="graph")
 
 ## Custom colors
 plot(subrules2, method="graph", 
-  control = list(nodeCol = grey.colors(10), edgeCol = grey(.7), alpha = 1))
+  nodeCol = grey.colors(10), edgeCol = grey(.7), alpha = 1)
 
 ## igraph layout generators can be used (see ? igraph::layout_)
-plot(subrules2, method="graph", control=list(layout=igraph::in_circle()))
-plot(subrules2, method="graph", control=list(
-  layout=igraph::with_graphopt(spring.const=5, mass=50)))
+plot(subrules2, method="graph", layout=igraph::in_circle())
+plot(subrules2, method="graph", 
+  layout=igraph::with_graphopt(spring.const=5, mass=50))
 
 ## Graph rendering using Graphviz
 \dontrun{
@@ -274,15 +274,18 @@ plot(subrules2, method="graph", engine="graphviz")}
 \dontrun{
 plot(subrules2, method="graph", engine = "interactive")}
 
-## Interactive graph as a html widget
+## Interactive graph as a html widget (using igraph layout)
 \dontrun{
-plot(subrules2, method="graph", engine="htmlwidget")}
+plot(subrules2, method="graph", engine="htmlwidget")
+plot(subrules2, method="graph", engine="htmlwidget", 
+  igraphLayout = "layout_in_circle")
+}
 
 ## Parallel coordinates plot
 ## -------------------------
 
 plot(subrules2, method="paracoord")
-plot(subrules2, method="paracoord", control=list(reorder=TRUE))
+plot(subrules2, method="paracoord", reorder=TRUE)
 
 ## Doubledecker plot 
 ## -----------------
@@ -298,7 +301,7 @@ plot(oneRule, method="doubledecker", data = Groceries)
 itemsets <- eclat(Groceries, parameter = list(support = 0.02, minlen=2))
 plot(itemsets)
 plot(itemsets, method="graph")
-plot(itemsets, method="paracoord", control=list(alpha=.5, reorder=TRUE))
+plot(itemsets, method="paracoord", alpha=.5, reorder=TRUE)
 
 ## Add more quality measures to use for the scatterplot
 ## ----------------------------------------------------
