@@ -37,18 +37,22 @@ grey_hcl <- function(n, alpha = 1) sequential_hcl(n, c.=0, alpha = alpha)
 default_colors <- function(n , alpha = 1) 
   colorRampPalette(c("#EE0000", "#EE9999","#EEEEEE"), alpha = alpha)(n)
 
-## helpers for variouse visualizations
+## helpers for various visualization
+## returns all NAs for unknown measure
 rulesAsDataFrame <- function(rules, measure = "support", ...) {
   antes <- labels(lhs(rules), ...)
   conseqs <- labels(rhs(rules), ...)
+  qual <- quality(rules)[[measure]]
+  if(is.null(qual)) qual <- NA
   
   data.frame(
     antecedent = factor(antes, levels = unique(antes)),
     consequent = factor(conseqs, levels = unique(conseqs)),
-    measure = quality(rules)[[measure]]
+    measure = qual
   )
 }
 
+# attribute encoding contains the rule ids
 rulesAsMatrix <- function(rules, measure = "support", ...) {
   df <- rulesAsDataFrame(rules, measure, ...)
   

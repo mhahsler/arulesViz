@@ -38,7 +38,7 @@ matrix_arules <- function(rules, measure = "lift", control = NULL, ...){
     col = default_colors(100),
     zlim = NULL,
     axes = TRUE,
-    reorder = TRUE,
+    reorder = "measure",
     newpage = TRUE,
     plot_options = list()
   ))
@@ -84,12 +84,29 @@ matrix_arules <- function(rules, measure = "lift", control = NULL, ...){
 
 matrix_int <- function(rules, measure, control){
   m <- rulesAsMatrix(rules, measure)
-  
-  if(control$reorder == TRUE){
+  m_s <- rulesAsMatrix(rules, "support")
+  m_c <- rulesAsMatrix(rules, "confidence")
+
+  reorderTypes <- c("none", "measure", "support/confidence", "similarity")
+  reorderType <- pmatch(control$reorder , reorderTypes, nomatch = 0)
+  if(reorderType == 0) stop("Unknown reorder method: ", 
+    sQuote(control$reorder), 
+    " Valid reorder methods are: ", paste(sQuote(reorderTypes), 
+      collapse = ", "))
+  if(reorderType == 2){
     cm <- colMeans(m, na.rm = TRUE)
     rm <- rowMeans(m, na.rm = TRUE)
     m <- m[order(rm, decreasing = FALSE), order(cm, decreasing = TRUE)]
-  }
+  } else if(reorderType == 3){
+    cm <- colMeans(m_s, na.rm = TRUE)
+    rm <- rowMeans(m_c, na.rm = TRUE)
+    m <- m[order(rm, decreasing = FALSE), order(cm, decreasing = TRUE)]
+  } else if(reorderType == 4){
+    d <- dissimilarity(lhs(rules), method = "jaccard")
+    cm <- get_order(seriate(d))
+    rm <- rowMeans(m, na.rm = TRUE)
+    m <- m[order(rm, decreasing = FALSE), cm]
+  } 
   
   writeLines("Itemsets in Antecedent (LHS)")
   print(colnames(m))

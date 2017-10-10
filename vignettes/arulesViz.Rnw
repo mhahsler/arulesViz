@@ -370,7 +370,7 @@ the number of items contained in the rule. Two-key plots can be produced
 using the unified interface by:
 
 <<scatterplot3, fig=TRUE, height=5, include=FALSE>>=
-plot(rules, shading="order", control=list(main = "Two-key plot"))
+plot(rules, method = "two-key plot")
 @
 
 \begin{figure}
@@ -506,75 +506,76 @@ Itemsets in Consequent (rhs)
   [4] "{tropical fruit}"   "{yogurt}"           "{root vegetables}"
 \end{verbatim}
 
-The visual impression can be improved by
-reordering rows and columns in the matrix
-such that rules with similar values of the interest measure are presented
-closer together.
-This removes some of the fragmentation in the
-matrix display and therefore makes it easier to see structure.
+%The visual impression can be improved by
+%reordering rows and columns in the matrix
+%such that rules with similar values of the interest measure are presented
+%closer together.
+%This removes some of the fragmentation in the
+%matrix display and therefore makes it easier to see structure.%
 
-<<matrix2, fig=TRUE, height=3, width=10, results=hide, include=FALSE>>=
-plot(subrules, method="matrix", measure="lift", control=list(reorder=TRUE))
-@
+%<<matrix2, fig=TRUE, height=3, width=10, results=hide, include=FALSE>>=
+%plot(subrules, method="matrix", measure="lift", control=list(reorder=TRUE))
+%@
+%
+%In the resulting plot in Figure~\ref{fig:matrix2} we
+%see the emergence of two large
 
-In the resulting plot in Figure~\ref{fig:matrix2} we
-see the emergence of two large
-blocks of rules with two different consequents and then smaller blocks
-for the rest. With the interactive mode (\code{interactive=TRUE})
-colored squares can be selected
-and the rule it represents will be displayed on the screen.
-This can
-be used to explore different antecedents which have a similar impact on
-the same consequent in terms of the measure used in the plot.
-
-Reordering is done using the \pkg{seriation}
-package~\citep{arulesViz:Hahsler:2008} which provides a wide array of
-ordering methods for multivariate data. Typically, finding the optimal
-order subject to some defined objective function
-is a difficult combinatorial optimization problem which involves
-for $n$ objects to check many of the $O(n!)$ possible permutations.
-However, for visualization purposes
-some suboptimal but fast heuristics are acceptable and it is
-often sufficient to try several methods to find the most useful representation.
-However, it is useful to understand the different methods
-and the objective function they try to optimize.
-Some available useful methods are:
-\begin{itemize}
-\item "PCA" -- First principal component. Uses the first principal component
-for the data matrix and for the transposed matrix as order for
-    rows and columns. This is a very fast approach which avoids the expensive
-    distance matrix computation.
-
-\item "TSP" -- Traveling salesperson problem solver. Computes distance matrices
-    between rows and between columns and solves two separate TSPs. By default
-    the nearest insertion heuristic is used. This method is reasonably fast for
-    small rule sets, but the distance matrix computation and the associated
-    memory requirements make it impractical for larger sets.
-
-\item "HC" -- Hierarchical clustering. Computes distance matrices
-    for rows and columns and
-    then clusters twice. Distance matrix computation is again limiting
-    the approach for smaller sets.
-
-\item "max", "avg" and "median" -- Reorder rows/columns by their maximum,
-    average or median value. This extremely simple and fast methods
-    provides sometimes good visualizations.
-\end{itemize}
-
-Other available methods include "BEA", "MDS", "OLO", "GW", "ARSA" and "BBURCG".
-We refer the interested reader to \cite{arulesViz:Hahsler:2008} for
-detailed description of these methods.
-Different seriation
-methods can be selected via \code{reorderMethod} in the control list
-(default: TSP). For the methods which first compute dissimilarity matrices,
-the control list argument \code{reorderDist} can be used to specify the
-used measure (default: Euclidean distance).
-
-Most seriation methods cannot handle missing values.
-However, the visualized matrix typically contains many missing values since
-minimum support discards of many rules during rule mining.  We use a very crude
-imputation approach by replacing the missing values in the matrix (values for
-rules not contained in the rules set) by a fixed value (0 by default).
+%blocks of rules with two different consequents and then smaller blocks
+%for the rest. With the interactive mode (\code{interactive=TRUE})
+%colored squares can be selected
+%and the rule it represents will be displayed on the screen.
+%This can
+%be used to explore different antecedents which have a similar impact on
+%the same consequent in terms of the measure used in the plot.
+%
+%Reordering is done using the \pkg{seriation}
+%package~\citep{arulesViz:Hahsler:2008} which provides a wide array of
+%ordering methods for multivariate data. Typically, finding the optimal
+%order subject to some defined objective function
+%is a difficult combinatorial optimization problem which involves
+%for $n$ objects to check many of the $O(n!)$ possible permutations.
+%However, for visualization purposes
+%some suboptimal but fast heuristics are acceptable and it is
+%often sufficient to try several methods to find the most useful representation.
+%However, it is useful to understand the different methods
+%and the objective function they try to optimize.
+%Some available useful methods are:
+% \begin{itemize}
+% \item "PCA" -- First principal component. Uses the first principal component
+% for the data matrix and for the transposed matrix as order for
+%     rows and columns. This is a very fast approach which avoids the expensive
+%     distance matrix computation.
+% 
+% \item "TSP" -- Traveling salesperson problem solver. Computes distance matrices
+%     between rows and between columns and solves two separate TSPs. By default
+%     the nearest insertion heuristic is used. This method is reasonably fast for
+%     small rule sets, but the distance matrix computation and the associated
+%     memory requirements make it impractical for larger sets.
+% 
+% \item "HC" -- Hierarchical clustering. Computes distance matrices
+%     for rows and columns and
+%     then clusters twice. Distance matrix computation is again limiting
+%     the approach for smaller sets.
+% 
+% \item "max", "avg" and "median" -- Reorder rows/columns by their maximum,
+%     average or median value. This extremely simple and fast methods
+%     provides sometimes good visualizations.
+% \end{itemize}
+% 
+% Other available methods include "BEA", "MDS", "OLO", "GW", "ARSA" and "BBURCG".
+% We refer the interested reader to \cite{arulesViz:Hahsler:2008} for
+% detailed description of these methods.
+% Different seriation
+% methods can be selected via \code{reorderMethod} in the control list
+% (default: TSP). For the methods which first compute dissimilarity matrices,
+% the control list argument \code{reorderDist} can be used to specify the
+% used measure (default: Euclidean distance).
+% 
+% Most seriation methods cannot handle missing values.
+% However, the visualized matrix typically contains many missing values since
+% minimum support discards of many rules during rule mining.  We use a very crude
+% imputation approach by replacing the missing values in the matrix (values for
+% rules not contained in the rules set) by a fixed value (0 by default).
 
 \begin{figure}
 \centering
@@ -582,11 +583,11 @@ rules not contained in the rules set) by a fixed value (0 by default).
 \caption{Matrix-based visualization with colored squares.
 \label{fig:matrix1}}
 
-\vspace{5mm}
-
-\includegraphics[width=\linewidth]{arulesViz-matrix2}
-\caption{Matrix-based visualization with colored squares (reordered).
-\label{fig:matrix2}}
+%\vspace{5mm}
+%
+%\includegraphics[width=\linewidth]{arulesViz-matrix2}
+%\caption{Matrix-based visualization with colored squares (reordered).
+%\label{fig:matrix2}}
 \end{figure}
 
 
@@ -596,26 +597,26 @@ An alternative representation is to use
 <<matrix3D1, fig=TRUE, results=hide, include=FALSE>>=
 plot(subrules, method="matrix3D", measure="lift")
 @
-<<matrix3D2, fig=TRUE, results=hide, include=FALSE>>=
-plot(subrules, method="matrix3D", measure="lift", control=list(reorder=TRUE))
-@
+%<<matrix3D2, fig=TRUE, results=hide, include=FALSE>>=
+%plot(subrules, method="matrix3D", measure="lift", control=list(reorder=TRUE))
+%@
 
 \begin{figure}
-\begin{minipage}{.48\linewidth}
+%\begin{minipage}{.48\linewidth}
 \centering
-\includegraphics[width=\linewidth]{arulesViz-matrix3D1}
+\includegraphics[width=.48\linewidth]{arulesViz-matrix3D1}
 \caption{Matrix-based visualization with 3D bars.
 \label{fig:matrix3D1}}
-\end{minipage}
-\begin{minipage}{.48\linewidth}
-\includegraphics[width=\linewidth]{arulesViz-matrix3D2}
-\caption{Matrix-based visualization with 3D bars (reordered).
-\label{fig:matrix3D2}}
-\end{minipage}
+%\end{minipage}
+%\begin{minipage}{.48\linewidth}
+%\includegraphics[width=\linewidth]{arulesViz-matrix3D2}
+%\caption{Matrix-based visualization with 3D bars (reordered).
+%\label{fig:matrix3D2}}
+%\end{minipage}
 \end{figure}
 
-The 3D visualization is shown in Figures~\ref{fig:matrix3D1} and
-\ref{fig:matrix3D2}.
+The 3D visualization is shown in Figure~\ref{fig:matrix3D1}.
+%andb\ref{fig:matrix3D2}.
 
 If we specify a vector with two measures, both measures
 are used simultaneously using color hue for one measure and luminance
@@ -624,10 +625,10 @@ and chroma together for the other.
 <<matrix_col1, fig=TRUE, height=3, width=10, results=hide, include=FALSE>>=
 plot(subrules, method="matrix", measure=c("lift", "confidence"))
 @
-<<matrix_col2, fig=TRUE, height=3, width=10, results=hide, include=FALSE>>=
-plot(subrules, method="matrix", measure=c("lift", "confidence"),
-        control=list(reorder=TRUE))
-@
+%<<matrix_col2, fig=TRUE, height=3, width=10, results=hide, include=FALSE>>=
+%plot(subrules, method="matrix", measure=c("lift", "confidence"),
+%        control=list(reorder=TRUE))
+%@
 
 \begin{figure}
 \centering
@@ -635,12 +636,13 @@ plot(subrules, method="matrix", measure=c("lift", "confidence"),
 \caption{Matrix-based visualization of two measures with colored squares.
 \label{fig:matrix_col1}}
 
-\includegraphics[width=\linewidth]{arulesViz-matrix_col2}
-\caption{Matrix-based visualization of two measures with colored squares (reordered).
-\label{fig:matrix_col2}}
+%\includegraphics[width=\linewidth]{arulesViz-matrix_col2}
+%\caption{Matrix-based visualization of two measures with colored squares (reordered%).
+%\label{fig:matrix_col2}}
 \end{figure}
 
-Figures~\ref{fig:matrix_col1} and \ref{fig:matrix_col2} show plots with two
+Figure~\ref{fig:matrix_col1} %and \ref{fig:matrix_col2} show plots 
+shows a plot with two
 measures of interest. The legend is here a color matrix.  By matching a square
 with the closed color in the legend, we can determine both, support and
 confidence.  High confidence/high support rules can be identified in the plot

@@ -170,7 +170,7 @@ matrix_plotly <- function(x, measure, shading, control, ...) {
     engine = "htmlwidget",
     max = 1000,
     colors = default_colors(2), 
-    reorder = TRUE,
+    reorder = "measure",
     precision = 3
   ))
   
@@ -195,16 +195,42 @@ matrix_plotly <- function(x, measure, shading, control, ...) {
   
   m <- rulesAsMatrix(x, measure = measure, itemSep= ',<BR>&nbsp;&nbsp;', 
     setStart = '<B>{', setEnd = '}</B>')
+  m_s <- rulesAsMatrix(x, "support")
+  m_c <- rulesAsMatrix(x, "confidence")
   
-  if(reorder) {
-    cm <- colMeans(m, na.rm = TRUE)
-    rm <- rowMeans(m, na.rm = TRUE)
-    m <- m[order(rm, decreasing = FALSE), order(cm, decreasing = TRUE)]
-  }
+  reorderTypes <- c("none", "measure", "support/confidence", "similarity")
+  reorderType <- pmatch(reorder , reorderTypes, nomatch = 0)
+  if(reorderType == 0) stop("Unknown reorder method: ", sQuote(reorder), 
+    " Valid reorder methods are: ", paste(sQuote(reorderTypes), 
+      collapse = ", "))
+  if(reorderType == 2){
+    cm <- order(colMeans(m, na.rm = TRUE), decreasing = FALSE)
+    rm <- order(rowMeans(m, na.rm = TRUE), decreasing = FALSE)
+    m <- m[rm, cm]
+    m_s <- m_s[rm, cm]
+    m_c <- m_c[rm, cm]
+  } else if(reorderType == 3){
+    cm <- order(colMeans(m_s, na.rm = TRUE), decreasing = FALSE)
+    rm <- order(rowMeans(m_c, na.rm = TRUE), decreasing = FALSE)
+    m <- m[rm, cm]
+    m_s <- m_s[rm, cm]
+    m_c <- m_c[rm, cm]
+  } else if(reorderType == 4){
+    d <- dissimilarity(lhs(x), method = "jaccard")
+    cm <- get_order(seriate(d))
+    rm <- order(rowMeans(m, na.rm = TRUE), decreasing = FALSE)
+    m <- m[rm, cm]
+    m_s <- m_s[rm, cm]
+    m_c <- m_c[rm, cm]
+  } 
 
   
   txt <- t(outer(colnames(m), rownames(m), paste, sep = '<BR>&nbsp;&nbsp; => '))
-  txt[] <- paste('<B>', txt, '</B>', '<BR>',measure, ': ', signif(m, precision), sep = '')
+  txt[] <- paste('<B>', txt, '</B>', 
+    '<BR>',measure, ': ', signif(m, precision), 
+    '<BR>','support', ': ', signif(m_s, precision), 
+    '<BR>','confidence', ': ', signif(m_c, precision), 
+    sep = '')
   txt[is.na(m)] <- NA
   
   plot_ly(z = m,

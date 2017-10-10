@@ -41,7 +41,19 @@ plot.rules <- function(x, method = NULL,
   if(is.null(method)) methodNr <- 6
   else methodNr <- pmatch(tolower(method), tolower(methods))
   if(is.na(methodNr)) stop (paste("Unknown method:",sQuote(method), "\nAvailable methods:", paste(sQuote(methods), collapse = ", ")))
+ 
+  ## complete measure and shading
+  mid <- pmatch(measure, colnames(quality(rules)))
+  if(any(is.na(mid))) stop("Measure not available in rule set: ", 
+    paste(sQuote(measure[is.na(mid)]), collapse = ", "))
+  measure <- colnames(quality(rules))[mid]
   
+  sid <- pmatch(shading, colnames(quality(rules)))
+  if(any(is.na(sid))) stop("Shading measure not available in rule set: ", 
+    paste(sQuote(shading[is.na(sid)]), collapse = ", "))
+  shading <- colnames(quality(rules))[sid]
+
+   
   ## add interactive and engine
   if(!is.null(interactive)) {
     warning("The parameter interactive is deprecated. Use engine='interactive' instead.")

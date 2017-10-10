@@ -1,3 +1,12 @@
+# arulesViz 1.3-0.1 (xx/xx/2017)
+
+## New features
+* plot method matrix now supports different reordering methods: 'none',
+    'measure', 'support/confidence', 'similarity'. Default is measure,
+    the measure for used for shading.
+* measure and shading now auto-completes measure names.
+
+
 # arulesViz 1.3-0 (09/07/2017)
 
 ## New features
