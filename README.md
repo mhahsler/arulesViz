@@ -1,12 +1,13 @@
 # arulesViz - Visualizing Association Rules and Frequent Itemsets with R
 
 [![CRAN version](http://www.r-pkg.org/badges/version/arulesViz)](https://cran.r-project.org/package=arulesViz)
+[![Rdoc](http://www.rdocumentation.org/badges/version/arulesViz)](http://www.rdocumentation.org/packages/arulesViz) 
 [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/arulesViz)](https://cran.r-project.org/package=arulesViz)
 [![Travis-CI Build Status](https://travis-ci.org/mhahsler/arulesViz.svg?branch=master)](https://travis-ci.org/mhahsler/arulesViz)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/mhahsler/arulesViz?branch=master&svg=true)](https://ci.appveyor.com/project/mhahsler/arulesViz)
 
 This R package 
-extends package [arules](http://mhahsler.github.io/arules/) with various visualization techniques for association rules and itemsets. The package also includes several interactive visualizations for rule exploration.
+extends package [arules](https://github.com/mhahsler/arules) with various visualization techniques for association rules and itemsets. The package also includes several interactive visualizations for rule exploration.
 
 ## Installation
 
