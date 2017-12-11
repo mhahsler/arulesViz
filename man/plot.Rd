@@ -313,7 +313,7 @@ plot(itemsets, measure=c("support", "allConfidence"), shading="lift")
 ## Save HTML widget as web page
 ## ----------------------------
 \dontrun{
-p <- plotly_arules(rules)
+p <- plot(rules, engine = "html")
 htmlwidgets::saveWidget(p, "arules.html", selfcontained = FALSE)
 browseURL("arules.html")}
 # Note: selfcontained seems to make the browser slow.

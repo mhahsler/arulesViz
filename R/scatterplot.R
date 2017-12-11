@@ -53,7 +53,7 @@ scatterplot_arules <- function(rules, measure = c("support","confidence"),
   
   ## set zlim depending on measure...
   ## add order
-  quality(rules) <- cbind(quality(rules), order=size(rules))
+  #quality(rules) <- cbind(quality(rules), order=size(rules))
   
   if(!is.na(shading)) {
     i <- pmatch(shading, colnames(quality(rules)))
@@ -218,7 +218,7 @@ scatterplot_int <- function(rules, measure, shading, control, ...){
   
   ## reverse colors
   colors <- rev(control$col)
-   
+  
   q <- quality(rules)[, na.omit(c(measure, shading))]
   
   ## handle Inf
@@ -304,7 +304,7 @@ scatterplot_int <- function(rules, measure, shading, control, ...){
  
   control$jitter <- control$jitter[1]
   if(is.na(control$jitter) && any(duplicated(x))) {
-    #warning("To reduce overplotting, jitter is set to 1!")
+    message("To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.")
     control$jitter <- .2
     }
    

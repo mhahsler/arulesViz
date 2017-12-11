@@ -42,7 +42,7 @@ plotly_arules <- function(x, method = "scatterplot",
     methodNr <- 1
   }
   
-  quality(x)[["order"]] <- size(x) 
+  #quality(x)[["order"]] <- size(x) 
   qnames <- names(quality(x))
   measure <- qnames[pmatch(measure, qnames, duplicates.ok = TRUE)]
   shading <- qnames[pmatch(shading, qnames)]
@@ -66,6 +66,7 @@ scatterplot_plotly <- function(x,
     colors = default_colors(2), 
     jitter = NA, 
     precision = 3,
+    main = "Unused",
     marker = list()
   ))
   
@@ -128,11 +129,12 @@ scatterplot_plotly <- function(x,
   ### add x/y-jitter
   jitter <- jitter[1]
   if(is.na(jitter) && any(duplicated(q[,measure]))) {
-      jitter <- .1
+    message("To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.")   
+    jitter <- .1
   }
   
   if(!is.na(jitter) && jitter>0) 
-    for(m in measure) q[[m]] <- jitter(q[[m]], factor = jitter, amount = 0)
+    for(m in measure) q[[m]] <- jitter(q[[m]], factor = jitter)
 
   if(is.na(shading)) 
     p <- plot_ly(q, type = "scatter", x = q[,measure[1]], y = q[,measure[2]], 

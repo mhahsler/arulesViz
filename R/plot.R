@@ -43,16 +43,19 @@ plot.rules <- function(x, method = NULL,
   if(is.na(methodNr)) stop (paste("Unknown method:",sQuote(method), "\nAvailable methods:", paste(sQuote(methods), collapse = ", ")))
  
   ## complete measure and shading
-  mid <- pmatch(measure, colnames(quality(rules)))
+  mid <- pmatch(measure, colnames(quality(x)))
   if(any(is.na(mid))) stop("Measure not available in rule set: ", 
     paste(sQuote(measure[is.na(mid)]), collapse = ", "))
-  measure <- colnames(quality(rules))[mid]
-  
-  sid <- pmatch(shading, colnames(quality(rules)))
-  if(any(is.na(sid))) stop("Shading measure not available in rule set: ", 
-    paste(sQuote(shading[is.na(sid)]), collapse = ", "))
-  shading <- colnames(quality(rules))[sid]
+  measure <- colnames(quality(x))[mid]
 
+  ### NA means no shading & add order  
+  quality(x)$order <- size(x)
+  if(!all(is.na(shading))) {
+    sid <- pmatch(shading, colnames(quality(x)))
+    if(any(is.na(sid))) stop("Shading measure not available in rule set: ", 
+      paste(sQuote(shading[is.na(sid)]), collapse = ", "))
+    shading <- colnames(quality(x))[sid]
+  }
    
   ## add interactive and engine
   if(!is.null(interactive)) {
@@ -124,6 +127,9 @@ plot.itemsets <- function(x, method = NULL,
   }
     
   if(length(x)<1) stop("x contains 0 itemsets!")
+  
+  ### add order  
+  quality(x)$order <- size(x)
   
   if(is.null(method)) methodNr <- 3
   else methodNr <- pmatch(tolower(method), tolower(methods))
