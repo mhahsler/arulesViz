@@ -13,3 +13,4 @@ License: GPL-3
 URL: https://github.com/mhahsler/arulesViz, http://lyle.smu.edu/IDA/arules/
 BugReports: https://github.com/mhahsler/arulesViz
 Copyright: (C) 2011 Michael Hahsler and Sudheer Chelluboina
+RoxygenNote: 6.0.1

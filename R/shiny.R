@@ -1,4 +1,23 @@
 #TODO: cite and document and change
+#######################################################################
+# arulesViz - Visualizing Association Rules and Frequent Itemsets
+# Copyrigth (C) 2011 Michael Hahsler and Sudheer Chelluboina
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+# Adapted from code written by Andrew Brooks and found at https://github.com/brooksandrew/Rsenal
 
 rules2df <- function(rules, list=F){
   df <- as(rules, 'data.frame')
@@ -57,7 +76,7 @@ depthbin <- function(ser, nbins=10, qtype=7, digits=10, labelRange=T, labelPct=F
   return(returnser)
 }
 
-shiny_arules <- function (dataset, bin=T, vars=5, supp=0.1, conf=0.5) {
+shiny_arules <- function (dataset, vars=5, supp=0.1, conf=0.5) {
 
   ## binning numeric data
   for(i in 1:ncol(dataset)) {
@@ -185,14 +204,29 @@ shiny_arules <- function (dataset, bin=T, vars=5, supp=0.1, conf=0.5) {
        } else {
          ar <- arAll
        }
-       quality(ar)$conviction <- interestMeasure(ar, 'conviction', transactions=tr)
-       quality(ar)$hyperConfidence <- interestMeasure(ar, 'hyperConfidence', transactions=tr)
-       quality(ar)$cosine <- interestMeasure(ar, 'cosine', transactions=tr)
-       quality(ar)$chiSquare <- interestMeasure(ar, 'chiSquare', transactions=tr)
-       quality(ar)$coverage <- interestMeasure(ar, 'coverage', transactions=tr)
-       quality(ar)$doc <- interestMeasure(ar, 'doc', transactions=tr)
-       quality(ar)$gini <- interestMeasure(ar, 'gini', transactions=tr)
-       quality(ar)$hyperLift <- interestMeasure(ar, 'hyperLift', transactions=tr)
+
+       # Catch the case of too few variables selected
+       tc <- tryCatch(
+         {
+           quality(ar)$conviction <- interestMeasure(ar, 'conviction', transactions=tr)
+           quality(ar)$hyperConfidence <- interestMeasure(ar, 'hyperConfidence', transactions=tr)
+           quality(ar)$cosine <- interestMeasure(ar, 'cosine', transactions=tr)
+           quality(ar)$chiSquare <- interestMeasure(ar, 'chiSquare', transactions=tr)
+           quality(ar)$coverage <- interestMeasure(ar, 'coverage', transactions=tr)
+           quality(ar)$doc <- interestMeasure(ar, 'doc', transactions=tr)
+           quality(ar)$gini <- interestMeasure(ar, 'gini', transactions=tr)
+           quality(ar)$hyperLift <- interestMeasure(ar, 'hyperLift', transactions=tr)
+         },
+         error=function(cond) {
+             validate(
+               need(0>1,'Plase select more variables')
+             )
+         },
+         warning=function(cond) {
+         },
+         finally={
+         }
+       )
        ar
      })
 
@@ -201,34 +235,52 @@ shiny_arules <- function (dataset, bin=T, vars=5, supp=0.1, conf=0.5) {
        nRule <- ifelse(input$samp == 'All Rules', length(rules()), input$nrule)
      })
 
+     handleErrors <- reactive({
+       ar <- rules()
+       validate(
+                need(nR()>=2,'Please increase the number of rules')
+       )
+       validate(
+                need(nR()<=length(ar),'Please decrease the number of rules')
+       )
+       validate(
+                need(length(input$cols)>0,'Please increase the number of variables')
+       )
+     })
+
      ## Grouped Plot #########################
      output$groupedPlot <- renderPlot({
        ar <- rules()
+       handleErrors()
        plot(sort(ar, by=input$sort)[1:nR()], method='grouped', control=list(k=input$k))
      }, height=800, width=800)
 
      ## Graph Plot ##########################
      output$graphPlot <- renderPlot({
        ar <- rules()
+       handleErrors()
        plot(sort(ar, by=input$sort)[1:nR()], method='graph', control=list(type=input$graphType))
      }, height=800, width=800)
 
      ## Scatter Plot ##########################
      output$scatterPlot <- renderPlot({
        ar <- rules()
+       handleErrors()
        plot(sort(ar, by=input$sort)[1:nR()], method='scatterplot')
      }, height=800, width=800)
 
      ## Parallel Coordinates Plot ###################
      output$paracoordPlot <- renderPlot({
        ar <- rules()
+       handleErrors()
        plot(sort(ar, by=input$sort)[1:nR()], method='paracoord')
      }, height=800, width=800)
 
      ## Matrix Plot ###################
      output$matrixPlot <- renderPlot({
        ar <- rules()
-       plot(sort(ar, by=input$sort)[1:nR()], method='matrix', control=list(reorder=T))
+       handleErrors()
+       plot(sort(ar, by=input$sort)[1:nR()], method='matrix', control=list(reorder='similarity'))
      }, height=800, width=800)
 
      ## Item Frequency Plot ##########################
@@ -240,15 +292,15 @@ shiny_arules <- function (dataset, bin=T, vars=5, supp=0.1, conf=0.5) {
      ## Rules Data Table ##########################
      output$rulesDataTable <- renderDataTable({
        ar <- rules()
+       handleErrors()
        rulesdt <- rules2df(ar)
        rulesdt
      })
 
      ## Rules Printed ########################
      output$rulesTable <- renderPrint({
-       #hack to disply results... make sure this match line above!!
-       #ar <- apriori(dataset[,input$cols], parameter=list(support=input$supp, confidence=input$conf, minlen=input$minL, maxlen=input$maxL))
        ar <- rules()
+       handleErrors()
        inspect(sort(ar, by=input$sort))
      })
 

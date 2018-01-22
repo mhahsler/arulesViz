@@ -1,8 +1,6 @@
 import("arules")
 
-#TODO: import only part of this
 import("shiny")
-
 importFrom("graphics", "par", "plot", "mtext", "text", "axis", "box")
 importFrom("stats", "median", "kmeans", "cutree", "dist", "hclust", "na.omit", "quantile")
 importFrom("grDevices", "hcl", "rgb", "gray.colors", "gray", "col2rgb",
