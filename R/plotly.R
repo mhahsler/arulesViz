@@ -182,7 +182,7 @@ matrix_plotly <- function(x, measure, shading, control, ...) {
   .plotly_matrix(x, measure[1], reorder = control$reorder, 
     colors = control$colors, precision = control$precision, max = control$max) }
 
-.plotly_matrix <- function(x, measure = "lift", reorder = TRUE, 
+.plotly_matrix <- function(x, measure = "lift", reorder = "none", 
   #colors = colorRamp(c("grey", "red"))) {
   colors = default_colors(2), precision = 3, max = 1000) {
   
