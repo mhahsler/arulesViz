@@ -17,7 +17,7 @@ importFrom("vcd", "mosaic", "doubledecker")
 importFrom("colorspace", "heat_hcl", "sequential_hcl")
 importFrom("DT", "datatable", "%>%", "formatRound")
 importFrom("visNetwork", "visNetwork", "visIgraphLayout",
-  "visOptions", "visNodes")
+  "visOptions", "visNodes","renderVisNetwork","visNetworkOutput")
 
 export("saveAsGraph")
 

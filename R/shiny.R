@@ -78,24 +78,34 @@ depthbin <- function(ser, nbins=10, qtype=7, digits=10, labelRange=T, labelPct=F
   return(returnser)
 }
 
-shiny_arules <- function (dataset, vars=5, supp=0.1, conf=0.5, lift=0.0) {
+shiny_arules <- function (dataset, vars=0, supp=0.1, conf=0.5, lift=0.0) {
 
+  numVars <- length(colnames(dataset))
   minSupp <- 0
   maxSupp <- 1
   minConf <- 0
   maxConf <- 1
   minLift <- 0
   maxLift <- 1
+  roundUp <- function(x,y) ceiling(x*(10^y))/(10^y)
+  roundDown <- function(x,y) floor(x*(10^x))/(10^y)
+
   if(class(dataset)=='rules') {
-      minSupp <- round(min(dataset@quality$support),3)
-      maxSupp <- round(max(dataset@quality$support),3)
-      minConf <- round(min(dataset@quality$confidence),3)
-      maxConf <- round(max(dataset@quality$confidence),3)
-      minLift <- round(min(dataset@quality$lift),3)
-      maxLift <- round(max(dataset@quality$lift),3)
+      minSupp <- roundDown(min(dataset@quality$support),3)
+      maxSupp <- roundUp(max(dataset@quality$support),3)
+      minConf <- roundDown(min(dataset@quality$confidence),3)
+      maxConf <- roundUp(max(dataset@quality$confidence),3)
+      minLift <- floor(min(dataset@quality$lift))
+      maxLift <- ceiling(max(dataset@quality$lift))
+      vars <- length(itemLabels(dataset))
+      supp <- minSupp
+      conf <- minConf
+      lift <- minLift
+      numVars <- length(itemLabels(dataset))
   }
   ## binning numeric data
   if(class(dataset)=='transactions'){
+      vars <- length(colnames(dataset))
       for(i in 1:ncol(dataset)) {
         if(class(dataset[,i]) %in% c('numeric', 'integer')) dataset[,i] <- depthbin(dataset[,i], nbins=10)
       }
@@ -112,35 +122,41 @@ shiny_arules <- function (dataset, vars=5, supp=0.1, conf=0.5, lift=0.0) {
         numericInput("nrule", 'Number of Rules', 5, min=2), br()
       ),
 
-      conditionalPanel(
-        condition = "input.mytab=='graph'",
-        radioButtons('graphType', label='Graph Type', choices=c('itemsets','items'), inline=T), br()
-      ),
 
       conditionalPanel(
         condition = "input.lhsv=='Subset'",
-        uiOutput("choose_lhs"), br()
+        div(style='overflow-y:scroll;height:300px',
+        uiOutput("choose_lhs")), br()
       ),
 
       conditionalPanel(
         condition = "input.rhsv=='Subset'",
-        uiOutput("choose_rhs"), br()
+        div(style='overflow-y:scroll;height:300px',
+        uiOutput("choose_rhs")), br()
       ),
 
       conditionalPanel(
         condition = "input.mytab=='grouped'",
         sliderInput('k', label='Choose # of rule clusters', min=1, max=150, step=1, value=15), br()
       ),
+      conditionalPanel(
+        condition = "input.mytab=='itemFreq'",
+        sliderInput('itemFreqN', label='Choose # of items', min=1, max=numVars, step=1, value=30), br()
+      ),
 
       conditionalPanel(
         condition = "input.mytab %in%' c('grouped', 'graph', 'table', 'datatable', 'scatter', 'paracoord', 'matrix', 'itemFreq')",
-        radioButtons('samp', label='Sample', choices=c('All Rules', 'Sample'), inline=T), br(),
-        uiOutput("choose_columns"), br(),
-        sliderInput("supp", "Support:", min = minSupp, max = maxSupp, value = supp , step = 1/10000), br(),
-        sliderInput("conf", "Confidence:", min = minConf, max = maxConf, value = conf , step = 1/10000), br(),
-        sliderInput("lift", "Lift:", min = minLift, max = maxLift, value = lift , step = 1/10000), br(),
-        numericInput("minL", "Min. items per set:", 2), br(),
-        numericInput("maxL", "Max. items per set::", 3), br(),
+        #radioButtons('samp', label='Sample', choices=c('All Rules', 'Sample'), inline=T), br(),
+        div(style='overflow-y:scroll;height:300px',
+        uiOutput("choose_columns")), br(),
+        sliderInput("supp", "Support:", min = minSupp, max = maxSupp, value = supp , step = 1/10000),
+        sliderInput("conf", "Confidence:", min = minConf, max = maxConf, value = conf , step = 1/10000), 
+        sliderInput("lift", "Lift:", min = minLift, max = maxLift, value = lift , step = 1/10000), 
+        numericInput("minL", "Min. items per set:", 2), 
+        numericInput("maxL", "Max. items per set:", 3), 
+        uiOutput("xAxisSelectInput"),
+        uiOutput("yAxisSelectInput"),
+        uiOutput("cAxisSelectInput"),
         radioButtons('lhsv', label='LHS variables', choices=c('All', 'Subset')), br(),
         radioButtons('rhsv', label='RHS variables', choices=c('All', 'Subset')), br(),
         downloadButton('downloadData', 'Download Rules as CSV')
@@ -150,20 +166,30 @@ shiny_arules <- function (dataset, vars=5, supp=0.1, conf=0.5, lift=0.0) {
 
     mainPanel(
       tabsetPanel(id='mytab',
-                  tabPanel('Grouped', value='grouped', plotOutput("groupedPlot", width='100%', height='100%')),
-                  tabPanel('Graph', value='graph', plotOutput("graphPlot", width='100%', height='100%')),
+                  tabPanel('Data Table', value='datatable', dataTableOutput("rulesDataTable")),
                   tabPanel('Scatter', value='scatter', plotlyOutput("scatterPlot", width='100%', height='100%')),
-                  tabPanel('Parallel Coordinates', value='paracoord', plotOutput("paracoordPlot", width='100%', height='100%')),
-                  tabPanel('Matrix', value='matrix', plotlyOutput("matrixPlot", width='100%', height='100%')),
+                  tabPanel('Graph', value='graph', visNetworkOutput("graphPlot", width='100%', height='100%')),
                   tabPanel('ItemFreq', value='itemFreq', plotOutput("itemFreqPlot", width='100%', height='100%')),
-                  tabPanel('Table', value='table', verbatimTextOutput("rulesTable")),
-                  tabPanel('Data Table', value='datatable', dataTableOutput("rulesDataTable"))
+                  tabPanel('Grouped', value='grouped', plotOutput("groupedPlot", width='100%', height='100%')),
+                  tabPanel('Matrix', value='matrix', plotlyOutput("matrixPlot", width='100%', height='100%'))
       )
     )
 
    )),
 
    server = function(input, output) {
+
+     output$xAxisSelectInput <- renderUI({
+        selectInput("xAxis","X Axis:",xNames())
+     })
+
+     output$yAxisSelectInput <- renderUI({
+        selectInput("yAxis","Y Axis:",yNames(),selected=yNames()[2])
+     })
+
+     output$cAxisSelectInput <- renderUI({
+        selectInput("cAxis","Shading:",cNames(),selected=cNames()[3])
+     })
 
      output$choose_columns <- renderUI({
        if(class(dataset)=='transactions'){
@@ -212,10 +238,13 @@ shiny_arules <- function (dataset, vars=5, supp=0.1, conf=0.5, lift=0.0) {
        if(class(dataset)=='transactions') {
            tr <- as(dataset[,input$cols], 'transactions')
 
-           if(length(cachedRules)==0  || length(input$cols) != cachedVars) {
+           if(length(cachedRules)==0  || length(input$cols) > cachedVars) {
                recalculateRules()
            }
            arAll <- cachedRules
+           if(length(input$cols) < cachedVars) {
+               arAll <- subset(arAll, subset=lhs %in% input$cols & rhs %in% input$cols)
+           }
            if(input$supp > cachedSupp) {
                arAll <- subset(arAll, subset=support>input$supp)
            } else if(input$supp < cachedSupp) {
@@ -241,33 +270,13 @@ shiny_arules <- function (dataset, vars=5, supp=0.1, conf=0.5, lift=0.0) {
                arAll <- cachedRules
            }
            if(input$rhsv=='Subset' & input$lhsv!='Subset'){
-             varsR <- character()
-             for(i in 1:length(input$colsRHS)){
-               tmp <- with(dataset, paste(input$colsRHS[i], '=', levels(as.factor(get(input$colsRHS[i]))), sep=''))
-               varsR <- c(varsR, tmp)
-             }
-             ar <- subset(arAll, subset=rhs %in% varsR)
+             ar <- subset(arAll, subset=rhs %in% input$colsRHS)
 
            } else if(input$lhsv=='Subset' & input$rhsv!='Subset') {
-             varsL <- character()
-             for(i in 1:length(input$colsLHS)){
-               tmp <- with(dataset, paste(input$colsLHS[i], '=', levels(as.factor(get(input$colsLHS[i]))), sep=''))
-               varsL <- c(varsL, tmp)
-             }
-             ar <- subset(arAll, subset=lhs %in% varsL)
+             ar <- subset(arAll, subset=lhs %in% input$colsLHS)
 
            } else if(input$lhsv=='Subset' & input$rhsv=='Subset') {
-             varsL <- character()
-             for(i in 1:length(input$colsLHS)){
-               tmp <- with(dataset, paste(input$colsLHS[i], '=', levels(as.factor(get(input$colsLHS[i]))), sep=''))
-               varsL <- c(varsL, tmp)
-             }
-             varsR <- character()
-             for(i in 1:length(input$colsRHS)){
-               tmp <- with(dataset, paste(input$colsRHS[i], '=', levels(as.factor(get(input$colsRHS[i]))), sep=''))
-               varsR <- c(varsR, tmp)
-             }
-             ar <- subset(arAll, subset=lhs %in% varsL & rhs %in% varsR)
+             ar <- subset(arAll, subset=lhs %in% input$colsLHS & rhs %in% input$colsRHS)
 
            } else {
              ar <- arAll
@@ -299,34 +308,15 @@ shiny_arules <- function (dataset, vars=5, supp=0.1, conf=0.5, lift=0.0) {
        } else if(class(dataset)=='rules') {
            cat(file=stderr(),'I was given rules and running the rules() method','\n')
            arAll <- subset(dataset, subset=support>input$supp)
+           arAll <- subset(arAll, subset=lhs %in% input$cols & rhs %in% input$cols)
            arAll <- subset(arAll, subset=confidence>input$conf)
            arAll <- subset(arAll, subset=lift>input$lift)
            if(input$rhsv=='Subset' & input$lhsv!='Subset'){
-             varsR <- character()
-             for(i in 1:length(input$colsRHS)){
-               tmp <- with(dataset, paste(input$colsRHS[i], '=', levels(as.factor(get(input$colsRHS[i]))), sep=''))
-               varsR <- c(varsR, tmp)
-             }
-             arAll <- subset(arAll, subset=rhs %in% varsR)
+             arAll <- subset(arAll, subset=rhs %in% input$colsRHS)
            } else if(input$lhsv=='Subset' & input$rhsv!='Subset') {
-             varsL <- character()
-             for(i in 1:length(input$colsLHS)){
-               tmp <- with(dataset, paste(input$colsLHS[i], '=', levels(as.factor(get(input$colsLHS[i]))), sep=''))
-               varsL <- c(varsL, tmp)
-             }
-             arAll <- subset(arAll, subset=lhs %in% varsL)
+             arAll <- subset(arAll, subset=lhs %in% input$colsLHS)
            } else if(input$lhsv=='Subset' & input$rhsv=='Subset') {
-             varsL <- character()
-             for(i in 1:length(input$colsLHS)){
-               tmp <- with(dataset, paste(input$colsLHS[i], '=', levels(as.factor(get(input$colsLHS[i]))), sep=''))
-               varsL <- c(varsL, tmp)
-             }
-                 varsR <- character()
-                 for(i in 1:length(input$colsRHS)){
-                   tmp <- with(dataset, paste(input$colsRHS[i], '=', levels(as.factor(get(input$colsRHS[i]))), sep=''))
-                   varsR <- c(varsR, tmp)
-                 }
-                 arAll <- subset(arAll, subset=lhs %in% varsL & rhs %in% varsR)
+                 arAll <- subset(arAll, subset=lhs %in% input$colsLHS & rhs %in% input$colsRHS)
            }
             arAll
        }
@@ -334,7 +324,19 @@ shiny_arules <- function (dataset, vars=5, supp=0.1, conf=0.5, lift=0.0) {
 
      # Rule length
      nR <- reactive({
-       nRule <- ifelse(input$samp == 'All Rules', length(rules()), input$nrule)
+       #TODO: change if allowing rule sampling
+       #nRule <- ifelse(input$samp == 'All Rules', length(rules()), input$nrule)
+       nRule <- length(rules())
+     })
+
+     xNames <- reactive({
+         colnames(quality(rules()))
+     })
+     yNames <- reactive({
+         colnames(quality(rules()))
+     })
+     cNames <- reactive({
+         colnames(quality(rules()))
      })
 
      # Present errors nicely to the user
@@ -359,16 +361,17 @@ shiny_arules <- function (dataset, vars=5, supp=0.1, conf=0.5, lift=0.0) {
        #TODO: make sure this is legit
        #plot(sort(ar, by=input$sort)[1:nR()], method='grouped', control=list(k=input$k))
        cat(file=stderr(),length(ar),'\n')
-       plot(sort(ar)[1:nR()], method='grouped', control=list(k=input$k))
+       #plot(sort(ar)[1:nR()], method='grouped', control=list(k=input$k), engine='interactive')
+       plot(ar, method='grouped', control=list(k=input$k))
      }, height=800, width=800)
 
      ## Graph Plot ##########################
-     output$graphPlot <- renderPlot({
+     output$graphPlot <- renderVisNetwork({
        ar <- rules()
        handleErrors()
-       #plot(sort(ar, by=input$sort)[1:nR()], method='graph', control=list(type=input$graphType))
-       plot(sort(ar)[1:nR()], method='graph', control=list(type=input$graphType))
-     }, height=800, width=800)
+       #plot(sort(ar)[1:nR()], method='graph', control=list(type=input$graphType))
+       plot(sort(ar)[1:nR()], method='graph', control=list(type=input$graphType),engine='htmlwidget')
+     })
 
      ## Scatter Plot ##########################
      
@@ -376,7 +379,8 @@ shiny_arules <- function (dataset, vars=5, supp=0.1, conf=0.5, lift=0.0) {
        ar <- rules()
        handleErrors()
        #plotly_arules(sort(ar, by=input$sort)[1:nR()], method='scatterplot')
-       plotly_arules(sort(ar)[1:nR()], method='scatterplot')
+       plotly_arules(sort(ar)[1:nR()], method='scatterplot',
+                     measure=c(input$xAxis,input$yAxis),shading=input$cAxis)
      })
      
 
@@ -393,13 +397,17 @@ shiny_arules <- function (dataset, vars=5, supp=0.1, conf=0.5, lift=0.0) {
        ar <- rules()
        handleErrors()
        #plotly_arules(sort(ar, by=input$sort)[1:nR()], method='matrix', control=list(reorder='similarity'))
-       plotly_arules(sort(ar)[1:nR()], method='matrix')
+       plotly_arules(sort(ar)[1:nR()], method='matrix',shading=input$cAxis)
      })
 
      ## Item Frequency Plot ##########################
      output$itemFreqPlot <- renderPlot({
-       trans <- as(dataset[,input$cols], 'transactions')
-       itemFrequencyPlot(trans)
+       if(class(dataset)=='transactions'){
+           trans <- as(dataset[,input$cols], 'transactions')
+           itemFrequencyPlot(trans,topN=input$itemFreqN)
+       } else if(class(dataset)=='rules'){
+           itemFrequencyPlot(items(rules()),topN=input$itemFreqN)
+       }
      }, height=800, width=800)
 
      ## Rules Data Table ##########################
