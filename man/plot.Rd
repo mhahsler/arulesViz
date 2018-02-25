@@ -27,7 +27,7 @@ and interactive HTML widget-based visualizations.
   \item{method}{ a string with value "scatterplot", "two-key plot", "matrix", 
   "matrix3D",  "mosaic", 
   "doubledecker", "graph", "paracoord" or "grouped", "iplots" selecting the 
-  visualization method (see Details).}
+  visualization method (see Details). Note that some methods may only be  available for rules or itemsets.}
   
   \item{measure}{ measure(s) of interestingness 
   (e.g., "support", "confidence", "lift", "order") used in the visualization. Some 
@@ -66,7 +66,8 @@ and interactive HTML widget-based visualizations.
 }
 \details{
 Most visualization techniques are described by Bruzzese and Davino (2008),
-however, we added more color shading, reordering and interactive features.
+however, we added more color shading, reordering and interactive features
+(see Hahsler, 2017).
 Many visualization methods take extra parameters as the \code{control} parameter list. Although, we have tried to keep control parameters consistent, the available control parameters vary (slightly) from visualization method to visualization method. A complete list of parameters with default
 values can be obtained using verbose mode. For example, 
 
@@ -172,11 +173,13 @@ the implementation by Martin Vodenicharov.
 \references{
 Bruzzese, D. and Davino, C. (2008), Visual Mining of Association Rules, in
 Visual Data Mining: Theory, Techniques and Tools for Visual Analytics,
-Springer-Verlag, pp. 103--122.
+Springer-Verlag, pp. 103-122.
 
-Hahsler, M. and Karpienko, R. (2016) Visualizing Association Rules in Hierarchical Groups. \emph{Journal of Business Economics,} accepted for publication, 2016.
+Hahsler, M. and Karpienko, R. (2016), Visualizing Association Rules in Hierarchical Groups. \emph{Journal of Business Economics,} 87(3):17-335, May 2016
 
-Hahsler, M. (2016) Grouping association rules using lift. In C. Iyigun, R. Moghaddess, and A. Oztekin, editors, 11th INFORMS Workshop on Data Mining and Decision Analytics (DM-DA 2016).
+Hahsler, M. (2016), Grouping association rules using lift. In C. Iyigun, R. Moghaddess, and A. Oztekin, editors, 11th INFORMS Workshop on Data Mining and Decision Analytics (DM-DA 2016).
+
+Hahsler, M. (2017), arulesViz: Visualizing association rules with R. \emph{R Journal,} 9(2):163-175, December 2017.
 }
 
 \seealso{
