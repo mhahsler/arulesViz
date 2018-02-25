@@ -71,7 +71,7 @@ inspectDT(rules)
 ## References
 
 * [Intro article](https://cran.r-project.org/package=arulesViz/vignettes/arulesViz.pdf) with complete examples by Michael Hahsler and Sudheer Chelluboina.
-* Michael Hahsler. [arulesViz: Visualizing association rules with R.](https://journal.r-project.org/archive/2017/RJ-2017-047/) _R Journal,_ 9(2):163--175, December 2017.
+* Michael Hahsler. [arulesViz: Visualizing association rules with R.](https://journal.r-project.org/archive/2017/RJ-2017-047/) _R Journal,_ 9(2):163-175, December 2017.
 * Michael Hahsler, Sudheer Chelluboina, Kurt Hornik, and Christian Buchta. [The arules R-package ecosystem: Analyzing interesting patterns from large transaction datasets.](http://jmlr.csail.mit.edu/papers/v12/hahsler11a.html) _Journal of Machine Learning Research,_ 12:1977-1981, 2011.
 
 

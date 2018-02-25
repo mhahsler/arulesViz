@@ -6,6 +6,9 @@
     the measure for used for shading.
 * measure and shading now auto-completes measure names.
 
+## Bug Fix
+* Fixed problem with quality measures (offset of 1) when creating igraph 
+    graphs (reported by sostahl). 
 
 # arulesViz 1.3-0 (09/07/2017)
 
