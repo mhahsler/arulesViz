@@ -80,6 +80,10 @@ depthbin <- function(ser, nbins=10, qtype=7, digits=10, labelRange=T, labelPct=F
 
 shiny_arules <- function (dataset, vars=0, supp=0.1, conf=0.5, lift=0.0) {
 
+  if (!requireNamespace("shiny",quietly=TRUE)) {
+      stop("Package shiny is required to run this method.",call.=FALSE)
+  }
+
   numVars <- length(colnames(dataset))
   minSupp <- 0
   maxSupp <- 1
@@ -89,6 +93,9 @@ shiny_arules <- function (dataset, vars=0, supp=0.1, conf=0.5, lift=0.0) {
   maxLift <- 1
   roundUp <- function(x,y) ceiling(x*(10^y))/(10^y)
   roundDown <- function(x,y) floor(x*(10^x))/(10^y)
+  xIndexCached <- "support"
+  yIndexCached <- "confidence"
+  zIndexCached <- "lift"
 
   if(class(dataset)=='rules') {
       minSupp <- roundDown(min(dataset@quality$support),3)
@@ -97,7 +104,9 @@ shiny_arules <- function (dataset, vars=0, supp=0.1, conf=0.5, lift=0.0) {
       maxConf <- roundUp(max(dataset@quality$confidence),3)
       minLift <- floor(min(dataset@quality$lift))
       maxLift <- ceiling(max(dataset@quality$lift))
-      vars <- length(itemLabels(dataset))
+      if(vars==0) {
+          vars <- length(itemLabels(dataset))
+      }
       supp <- minSupp
       conf <- minConf
       lift <- minLift
@@ -105,115 +114,133 @@ shiny_arules <- function (dataset, vars=0, supp=0.1, conf=0.5, lift=0.0) {
   }
   ## binning numeric data
   if(class(dataset)=='transactions'){
-      vars <- length(colnames(dataset))
+      if(vars==0){
+          vars <- length(colnames(dataset))
+      }
       for(i in 1:ncol(dataset)) {
         if(class(dataset[,i]) %in% c('numeric', 'integer')) dataset[,i] <- depthbin(dataset[,i], nbins=10)
       }
   }
 
   ## calling Shiny App
-  shinyApp(ui = shinyUI(pageWithSidebar(
-    headerPanel("Association Rules"),
+  shiny::shinyApp(ui = shiny::shinyUI(shiny::pageWithSidebar(
+    shiny::headerPanel("Association Rules"),
 
-    sidebarPanel(
+    shiny::sidebarPanel(
 
-      conditionalPanel(
+      shiny::conditionalPanel(
         condition = "input.samp=='Sample'",
-        numericInput("nrule", 'Number of Rules', 5, min=2), br()
+        shiny::numericInput("nrule", 'Number of Rules', 5, min=2), shiny::br()
       ),
 
 
-      conditionalPanel(
+      shiny::conditionalPanel(
         condition = "input.lhsv=='Subset'",
-        div(style='overflow-y:scroll;height:300px',
-        uiOutput("choose_lhs")), br()
+        shiny::uiOutput("choose_lhs"),shiny::br()
       ),
 
-      conditionalPanel(
+      shiny::conditionalPanel(
         condition = "input.rhsv=='Subset'",
-        div(style='overflow-y:scroll;height:300px',
-        uiOutput("choose_rhs")), br()
+        shiny::uiOutput("choose_rhs"), shiny::br()
       ),
 
-      conditionalPanel(
+      shiny::conditionalPanel(
         condition = "input.mytab=='grouped'",
-        sliderInput('k', label='Choose # of rule clusters', min=1, max=150, step=1, value=15), br()
+        shiny::sliderInput('k', label='Choose # of rule clusters', min=1, max=150, step=1, value=15), shiny::br()
       ),
-      conditionalPanel(
+      shiny::conditionalPanel(
         condition = "input.mytab=='itemFreq'",
-        sliderInput('itemFreqN', label='Choose # of items', min=1, max=numVars, step=1, value=30), br()
+        shiny::sliderInput('itemFreqN', label='Choose # of items', min=1, max=numVars, step=1, value=30), shiny::br()
       ),
 
-      conditionalPanel(
+      shiny::conditionalPanel(
         condition = "input.mytab %in%' c('grouped', 'graph', 'table', 'datatable', 'scatter', 'paracoord', 'matrix', 'itemFreq')",
-        #radioButtons('samp', label='Sample', choices=c('All Rules', 'Sample'), inline=T), br(),
-        div(style='overflow-y:scroll;height:300px',
-        uiOutput("choose_columns")), br(),
-        sliderInput("supp", "Support:", min = minSupp, max = maxSupp, value = supp , step = 1/10000),
-        sliderInput("conf", "Confidence:", min = minConf, max = maxConf, value = conf , step = 1/10000), 
-        sliderInput("lift", "Lift:", min = minLift, max = maxLift, value = lift , step = 1/10000), 
-        numericInput("minL", "Min. items per set:", 2), 
-        numericInput("maxL", "Max. items per set:", 3), 
-        uiOutput("xAxisSelectInput"),
-        uiOutput("yAxisSelectInput"),
-        uiOutput("cAxisSelectInput"),
-        radioButtons('lhsv', label='LHS variables', choices=c('All', 'Subset')), br(),
-        radioButtons('rhsv', label='RHS variables', choices=c('All', 'Subset')), br(),
-        downloadButton('downloadData', 'Download Rules as CSV')
+        shiny::uiOutput("choose_columns"), shiny::br(),
+        shiny::uiOutput("xAxisSelectInput"),
+        shiny::uiOutput("yAxisSelectInput"),
+        shiny::uiOutput("cAxisSelectInput"),
+        shiny::sliderInput("supp", "Support:", min = minSupp, max = maxSupp, value = supp , step = 1/10000),
+        shiny::sliderInput("conf", "Confidence:", min = minConf, max = maxConf, value = conf , step = 1/10000), 
+        shiny::sliderInput("lift", "Lift:", min = minLift, max = maxLift, value = lift , step = 1/10000), 
+        shiny::numericInput("minL", "Min. items per set:", 2), 
+        shiny::numericInput("maxL", "Max. items per set:", 3), 
+        shiny::radioButtons('lhsv', label='LHS variables', choices=c('All', 'Subset')), shiny::br(),
+        shiny::radioButtons('rhsv', label='RHS variables', choices=c('All', 'Subset')), shiny::br(),
+        shiny::downloadButton('downloadData', 'Download Rules as CSV')
       )
 
     ),
 
-    mainPanel(
-      tabsetPanel(id='mytab',
-                  tabPanel('Data Table', value='datatable', dataTableOutput("rulesDataTable")),
-                  tabPanel('Scatter', value='scatter', plotlyOutput("scatterPlot", width='100%', height='100%')),
-                  tabPanel('Graph', value='graph', visNetworkOutput("graphPlot", width='100%', height='100%')),
-                  tabPanel('ItemFreq', value='itemFreq', plotOutput("itemFreqPlot", width='100%', height='100%')),
-                  tabPanel('Grouped', value='grouped', plotOutput("groupedPlot", width='100%', height='100%')),
-                  tabPanel('Matrix', value='matrix', plotlyOutput("matrixPlot", width='100%', height='100%'))
+    shiny::mainPanel(
+      shiny::tabsetPanel(id='mytab',
+                  shiny::tabPanel('Data Table', value='datatable', shiny::dataTableOutput("rulesDataTable")),
+                  shiny::tabPanel('Scatter', value='scatter', plotlyOutput("scatterPlot", width='100%', height='100%')),
+                  shiny::tabPanel('Graph', value='graph', visNetworkOutput("graphPlot", width='100%', height='800px')),
+                  shiny::tabPanel('ItemFreq', value='itemFreq', shiny::plotOutput("itemFreqPlot", width='100%', height='100%')),
+                  shiny::tabPanel('Grouped', value='grouped', shiny::plotOutput("groupedPlot", width='100%', height='100%')),
+                  shiny::tabPanel('Matrix', value='matrix', plotlyOutput("matrixPlot", width='100%', height='100%'))
       )
     )
 
    )),
 
-   server = function(input, output) {
+   server = function(input, output, session) {
 
-     output$xAxisSelectInput <- renderUI({
-        selectInput("xAxis","X Axis:",xNames())
+     output$xAxisSelectInput <- shiny::renderUI({
+        if(input$mytab == 'scatter') {
+            shiny::selectInput("xAxis","X Axis:",xNames(),selected=xIndexCached)
+        }
      })
 
-     output$yAxisSelectInput <- renderUI({
-        selectInput("yAxis","Y Axis:",yNames(),selected=yNames()[2])
+     output$yAxisSelectInput <- shiny::renderUI({
+        if(input$mytab == 'scatter') {
+            shiny::selectInput("yAxis","Y Axis:",yNames(),selected=yIndexCached)
+        }
      })
 
-     output$cAxisSelectInput <- renderUI({
-        selectInput("cAxis","Shading:",cNames(),selected=cNames()[3])
+     output$cAxisSelectInput <- shiny::renderUI({
+        if(input$mytab == 'scatter' || input$mytab == 'matrix') {
+            shiny::selectInput("cAxis","Shading:",cNames(),selected=zIndexCached)
+        }
      })
 
-     output$choose_columns <- renderUI({
+     output$choose_columns <- shiny::renderUI({
        if(class(dataset)=='transactions'){
-           checkboxGroupInput("cols", "Choose variables:",
-                              choices  = colnames(dataset),
-                              selected = colnames(dataset)[1:vars])
+           shiny::selectizeInput('cols','Choose variables to remove:',
+                          colnames(dataset),
+                          multiple = TRUE)
        } else if(class(dataset)=='rules'){
-           checkboxGroupInput("cols", "Choose variables:",
-                              choices  = itemLabels(dataset),
-                              selected = itemLabels(dataset)[1:vars])
+           shiny::selectizeInput('cols','Choose variables:',
+                          colnames(dataset),
+                          multiple = TRUE)
        }
      })
 
 
-     output$choose_lhs <- renderUI({
-       checkboxGroupInput("colsLHS", "Choose LHS variables:",
-                          choices  = input$cols,
-                          selected = input$cols[1])
+     shiny::observe({
+         xIndexCached <<- input$xAxis
+     })
+     shiny::observe({
+         yIndexCached <<- input$yAxis
+     })
+     shiny::observe({
+         zIndexCached <<- input$cAxis
      })
 
-     output$choose_rhs <- renderUI({
-       checkboxGroupInput("colsRHS", "Choose RHS variables:",
-                          choices  = input$cols,
-                          selected = input$cols[1])
+     output$choose_lhs <- shiny::renderUI({
+       cols <- colnames(dataset)
+       cols <- cols[!(cols %in% input$cols)]
+       shiny::selectizeInput('colsLHS','Choose LHS variables to remove:',
+                      cols,
+                      multiple = TRUE)
+     })
+
+     output$choose_rhs <- shiny::renderUI({
+       cols <- colnames(dataset)
+       cols <- cols[!(cols %in% input$cols)]
+       shiny::selectizeInput('colsRHS','Choose RHS variables to remove:',
+                      cols,
+                      multiple = TRUE)
      })
 
      ## Extracting and Defining arules
@@ -224,35 +251,39 @@ shiny_arules <- function (dataset, vars=0, supp=0.1, conf=0.5, lift=0.0) {
      cachedLift <- 0
      cachedMinL <- 0
      cachedMaxL <- 0
-     recalculateRules <- reactive({
-       tr <- as(dataset[,input$cols], 'transactions')
+     recalculateRules <- shiny::reactive({
+       cols <- colnames(dataset)
+       cols <- cols[!(cols %in% input$cols)]
+       tr <- as(dataset[,cols], 'transactions')
        cachedRules <<- apriori(tr, parameter=list(support=as.numeric(input$supp), confidence=as.numeric(input$conf), minlen=input$minL, maxlen=input$maxL))
-       cachedVars <<- length(input$cols)
+       cachedVars <<- length(cols)
        cachedSupp <<- input$supp
        cachedConf <<- input$conf
        cachedLift <<- input$lift
        cachedMinL <<- input$minL
        cachedMaxL <<- input$maxL
      })
-     rules <- reactive({
+     rules <- shiny::reactive({
        if(class(dataset)=='transactions') {
-           tr <- as(dataset[,input$cols], 'transactions')
+           cols <- colnames(dataset)
+           cols <- cols[!(cols %in% input$cols)]
+           tr <- as(dataset[,cols], 'transactions')
 
-           if(length(cachedRules)==0  || length(input$cols) > cachedVars) {
+           if(length(cachedRules)==0  || length(cols) > cachedVars) {
                recalculateRules()
            }
            arAll <- cachedRules
-           if(length(input$cols) < cachedVars) {
-               arAll <- subset(arAll, subset=lhs %in% input$cols & rhs %in% input$cols)
+           if(length(cols) < cachedVars) {
+               arAll <- subset(arAll, subset=lhs %in% cols & rhs %in% cols)
            }
            if(input$supp > cachedSupp) {
-               arAll <- subset(arAll, subset=support>input$supp)
+               arAll <- subset(arAll, subset=arAll@quality$support>input$supp)
            } else if(input$supp < cachedSupp) {
                recalculateRules()
                arAll <- cachedRules
            }
            if(input$conf > cachedConf) {
-               arAll <- subset(arAll, subset=confidence>input$conf)
+               arAll <- subset(arAll, subset=arAll@quality$confidence>input$conf)
            } else if(input$conf < cachedConf) {
                recalculateRules()
                arAll <- cachedRules
@@ -270,47 +301,42 @@ shiny_arules <- function (dataset, vars=0, supp=0.1, conf=0.5, lift=0.0) {
                arAll <- cachedRules
            }
            if(input$rhsv=='Subset' & input$lhsv!='Subset'){
-             ar <- subset(arAll, subset=rhs %in% input$colsRHS)
+             rhsCols <- colnames(dataset)
+             rhsCols <- rhsCols[!(rhsCols %in% input$cols)]
+             rhsCols <- rhsCols[!(rhsCols %in% input$colsRHS)]
+             ar <- subset(arAll, subset=rhs %in% rhsCols)
 
            } else if(input$lhsv=='Subset' & input$rhsv!='Subset') {
-             ar <- subset(arAll, subset=lhs %in% input$colsLHS)
+             lhsCols <- colnames(dataset)
+             lhsCols <- lhsCols[!(lhsCols %in% input$cols)]
+             lhsCols <- lhsCols[!(lhsCols %in% input$colsLHS)]
+             ar <- subset(arAll, subset=lhs %in% lhsCols)
 
            } else if(input$lhsv=='Subset' & input$rhsv=='Subset') {
-             ar <- subset(arAll, subset=lhs %in% input$colsLHS & rhs %in% input$colsRHS)
+             rhsCols <- colnames(dataset)
+             rhsCols <- rhsCols[!(rhsCols %in% input$cols)]
+             rhsCols <- rhsCols[!(rhsCols %in% input$colsRHS)]
+             lhsCols <- colnames(dataset)
+             lhsCols <- lhsCols[!(lhsCols %in% input$cols)]
+             lhsCols <- lhsCols[!(lhsCols %in% input$colsLHS)]
+             ar <- subset(arAll, subset=lhs %in% lhsCols & rhs %in% rhsCols)
 
            } else {
              ar <- arAll
            }
 
-           # Catch the case of too few variables selected
-           tc <- tryCatch(
-             {
-               #quality(ar)$conviction <- interestMeasure(ar, 'conviction', transactions=tr)
-               #quality(ar)$hyperConfidence <- interestMeasure(ar, 'hyperConfidence', transactions=tr)
-               #quality(ar)$cosine <- interestMeasure(ar, 'cosine', transactions=tr)
-               #quality(ar)$chiSquare <- interestMeasure(ar, 'chiSquare', transactions=tr)
-               #quality(ar)$coverage <- interestMeasure(ar, 'coverage', transactions=tr)
-               #quality(ar)$doc <- interestMeasure(ar, 'doc', transactions=tr)
-               #quality(ar)$gini <- interestMeasure(ar, 'gini', transactions=tr)
-               #quality(ar)$hyperLift <- interestMeasure(ar, 'hyperLift', transactions=tr)
-             },
-             error=function(cond) {
-                 validate(
-                   need(0>1,cond)
-                 )
-             },
-             warning=function(cond) {
-             },
-             finally={
-             }
-           )
+           quality(ar) <- interestMeasure(ar, transactions=tr)
+           maxLift <<- ceiling(max(quality(ar)$lift))
+           shiny::updateSliderInput(session,"lift",value = input$lift, min=minLift, max=maxLift, step = 1/10000)
            ar
        } else if(class(dataset)=='rules') {
+           cols <- itemLabels(dataset)
+           cols <- cols[!(cols %in% input$cols)]
            cat(file=stderr(),'I was given rules and running the rules() method','\n')
            arAll <- subset(dataset, subset=support>input$supp)
-           arAll <- subset(arAll, subset=lhs %in% input$cols & rhs %in% input$cols)
-           arAll <- subset(arAll, subset=confidence>input$conf)
-           arAll <- subset(arAll, subset=lift>input$lift)
+           arAll <- subset(arAll, subset=lhs %in% cols & rhs %in% cols)
+           arAll <- subset(arAll, subset=arAll@quality$confidence>input$conf)
+           arAll <- subset(arAll, subset=arAll@quality$lift>input$lift)
            if(input$rhsv=='Subset' & input$lhsv!='Subset'){
              arAll <- subset(arAll, subset=rhs %in% input$colsRHS)
            } else if(input$lhsv=='Subset' & input$rhsv!='Subset') {
@@ -318,50 +344,43 @@ shiny_arules <- function (dataset, vars=0, supp=0.1, conf=0.5, lift=0.0) {
            } else if(input$lhsv=='Subset' & input$rhsv=='Subset') {
                  arAll <- subset(arAll, subset=lhs %in% input$colsLHS & rhs %in% input$colsRHS)
            }
+           shiny::validate(
+               shiny::need( length(items(arAll))!=0,"No matching rules found")
+           )
+           maxLift <<- ceiling(max(quality(ar)$lift))
+           shiny::updateSliderInput(session,"lift",value = input$lift, min=minLift, max=maxLift, step = 1/10000)
             arAll
        }
      })
 
      # Rule length
-     nR <- reactive({
-       #TODO: change if allowing rule sampling
-       #nRule <- ifelse(input$samp == 'All Rules', length(rules()), input$nrule)
+     nR <- shiny::reactive({
        nRule <- length(rules())
      })
 
-     xNames <- reactive({
+     xNames <- shiny::reactive({
          colnames(quality(rules()))
      })
-     yNames <- reactive({
+     yNames <- shiny::reactive({
          colnames(quality(rules()))
      })
-     cNames <- reactive({
+     cNames <- shiny::reactive({
          colnames(quality(rules()))
      })
 
      # Present errors nicely to the user
-     handleErrors <- reactive({
+     handleErrors <- shiny::reactive({
        ar <- rules()
-       #validate(
-                #need(nR()>=2,'Please increase the number of rules')
-       #)
-       # This needs to be here because we slice the existing rules [1:nR()]
-       validate(
-                need(nR()<=length(ar),'Please decrease the number of rules')
+       shiny::validate(
+                shiny::need(nR()<=length(ar),'Please decrease the number of rules')
        )
-       #validate(
-                #need(length(input$cols)>0,'Please increase the number of variables')
-       #)
      })
 
      ## Grouped Plot #########################
-     output$groupedPlot <- renderPlot({
+     output$groupedPlot <- shiny::renderPlot({
        ar <- rules()
        handleErrors()
-       #TODO: make sure this is legit
-       #plot(sort(ar, by=input$sort)[1:nR()], method='grouped', control=list(k=input$k))
        cat(file=stderr(),length(ar),'\n')
-       #plot(sort(ar)[1:nR()], method='grouped', control=list(k=input$k), engine='interactive')
        plot(ar, method='grouped', control=list(k=input$k))
      }, height=800, width=800)
 
@@ -369,8 +388,18 @@ shiny_arules <- function (dataset, vars=0, supp=0.1, conf=0.5, lift=0.0) {
      output$graphPlot <- renderVisNetwork({
        ar <- rules()
        handleErrors()
-       #plot(sort(ar)[1:nR()], method='graph', control=list(type=input$graphType))
-       plot(sort(ar)[1:nR()], method='graph', control=list(type=input$graphType),engine='htmlwidget')
+       plt <- plot(sort(ar)[1:nR()], method='graph', control=list(type=input$graphType),engine='htmlwidget')
+       sz <- htmlwidgets::sizingPolicy(
+            viewer.paneHeight=1000,
+            browser.defaultHeight=1000,
+            knitr.defaultHeight=1000,
+            defaultHeight=1000,defaultWidth=1000,
+            browser.fill=TRUE
+            )
+       plt$sizingPolicy <- sz
+       plt$height <- 1000
+       plt$x$height <- 1000
+       plt
      })
 
      ## Scatter Plot ##########################
@@ -378,17 +407,15 @@ shiny_arules <- function (dataset, vars=0, supp=0.1, conf=0.5, lift=0.0) {
      output$scatterPlot <- renderPlotly({
        ar <- rules()
        handleErrors()
-       #plotly_arules(sort(ar, by=input$sort)[1:nR()], method='scatterplot')
        plotly_arules(sort(ar)[1:nR()], method='scatterplot',
                      measure=c(input$xAxis,input$yAxis),shading=input$cAxis)
      })
      
 
      ## Parallel Coordinates Plot ###################
-     output$paracoordPlot <- renderPlot({
+     output$paracoordPlot <- shiny::renderPlot({
        ar <- rules()
        handleErrors()
-       #plot(sort(ar, by=input$sort)[1:nR()], method='paracoord')
        plot(sort(ar)[1:nR()], method='paracoord')
      }, height=800, width=800)
 
@@ -396,14 +423,15 @@ shiny_arules <- function (dataset, vars=0, supp=0.1, conf=0.5, lift=0.0) {
      output$matrixPlot <- renderPlotly({
        ar <- rules()
        handleErrors()
-       #plotly_arules(sort(ar, by=input$sort)[1:nR()], method='matrix', control=list(reorder='similarity'))
        plotly_arules(sort(ar)[1:nR()], method='matrix',shading=input$cAxis)
      })
 
      ## Item Frequency Plot ##########################
-     output$itemFreqPlot <- renderPlot({
+     output$itemFreqPlot <- shiny::renderPlot({
        if(class(dataset)=='transactions'){
-           trans <- as(dataset[,input$cols], 'transactions')
+           cols <- colnames(dataset)
+           cols <- cols[!(cols %in% input$cols)]
+           trans <- as(dataset[,cols], 'transactions')
            itemFrequencyPlot(trans,topN=input$itemFreqN)
        } else if(class(dataset)=='rules'){
            itemFrequencyPlot(items(rules()),topN=input$itemFreqN)
@@ -411,7 +439,7 @@ shiny_arules <- function (dataset, vars=0, supp=0.1, conf=0.5, lift=0.0) {
      }, height=800, width=800)
 
      ## Rules Data Table ##########################
-     output$rulesDataTable <- renderDataTable({
+     output$rulesDataTable <- shiny::renderDataTable({
        ar <- rules()
        handleErrors()
        rulesdt <- rules2df(ar)
@@ -419,14 +447,14 @@ shiny_arules <- function (dataset, vars=0, supp=0.1, conf=0.5, lift=0.0) {
      })
 
      ## Rules Printed ########################
-     output$rulesTable <- renderPrint({
+     output$rulesTable <- shiny::renderPrint({
        ar <- rules()
        handleErrors()
        inspect(sort(ar))
      })
 
      ## Download data to csv ########################
-     output$downloadData <- downloadHandler(
+     output$downloadData <- shiny::downloadHandler(
        filename = 'arules_data.csv',
        content = function(file) {
          write.csv(rules2df(rules()), file)

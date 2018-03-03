@@ -1,0 +1,547 @@
+
+R version 3.4.2 (2017-09-28) -- "Short Summer"
+Copyright (C) 2017 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> pkgname <- "arulesViz"
+> source(file.path(R.home("share"), "R", "examples-header.R"))
+> options(warn = 1)
+> base::assign(".ExTimings", "arulesViz-Ex.timings", pos = 'CheckExEnv')
+> base::cat("name\tuser\tsystem\telapsed\n", file=base::get(".ExTimings", pos = 'CheckExEnv'))
+> base::assign(".format_ptime",
++ function(x) {
++   if(!is.na(x[4L])) x[1L] <- x[1L] + x[4L]
++   if(!is.na(x[5L])) x[2L] <- x[2L] + x[5L]
++   options(OutDec = '.')
++   format(x[1L:3L], digits = 7L)
++ },
++ pos = 'CheckExEnv')
+> 
+> ### * </HEADER>
+> library('arulesViz')
+Loading required package: arules
+Loading required package: Matrix
+
+Attaching package: ‘arules’
+
+The following objects are masked from ‘package:base’:
+
+    abbreviate, write
+
+Loading required package: grid
+> 
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> cleanEx()
+> nameEx("inspectDT")
+> ### * inspectDT
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: inspectDT
+> ### Title: Inspect Associations Interactively Using datatable
+> ### Aliases: inspect inspectDT datatable
+> ### Keywords: print
+> 
+> ### ** Examples
+> 
+> ## Not run: 
+> ##D data(Groceries)
+> ##D rules <- apriori(Groceries, parameter=list(support=0.005, confidence=0.5))
+> ##D rules
+> ##D 
+> ##D inspectDT(rules)
+> ##D 
+> ##D ### save table as a html page.
+> ##D p <- inspectDT(rules)
+> ##D htmlwidgets::saveWidget(p, "arules.html", selfcontained = FALSE)
+> ##D browseURL("arules.html")
+> ## End(Not run)
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("inspectDT", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("plot")
+> ### * plot
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: plot
+> ### Title: Visualize Association Rules and Itemsets
+> ### Aliases: plot plot.itemsets plot.rules plot.grouped_matrix
+> ### Keywords: hplot
+> 
+> ### ** Examples
+> 
+> data(Groceries)
+> rules <- apriori(Groceries, parameter=list(support=0.001, confidence=0.8))
+Apriori
+
+Parameter specification:
+ confidence minval smax arem  aval originalSupport maxtime support minlen
+        0.8    0.1    1 none FALSE            TRUE       5   0.001      1
+ maxlen target   ext
+     10  rules FALSE
+
+Algorithmic control:
+ filter tree heap memopt load sort verbose
+    0.1 TRUE TRUE  FALSE TRUE    2    TRUE
+
+Absolute minimum support count: 9 
+
+set item appearances ...[0 item(s)] done [0.00s].
+set transactions ...[169 item(s), 9835 transaction(s)] done [0.00s].
+sorting and recoding items ... [157 item(s)] done [0.00s].
+creating transaction tree ... done [0.00s].
+checking subsets of size 1 2 3 4 5 6 done [0.01s].
+writing ... [410 rule(s)] done [0.00s].
+creating S4 object  ... done [0.00s].
+> rules
+set of 410 rules 
+> 
+> ## Scatterplot
+> ## -----------
+> plot(rules)
+To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.
+> 
+> ## Scatterplot with custom colors
+> library(colorspace) # for sequential_hcl
+> plot(rules, control = list(col=sequential_hcl(100)))
+To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.
+> plot(rules, col=sequential_hcl(100))
+To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.
+> plot(rules, col=grey.colors(50, alpha =.8))
+To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.
+> 
+> ## See all control options using verbose
+> plot(rules, verbose = TRUE)
+Used control parameters:
+main	 =  Scatter plot for 410 rules
+engine	 =  default
+pch	 =  19
+cex	 =  0.5
+xlim	 =  NULL
+ylim	 =  NULL
+zlim	 =  NULL
+alpha	 =  NULL
+col	 =  c("#EE0000FF", "#EE0303FF", "#EE0606FF", "#EE0909FF", "#EE0C0CFF", "#EE0F0FFF", "#EE1212FF", "#EE1515FF", "#EE1818FF", "#EE1B1BFF", "#EE1E1EFF", "#EE2222FF", "#EE2525FF", "#EE2828FF", "#EE2B2BFF", "#EE2E2EFF", "#EE3131FF", "#EE3434FF", "#EE3737FF", "#EE3A3AFF", "#EE3D3DFF", "#EE4040FF", "#EE4444FF", "#EE4747FF", "#EE4A4AFF", "#EE4D4DFF", "#EE5050FF", "#EE5353FF", "#EE5656FF", "#EE5959FF", "#EE5C5CFF", "#EE5F5FFF", "#EE6262FF", "#EE6666FF", "#EE6969FF", "#EE6C6CFF", "#EE6F6FFF", "#EE7272FF", "#EE7575FF",  "#EE7878FF", "#EE7B7BFF", "#EE7E7EFF", "#EE8181FF", "#EE8484FF", "#EE8888FF", "#EE8B8BFF", "#EE8E8EFF", "#EE9191FF", "#EE9494FF", "#EE9797FF", "#EE9999FF", "#EE9B9BFF", "#EE9D9DFF", "#EE9F9FFF", "#EEA0A0FF", "#EEA2A2FF", "#EEA4A4FF", "#EEA5A5FF", "#EEA7A7FF", "#EEA9A9FF", "#EEABABFF", "#EEACACFF", "#EEAEAEFF", "#EEB0B0FF", "#EEB1B1FF", "#EEB3B3FF", "#EEB5B5FF", "#EEB7B7FF", "#EEB8B8FF", "#EEBABAFF", "#EEBCBCFF", "#EEBDBDFF", "#EEBFBFFF", "#EEC1C1FF", "#EEC3C3FF", "#EEC4C4FF", "#EEC6C6FF", "#EEC8C8FF",  "#EEC9C9FF", "#EECBCBFF", "#EECDCDFF", "#EECFCFFF", "#EED0D0FF", "#EED2D2FF", "#EED4D4FF", "#EED5D5FF", "#EED7D7FF", "#EED9D9FF", "#EEDBDBFF", "#EEDCDCFF", "#EEDEDEFF", "#EEE0E0FF", "#EEE1E1FF", "#EEE3E3FF", "#EEE5E5FF", "#EEE7E7FF", "#EEE8E8FF", "#EEEAEAFF", "#EEECECFF", "#EEEEEEFF")
+newpage	 =  TRUE
+jitter	 =  NA
+verbose	 =  TRUE
+To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.
+> 
+> ## Interactive plot (selected rules are returned)
+> ## Not run: 
+> ##D sel <- plot(rules, engine = "interactive")
+> ## End(Not run)
+> 
+> ## Create a html widget for interactive visualization
+> ## Not run: 
+> ##D plot(rules, engine = "htmlwidget")
+> ## End(Not run)
+> 
+> ## Two-key plot (is a scatterplot with shading = "order")
+> plot(rules, method = "two-key plot")
+To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.
+> 
+>   
+> ## Matrix shading
+> ## --------------
+> 
+> ## The following techniques work better with fewer rules
+> subrules <- subset(rules, lift>5)
+> subrules
+set of 32 rules 
+> 
+> ## 2D matrix with shading
+> plot(subrules, method="matrix")
+Itemsets in Antecedent (LHS)
+ [1] "{liquor,red/blush wine}"                                         
+ [2] "{citrus fruit,other vegetables,soda,fruit/vegetable juice}"      
+ [3] "{tropical fruit,other vegetables,whole milk,yogurt,oil}"         
+ [4] "{citrus fruit,grapes,fruit/vegetable juice}"                     
+ [5] "{other vegetables,whole milk,yogurt,rice}"                       
+ [6] "{tropical fruit,other vegetables,whole milk,oil}"                
+ [7] "{ham,pip fruit,other vegetables,yogurt}"                         
+ [8] "{beef,citrus fruit,tropical fruit,other vegetables}"             
+ [9] "{root vegetables,butter,cream cheese }"                          
+[10] "{tropical fruit,whole milk,butter,sliced cheese}"                
+[11] "{other vegetables,curd,whipped/sour cream,cream cheese }"        
+[12] "{tropical fruit,other vegetables,butter,white bread}"            
+[13] "{sausage,pip fruit,sliced cheese}"                               
+[14] "{tropical fruit,whole milk,butter,curd}"                         
+[15] "{tropical fruit,butter,white bread}"                             
+[16] "{tropical fruit,butter,margarine}"                               
+[17] "{whole milk,curd,whipped/sour cream,cream cheese }"              
+[18] "{whipped/sour cream,cream cheese ,margarine}"                    
+[19] "{beef,tropical fruit,butter}"                                    
+[20] "{pork,tropical fruit,fruit/vegetable juice}"                     
+[21] "{tropical fruit,other vegetables,butter,curd}"                   
+[22] "{tropical fruit,root vegetables,whole milk,margarine}"           
+[23] "{other vegetables,butter milk,pastry}"                           
+[24] "{whipped/sour cream,pastry,fruit/vegetable juice}"               
+[25] "{citrus fruit,root vegetables,soft cheese}"                      
+[26] "{pip fruit,whipped/sour cream,brown bread}"                      
+[27] "{tropical fruit,grapes,whole milk,yogurt}"                       
+[28] "{ham,tropical fruit,pip fruit,yogurt}"                           
+[29] "{ham,tropical fruit,pip fruit,whole milk}"                       
+[30] "{tropical fruit,butter,whipped/sour cream,fruit/vegetable juice}"
+[31] "{whole milk,rolls/buns,soda,newspapers}"                         
+[32] "{citrus fruit,tropical fruit,root vegetables,whipped/sour cream}"
+Itemsets in Consequent (RHS)
+[1] "{other vegetables}" "{yogurt}"           "{tropical fruit}"  
+[4] "{root vegetables}"  "{bottled beer}"    
+> 
+> ## 3D matrix
+> plot(subrules, method="matrix", engine = "3d")
+Itemsets in Antecedent (LHS)
+ [1] "{liquor,red/blush wine}"                                         
+ [2] "{citrus fruit,other vegetables,soda,fruit/vegetable juice}"      
+ [3] "{tropical fruit,other vegetables,whole milk,yogurt,oil}"         
+ [4] "{citrus fruit,grapes,fruit/vegetable juice}"                     
+ [5] "{other vegetables,whole milk,yogurt,rice}"                       
+ [6] "{tropical fruit,other vegetables,whole milk,oil}"                
+ [7] "{ham,pip fruit,other vegetables,yogurt}"                         
+ [8] "{beef,citrus fruit,tropical fruit,other vegetables}"             
+ [9] "{root vegetables,butter,cream cheese }"                          
+[10] "{tropical fruit,whole milk,butter,sliced cheese}"                
+[11] "{other vegetables,curd,whipped/sour cream,cream cheese }"        
+[12] "{tropical fruit,other vegetables,butter,white bread}"            
+[13] "{sausage,pip fruit,sliced cheese}"                               
+[14] "{tropical fruit,whole milk,butter,curd}"                         
+[15] "{tropical fruit,butter,white bread}"                             
+[16] "{tropical fruit,butter,margarine}"                               
+[17] "{whole milk,curd,whipped/sour cream,cream cheese }"              
+[18] "{whipped/sour cream,cream cheese ,margarine}"                    
+[19] "{beef,tropical fruit,butter}"                                    
+[20] "{pork,tropical fruit,fruit/vegetable juice}"                     
+[21] "{tropical fruit,other vegetables,butter,curd}"                   
+[22] "{tropical fruit,root vegetables,whole milk,margarine}"           
+[23] "{other vegetables,butter milk,pastry}"                           
+[24] "{whipped/sour cream,pastry,fruit/vegetable juice}"               
+[25] "{citrus fruit,root vegetables,soft cheese}"                      
+[26] "{pip fruit,whipped/sour cream,brown bread}"                      
+[27] "{tropical fruit,grapes,whole milk,yogurt}"                       
+[28] "{ham,tropical fruit,pip fruit,yogurt}"                           
+[29] "{ham,tropical fruit,pip fruit,whole milk}"                       
+[30] "{tropical fruit,butter,whipped/sour cream,fruit/vegetable juice}"
+[31] "{whole milk,rolls/buns,soda,newspapers}"                         
+[32] "{citrus fruit,tropical fruit,root vegetables,whipped/sour cream}"
+Itemsets in Consequent (RHS)
+[1] "{other vegetables}" "{yogurt}"           "{tropical fruit}"  
+[4] "{root vegetables}"  "{bottled beer}"    
+> 
+> ## Matrix with two measures
+> plot(subrules, method="matrix", shading=c("lift", "confidence"))
+Itemsets in Antecedent (LHS)
+ [1] "{liquor,red/blush wine}"                                         
+ [2] "{citrus fruit,root vegetables,soft cheese}"                      
+ [3] "{citrus fruit,grapes,fruit/vegetable juice}"                     
+ [4] "{other vegetables,butter milk,pastry}"                           
+ [5] "{sausage,pip fruit,sliced cheese}"                               
+ [6] "{whipped/sour cream,cream cheese ,margarine}"                    
+ [7] "{root vegetables,butter,cream cheese }"                          
+ [8] "{tropical fruit,butter,white bread}"                             
+ [9] "{beef,tropical fruit,butter}"                                    
+[10] "{pork,tropical fruit,fruit/vegetable juice}"                     
+[11] "{pip fruit,whipped/sour cream,brown bread}"                      
+[12] "{tropical fruit,butter,margarine}"                               
+[13] "{whipped/sour cream,pastry,fruit/vegetable juice}"               
+[14] "{other vegetables,whole milk,yogurt,rice}"                       
+[15] "{tropical fruit,grapes,whole milk,yogurt}"                       
+[16] "{ham,tropical fruit,pip fruit,yogurt}"                           
+[17] "{ham,pip fruit,other vegetables,yogurt}"                         
+[18] "{ham,tropical fruit,pip fruit,whole milk}"                       
+[19] "{tropical fruit,whole milk,butter,sliced cheese}"                
+[20] "{tropical fruit,other vegetables,whole milk,oil}"                
+[21] "{other vegetables,curd,whipped/sour cream,cream cheese }"        
+[22] "{whole milk,curd,whipped/sour cream,cream cheese }"              
+[23] "{tropical fruit,other vegetables,butter,white bread}"            
+[24] "{beef,citrus fruit,tropical fruit,other vegetables}"             
+[25] "{tropical fruit,other vegetables,butter,curd}"                   
+[26] "{tropical fruit,whole milk,butter,curd}"                         
+[27] "{tropical fruit,root vegetables,whole milk,margarine}"           
+[28] "{tropical fruit,butter,whipped/sour cream,fruit/vegetable juice}"
+[29] "{whole milk,rolls/buns,soda,newspapers}"                         
+[30] "{citrus fruit,other vegetables,soda,fruit/vegetable juice}"      
+[31] "{citrus fruit,tropical fruit,root vegetables,whipped/sour cream}"
+[32] "{tropical fruit,other vegetables,whole milk,yogurt,oil}"         
+Itemsets in Consequent (RHS)
+[1] "{bottled beer}"     "{other vegetables}" "{tropical fruit}"  
+[4] "{yogurt}"           "{root vegetables}" 
+> 
+> ## Interactive matrix plot (default interactive and as a html widget)
+> ## Not run: 
+> ##D plot(subrules, method="matrix", engine="interactive")
+> ##D plot(subrules, method="matrix", engine="htmlwidget")
+> ## End(Not run)
+> 
+> ## Grouped matrix plot
+> ## -------------------
+> 
+> plot(rules, method="grouped matrix")
+> plot(rules, method="grouped matrix", 
++   col = grey.colors(10), 
++   gp_labels = gpar(col = "blue", cex=1, fontface="italic"))
+> 
+> ## Interactive grouped matrix plot
+> ## Not run: 
+> ##D sel <- plot(rules, method="grouped", engine = "interactive")
+> ## End(Not run)
+> 
+> ## Graphs
+> ## ------
+> 
+> ## Graphs only work well with very few rules
+> subrules2 <- sample(subrules, 25)
+> 
+> plot(subrules2, method="graph")
+> 
+> ## Custom colors
+> plot(subrules2, method="graph", 
++   nodeCol = grey.colors(10), edgeCol = grey(.7), alpha = 1)
+> 
+> ## igraph layout generators can be used (see ? igraph::layout_)
+> plot(subrules2, method="graph", layout=igraph::in_circle())
+> plot(subrules2, method="graph", 
++   layout=igraph::with_graphopt(spring.const=5, mass=50))
+> 
+> ## Graph rendering using Graphviz
+> ## Not run: 
+> ##D plot(subrules2, method="graph", engine="graphviz")
+> ## End(Not run)
+> 
+> ## Default interactive plot (using igraph's tkplot)
+> ## Not run: 
+> ##D plot(subrules2, method="graph", engine = "interactive")
+> ## End(Not run)
+> 
+> ## Interactive graph as a html widget (using igraph layout)
+> ## Not run: 
+> ##D plot(subrules2, method="graph", engine="htmlwidget")
+> ##D plot(subrules2, method="graph", engine="htmlwidget", 
+> ##D   igraphLayout = "layout_in_circle")
+> ## End(Not run)
+> 
+> ## Parallel coordinates plot
+> ## -------------------------
+> 
+> plot(subrules2, method="paracoord")
+> plot(subrules2, method="paracoord", reorder=TRUE)
+> 
+> ## Doubledecker plot 
+> ## -----------------
+> 
+> ## Note: only works for a single rule
+> oneRule <- sample(rules, 1)
+> inspect(oneRule)
+    lhs                                    rhs      support     confidence
+[1] {tropical fruit,butter,white bread} => {yogurt} 0.001118454 0.8461538 
+    lift     count
+[1] 6.065542 11   
+> plot(oneRule, method="doubledecker", data = Groceries)
+> 
+> ## Itemsets
+> ## --------
+> 
+> itemsets <- eclat(Groceries, parameter = list(support = 0.02, minlen=2))
+Eclat
+
+parameter specification:
+ tidLists support minlen maxlen            target   ext
+    FALSE    0.02      2     10 frequent itemsets FALSE
+
+algorithmic control:
+ sparse sort verbose
+      7   -2    TRUE
+
+Absolute minimum support count: 196 
+
+create itemset ... 
+set transactions ...[169 item(s), 9835 transaction(s)] done [0.00s].
+sorting and recoding items ... [59 item(s)] done [0.00s].
+creating sparse bit matrix ... [59 row(s), 9835 column(s)] done [0.00s].
+writing  ... [63 set(s)] done [0.00s].
+Creating S4 object  ... done [0.00s].
+> plot(itemsets)
+To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.
+> plot(itemsets, method="graph")
+> plot(itemsets, method="paracoord", alpha=.5, reorder=TRUE)
+> 
+> ## Add more quality measures to use for the scatterplot
+> ## ----------------------------------------------------
+> 
+> quality(itemsets) <- interestMeasure(itemsets, trans=Groceries)
+> head(quality(itemsets))
+     support allConfidence crossSupportRatio     lift
+1 0.02043721    0.07998408         0.1882212 1.663094
+2 0.02125064    0.08316753         0.2053323 1.585180
+3 0.02613116    0.10226821         0.2085157 1.919481
+4 0.02216573    0.08674891         0.2256267 1.504719
+5 0.02165735    0.11192853         0.2979506 1.941476
+6 0.02053889    0.08038201         0.2307998 1.363029
+> plot(itemsets, measure=c("support", "allConfidence"), shading="lift")
+To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.
+> 
+> ## Save HTML widget as web page
+> ## ----------------------------
+> ## Not run: 
+> ##D p <- plot(rules, engine = "html")
+> ##D htmlwidgets::saveWidget(p, "arules.html", selfcontained = FALSE)
+> ##D browseURL("arules.html")
+> ## End(Not run)
+> # Note: selfcontained seems to make the browser slow.
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("plot", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+
+detaching ‘package:colorspace’
+
+> nameEx("plotly_arules")
+> ### * plotly_arules
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: plotly_arules
+> ### Title: Interactive Scatter Plot for Association Rules using plotly
+> ### Aliases: plotly plotly_arules
+> ### Keywords: hplot
+> 
+> ### ** Examples
+> 
+> ## Not run: 
+> ##D  
+> ##D library(plotly)
+> ##D data(Groceries)
+> ##D rules <- apriori(Groceries, parameter=list(support=0.001, confidence=0.8))
+> ##D rules
+> ##D 
+> ##D # interactive scatter plot visualization
+> ##D plotly_arules(rules)
+> ##D plotly_arules(rules, measure = c("support", "lift"), shading = "confidence")
+> ##D plotly_arules(rules, method = "two-key plot")
+> ##D 
+> ##D # add jitter, change color and markers and add a title
+> ##D plotly_arules(rules, jitter = 10, 
+> ##D   marker = list(opacity = .7, size = 10, symbol = 1), 
+> ##D   colors = c("blue", "green")) ##D 
+> ##D 
+> ##D 
+> ##D # save a plot as a html page
+> ##D p <- plotly_arules(rules)
+> ##D htmlwidgets::saveWidget(p, "arules.html", selfcontained = FALSE)
+> ##D browseURL("arules.html")
+> ##D # Note: selfcontained seems to make the browser slow.
+> ##D 
+> ##D # interactive matrix visualization
+> ##D plotly_arules(rules, method = "matrix") ##D 
+> ## End(Not run)
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("plotly_arules", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("save")
+> ### * save
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: saveAsGraph
+> ### Title: Save rules or itemsets as a graph description
+> ### Aliases: saveAsGraph
+> ### Keywords: file
+> 
+> ### ** Examples
+> 
+> data("Groceries")
+> rules <- apriori(Groceries, parameter=list(support=0.01, confidence=0.5))
+Apriori
+
+Parameter specification:
+ confidence minval smax arem  aval originalSupport maxtime support minlen
+        0.5    0.1    1 none FALSE            TRUE       5    0.01      1
+ maxlen target   ext
+     10  rules FALSE
+
+Algorithmic control:
+ filter tree heap memopt load sort verbose
+    0.1 TRUE TRUE  FALSE TRUE    2    TRUE
+
+Absolute minimum support count: 98 
+
+set item appearances ...[0 item(s)] done [0.00s].
+set transactions ...[169 item(s), 9835 transaction(s)] done [0.00s].
+sorting and recoding items ... [88 item(s)] done [0.00s].
+creating transaction tree ... done [0.00s].
+checking subsets of size 1 2 3 4 done [0.00s].
+writing ... [15 rule(s)] done [0.00s].
+creating S4 object  ... done [0.00s].
+> 
+> saveAsGraph(rules, "rules.graphml")
+> 
+> ## clean up
+> unlink("rules.graphml")
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("save", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("shiny")
+> ### * shiny
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: shiny
+> ### Title: Visualize Association Rules and Itemsets with Shiny
+> ### Aliases: shiny_arules
+> 
+> ### ** Examples
+> 
+> data(Adult)
+> ## Not run: 
+> ##D   shiny_arules(Adult)
+> ## End(Not run)
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("shiny", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> ### * <FOOTER>
+> ###
+> options(digits = 7L)
+> base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
+Time elapsed:  3.363 0.072 3.434 0 0 
+> grDevices::dev.off()
+null device 
+          1 
+> ###
+> ### Local variables: ***
+> ### mode: outline-minor ***
+> ### outline-regexp: "\\(> \\)?### [*]+" ***
+> ### End: ***
+> quit('no')

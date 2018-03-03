@@ -1,0 +1,8 @@
+inspectDT               Inspect Associations Interactively Using
+                        datatable
+plot                    Visualize Association Rules and Itemsets
+plotly_arules           Interactive Scatter Plot for Association Rules
+                        using plotly
+saveAsGraph             Save rules or itemsets as a graph description
+shiny_arules            Visualize Association Rules and Itemsets with
+                        Shiny

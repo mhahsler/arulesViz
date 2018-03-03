@@ -1,0 +1,192 @@
+Hmm ... looks like a package
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./Rd2.tex
+LaTeX2e <2017-04-15>
+Babel <3.12> and hyphenation patterns for 3 language(s) loaded.
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2014/09/29 v1.4h Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/bk10.clo))
+(/usr/share/R/share/texmf/tex/latex/Rd.sty
+(/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/bm.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/base/alltt.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/verbatim.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/base/textcomp.sty
+(/usr/share/texlive/texmf-dist/tex/latex/base/ts1enc.def))
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1enc.def))
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/times.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
+(/usr/share/texlive/texmf-dist/tex/latex/base/utf8.def
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1enc.dfu)
+(/usr/share/texlive/texmf-dist/tex/latex/base/ot1enc.dfu)
+(/usr/share/texlive/texmf-dist/tex/latex/base/omsenc.dfu)
+(/usr/share/texlive/texmf-dist/tex/latex/base/ts1enc.dfu))
+(/usr/share/texlive/texmf-dist/tex/latex/base/latin1.def))
+No file Rd2.aux.
+(/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1ptm.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1pcr.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1phv.fd)
+No file Rd2.toc.
+(/usr/share/texlive/texmf-dist/tex/latex/base/utf8.def) [1{/var/lib/texmf/fonts
+/map/pdftex/updmap/pdftex.map}]
+Overfull \hbox (4.38043pt too wide) in paragraph at lines 77--77
+ []\T1/pcr/m/n/9 rules <- apriori(Groceries, parameter=list(support=0.005, conf
+idence=0.5))[] 
+(/usr/share/texlive/texmf-dist/tex/latex/base/utf8.def) [2]
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1pcr.fd)
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 112--112
+ []    \T1/pcr/m/n/10 interactive = NULL, engine = "default", data = NULL, cont
+rol = NULL, ...)[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 115--115
+ []    \T1/pcr/m/n/10 interactive = NULL, engine = "default", data = NULL, cont
+rol = NULL, ...)[] 
+[3]
+Overfull \hbox (0.75645pt too wide) in paragraph at lines 180--186
+[]\T1/ptm/m/n/10 This vi-su-al-iza-tion method draws a two di-men-sional scat-t
+er-plot with
+
+Overfull \hbox (10.45827pt too wide) in paragraph at lines 239--242
+\T1/ptm/m/n/10 able. Note that Rgraphviz has to be in-stalled sep-a-rately from
+ $\T1/pcr/m/n/10 http : / / www . bioconductor .
+[4]
+Overfull \hbox (4.38043pt too wide) in paragraph at lines 299--299
+ []\T1/pcr/m/n/9 rules <- apriori(Groceries, parameter=list(support=0.001, conf
+idence=0.8))[] 
+[5]
+Underfull \vbox (badness 10000) has occurred while \output is active [6]
+Underfull \vbox (badness 10000) has occurred while \output is active [7]
+(/usr/share/texlive/texmf-dist/tex/latex/base/utf8.def)
+Overfull \hbox (72.78088pt too wide) in paragraph at lines 449--449
+ []\T1/pcr/m/n/10 plotly_arules(x, method = "scatterplot", measure = c("support
+", "confidence"),[] 
+[8]
+Overfull \hbox (4.38043pt too wide) in paragraph at lines 482--482
+ []\T1/pcr/m/n/9 rules <- apriori(Groceries, parameter=list(support=0.001, conf
+idence=0.8))[] 
+
+Overfull \hbox (15.18042pt too wide) in paragraph at lines 487--487
+ []\T1/pcr/m/n/9 plotly_arules(rules, measure = c("support", "lift"), shading =
+ "confidence")[] 
+(/usr/share/texlive/texmf-dist/tex/latex/base/utf8.def) [9]
+Overfull \hbox (18.63805pt too wide) in paragraph at lines 530--533
+[]\T1/ptm/m/n/10 file for-mat (e.g., "edge-list", "graphml", "di-macs", "gml", 
+"dot"). See \T1/pcr/m/n/10 write.graph
+(/usr/share/texlive/texmf-dist/tex/latex/base/utf8.def)
+Overfull \hbox (97.29605pt too wide) in paragraph at lines 580--582
+[]\T1/ptm/m/n/10 Tyler Gi-al-lanza. Adapted from func-tions orig-i-nally cre-at
+ed by An-drew Brooks. See https://github.com/brooksandrew/Rsenal
+[10] [11] (./Rd2.aux) )
+(see the transcript file for additional information){/usr/share/texlive/texmf-d
+ist/fonts/enc/dvips/base/8r.enc}</usr/share/texlive/texmf-dist/fonts/type1/urw/
+courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr
+8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/sh
+are/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/tex
+mf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (11 pages, 88837 bytes).
+Transcript written on Rd2.log.
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./Rd2.tex
+LaTeX2e <2017-04-15>
+Babel <3.12> and hyphenation patterns for 3 language(s) loaded.
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2014/09/29 v1.4h Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/bk10.clo))
+(/usr/share/R/share/texmf/tex/latex/Rd.sty
+(/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/bm.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/base/alltt.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/verbatim.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/base/textcomp.sty
+(/usr/share/texlive/texmf-dist/tex/latex/base/ts1enc.def))
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1enc.def))
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/times.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
+(/usr/share/texlive/texmf-dist/tex/latex/base/utf8.def
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1enc.dfu)
+(/usr/share/texlive/texmf-dist/tex/latex/base/ot1enc.dfu)
+(/usr/share/texlive/texmf-dist/tex/latex/base/omsenc.dfu)
+(/usr/share/texlive/texmf-dist/tex/latex/base/ts1enc.dfu))
+(/usr/share/texlive/texmf-dist/tex/latex/base/latin1.def)) (./Rd2.aux)
+(/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1ptm.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1pcr.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1phv.fd) (./Rd2.toc)
+(/usr/share/texlive/texmf-dist/tex/latex/base/utf8.def) [1{/var/lib/texmf/fonts
+/map/pdftex/updmap/pdftex.map}]
+Overfull \hbox (4.38043pt too wide) in paragraph at lines 77--77
+ []\T1/pcr/m/n/9 rules <- apriori(Groceries, parameter=list(support=0.005, conf
+idence=0.5))[] 
+(/usr/share/texlive/texmf-dist/tex/latex/base/utf8.def) [2]
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1pcr.fd)
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 112--112
+ []    \T1/pcr/m/n/10 interactive = NULL, engine = "default", data = NULL, cont
+rol = NULL, ...)[] 
+
+Overfull \hbox (66.78088pt too wide) in paragraph at lines 115--115
+ []    \T1/pcr/m/n/10 interactive = NULL, engine = "default", data = NULL, cont
+rol = NULL, ...)[] 
+[3]
+Overfull \hbox (0.75645pt too wide) in paragraph at lines 180--186
+[]\T1/ptm/m/n/10 This vi-su-al-iza-tion method draws a two di-men-sional scat-t
+er-plot with
+
+Overfull \hbox (10.45827pt too wide) in paragraph at lines 239--242
+\T1/ptm/m/n/10 able. Note that Rgraphviz has to be in-stalled sep-a-rately from
+ $\T1/pcr/m/n/10 http : / / www . bioconductor .
+[4]
+Overfull \hbox (4.38043pt too wide) in paragraph at lines 299--299
+ []\T1/pcr/m/n/9 rules <- apriori(Groceries, parameter=list(support=0.001, conf
+idence=0.8))[] 
+[5]
+Underfull \vbox (badness 10000) has occurred while \output is active [6]
+Underfull \vbox (badness 10000) has occurred while \output is active [7]
+(/usr/share/texlive/texmf-dist/tex/latex/base/utf8.def)
+Overfull \hbox (72.78088pt too wide) in paragraph at lines 449--449
+ []\T1/pcr/m/n/10 plotly_arules(x, method = "scatterplot", measure = c("support
+", "confidence"),[] 
+[8]
+Overfull \hbox (4.38043pt too wide) in paragraph at lines 482--482
+ []\T1/pcr/m/n/9 rules <- apriori(Groceries, parameter=list(support=0.001, conf
+idence=0.8))[] 
+
+Overfull \hbox (15.18042pt too wide) in paragraph at lines 487--487
+ []\T1/pcr/m/n/9 plotly_arules(rules, measure = c("support", "lift"), shading =
+ "confidence")[] 
+(/usr/share/texlive/texmf-dist/tex/latex/base/utf8.def) [9]
+Overfull \hbox (18.63805pt too wide) in paragraph at lines 530--533
+[]\T1/ptm/m/n/10 file for-mat (e.g., "edge-list", "graphml", "di-macs", "gml", 
+"dot"). See \T1/pcr/m/n/10 write.graph
+(/usr/share/texlive/texmf-dist/tex/latex/base/utf8.def)
+Overfull \hbox (97.29605pt too wide) in paragraph at lines 580--582
+[]\T1/ptm/m/n/10 Tyler Gi-al-lanza. Adapted from func-tions orig-i-nally cre-at
+ed by An-drew Brooks. See https://github.com/brooksandrew/Rsenal
+[10] [11] (./Rd2.aux) )
+(see the transcript file for additional information){/usr/share/texlive/texmf-d
+ist/fonts/enc/dvips/base/8r.enc}</usr/share/texlive/texmf-dist/fonts/type1/urw/
+courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr
+8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/sh
+are/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/tex
+mf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (11 pages, 88966 bytes).
+Transcript written on Rd2.log.
+Saving output to ‘arulesViz-manual.pdf’ ...
+Done
+You may want to clean up by 'rm -rf /tmp/Rtmpvo6WIa/Rd2pdf4fee54132c5c'
