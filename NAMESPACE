@@ -1,6 +1,5 @@
 import("arules")
 
-import("plotly")
 importFrom("graphics", "par", "plot", "mtext", "text", "axis", "box")
 importFrom("stats", "median", "kmeans", "cutree", "dist", "hclust", "na.omit", "quantile")
 importFrom("grDevices", "hcl", "rgb", "gray.colors", "gray", "col2rgb",
@@ -15,6 +14,7 @@ importFrom("scatterplot3d", "scatterplot3d")
 importFrom("vcd", "mosaic", "doubledecker")
 importFrom("colorspace", "heat_hcl", "sequential_hcl")
 importFrom("DT", "datatable", "%>%", "formatRound")
+importFrom("plotly","plot_ly","layout","renderPlotly","plotlyOutput")
 importFrom("visNetwork", "visNetwork", "visIgraphLayout",
   "visOptions", "visNodes","renderVisNetwork","visNetworkOutput")
 
