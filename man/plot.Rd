@@ -130,8 +130,9 @@ to reorder the balloons in the plot.}
 }
 
 \item{"graph"}{
-Represents the rules (or itemsets) as a graph with items, itemsets, and
-rules represented as vertices.
+Represents the rules (or itemsets) as a graph with items as labeled vertices, and rules (or itemsets) represented as vertices connected to items using arrows. For rules, the LHS items are connected with arrows 
+pointing to the vertex representing the rule and the RHS has an
+arrow pointing to the item.
 
 Several engines are available. The default engine uses \pkg{igraph} (\code{plot.igraph} and \code{tkplot} for the interactive visualization). 
 \code{...} arguments are passed on to the respective plotting function (use for color, etc.).

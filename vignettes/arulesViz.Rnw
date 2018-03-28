@@ -74,8 +74,6 @@ With examples we show how these visualization techniques can be used to analyze 
 \begin{document}
 <<echo=FALSE>>=
 options(width = 75)
-### for sampling
-set.seed(1234)
 @
 %% ------------------------------------------------------------------
 %% ------------------------------------------------------------------
@@ -231,6 +229,15 @@ Section~\ref{sec:conclusion} concludes the paper.
 \section{Data preparation and unified interface of arulesViz}
 \label{sec:prep}
 
+Before we start, we set the number of displayed significant digits to 
+two to make the output easier to read, and we set the seed for the random
+number generator for predictability.
+
+<<>>=
+options(digits = 2)
+set.seed(1234)
+@
+
 To use \pkg{arulesViz} we fist have to load the package.
 The package automatically loads other needed packages like
 \pkg{arules}~\citep{arulesViz:Hahsler:2010}
@@ -268,7 +275,7 @@ with respect to the lift measure,
 a popular measure of rule strength, are:
 
 <<>>=
-inspect(head(sort(rules, by ="lift"),3))
+inspect(head(rules, n = 3, by ="lift"))
 @
 
 However, it is clear that going through all the \Sexpr{length(rules)} rules
@@ -278,25 +285,21 @@ implemented in~\pkg{arulesViz}.
 All implemented visualization techniques share the
 following interface:
 
-<<eval=FALSE>>=
-plot(x, method = NULL, measure = "support", shading = "lift",
-  interactive = FALSE, data = NULL, control = NULL, engine = "default", ...)
+<<>>=
+args(getS3method("plot", "rules"))
 @
 
 where \code{x} is the set of rules to be visualized,
 \code{method} is the visualization method,
-\code{measure} and \code{shading} contain the interest measures
-used by the plot,
-\code{interactive} indicates if we want to interactively
-explore or just present the rules,
-\code{data} can contain the transaction data set used to mine the
-rules (only necessary for some methods) and \code{control} is a list
-with further control arguments to customize the plot. Using \code{engine},
+and \code{measure} and \code{shading} contain the interest measures
+used by the plot.
+Further arguments are described in the manual page.
+
+Using \code{engine},
 different plotting engines can be specified to render the plot.
 the default engine typically uses \pkg{grid}, many plots can also be 
 rendered using the engine \code{"htmlwidget"} resulting in an interactive 
 HTML widget.
-
 
 In the following sections we will introduce the different visualization
 methods implemented in \pkg{arulesViz} and demonstrate how easy it is to
@@ -351,7 +354,7 @@ included in \pkg{arules}.
 For example we can customize the plot by switching lift and confidence:
 
 <<scatterplot2, fig=TRUE, height=5, include=FALSE>>=
-plot(rules, measure=c("support", "lift"), shading="confidence")
+plot(rules, measure = c("support", "lift"), shading = "confidence")
 @
 
 Figure~\ref{fig:scatterplot2} shows this plot with lift on the y-axis. Here it
@@ -397,7 +400,8 @@ and zooming. Interaction
 is activated using \code{interactive=TRUE}.
 
 <<eval=FALSE>>=
-sel <- plot(rules, measure=c("support", "lift"), shading="confidence", interactive=TRUE)
+sel <- plot(rules, measure=c("support", "lift"), shading = "confidence",
+            interactive = TRUE)
 @
 
 Interactive features include:
@@ -480,7 +484,7 @@ subrules
 @
 
 <<matrix1, fig=TRUE, height=3, width=10, include=FALSE, results=hide>>=
-plot(subrules, method="matrix", measure="lift")
+plot(subrules, method = "matrix", measure = "lift")
 @
 
 The resulting plot is shown in Figure~\ref{fig:matrix1}.
@@ -595,7 +599,7 @@ An alternative representation is to use
 3D bars (method ``matrix3D'') instead of colored rectangles.
 
 <<matrix3D1, fig=TRUE, results=hide, include=FALSE>>=
-plot(subrules, method="matrix3D", measure="lift")
+plot(subrules, method = "matrix3D", measure = "lift")
 @
 %<<matrix3D2, fig=TRUE, results=hide, include=FALSE>>=
 %plot(subrules, method="matrix3D", measure="lift", control=list(reorder=TRUE))
@@ -616,40 +620,6 @@ plot(subrules, method="matrix3D", measure="lift")
 \end{figure}
 
 The 3D visualization is shown in Figure~\ref{fig:matrix3D1}.
-%andb\ref{fig:matrix3D2}.
-
-If we specify a vector with two measures, both measures
-are used simultaneously using color hue for one measure and luminance
-and chroma together for the other.
-
-<<matrix_col1, fig=TRUE, height=3, width=10, results=hide, include=FALSE>>=
-plot(subrules, method="matrix", measure=c("lift", "confidence"))
-@
-%<<matrix_col2, fig=TRUE, height=3, width=10, results=hide, include=FALSE>>=
-%plot(subrules, method="matrix", measure=c("lift", "confidence"),
-%        control=list(reorder=TRUE))
-%@
-
-\begin{figure}
-\centering
-\includegraphics[width=\linewidth]{arulesViz-matrix_col1}
-\caption{Matrix-based visualization of two measures with colored squares.
-\label{fig:matrix_col1}}
-
-%\includegraphics[width=\linewidth]{arulesViz-matrix_col2}
-%\caption{Matrix-based visualization of two measures with colored squares (reordered%).
-%\label{fig:matrix_col2}}
-\end{figure}
-
-Figure~\ref{fig:matrix_col1} %and \ref{fig:matrix_col2} show plots 
-shows a plot with two
-measures of interest. The legend is here a color matrix.  By matching a square
-with the closed color in the legend, we can determine both, support and
-confidence.  High confidence/high support rules can be identified in the plot
-as hot/red (high confidence) and dark/intense (high support).  Note that on a
-black and white printout, the different colors are not distinguishable.
-
-
 
 \section{Grouped matrix-based visualization}
 \label{sec:grouped}
@@ -658,7 +628,7 @@ Matrix-based visualization is limited in the number of
 rules it can visualize effectively
 since large sets of rules typically also have large sets of
 unique antecedents/consequents. Here we introduce a new visualization
-techniques~\citep{arulesViz:Hahsler2011}
+techniques~\citep{arulesViz:Hahsler2011, arulesViz:Hahsler2016c}
 that enhances matrix-based visualization using grouping of rules
 via clustering to handle a larger number of rules. Grouped rules
 are presented as an aggregate in the matrix and can be explored
@@ -742,7 +712,7 @@ The matrix visualization with grouped antecedents
 for the set of $\Sexpr{length(rules)}$ rules mined earlier
 can be easily created by
 <<clusterplot1, fig=TRUE, include=FALSE, height=8>>=
-plot(rules, method="grouped")
+plot(rules, method = "grouped")
 @
 
 The resulting visualization is shown in Figure~\ref{fig:clusterplot1}.
@@ -760,7 +730,7 @@ antecedent and the consequent is ``hamburger meat.''
 To increase the number of groups we can change $k$ which defaults to 20.
 
 <<clusterplot2, fig=TRUE, width=10, include=FALSE, height=8>>=
-plot(rules, method="grouped", control=list(k=50))
+plot(rules, method = "grouped", control = list(k = 50))
 @
 
 The resulting, more detailed plot is shown in Figure~\ref{fig:clusterplot2}.
@@ -775,7 +745,7 @@ The resulting, more detailed plot is shown in Figure~\ref{fig:clusterplot2}.
 An interactive version of the grouped matrix visualization is also available.
 
 <<eval=FALSE>>=
-sel <- plot(rules, method="grouped", interactive=TRUE)
+sel <- plot(rules, method = "grouped", interactive = TRUE)
 @
 
 Here it is possible to zoom into groups and to inspect
@@ -784,10 +754,14 @@ the rules contained in a selected group.
 \section{Graph-based visualizations}
 
 Graph-based techniques~\citep{arulesViz:Klemettinen:1994,arulesViz:Rainsford:2000,arulesViz:Buono:2005,arulesViz:Ertek:2006} visualize association rules
-using vertices and edges where vertices typically represent items
-or itemsets and edges indicate relationship in rules. Interest measures are
-typically added to the plot as labels on the edges or by color or width of
-the arrows displaying the edges.
+using vertices and edges where vertices annodated with item labels
+represent items, and itemsets 
+or rules are reptesented as a second set of vertices. Items are connected
+with itemsets/rules using arrows. For rules arrows pointing from
+items to rule vertices indicate LHS items and an arrow from 
+a rule to an item indicates the RHS.
+Interest measures are typically added to the plot by using 
+color or size of the vertices representing the itemsets/rules.
 
 Graph-based visualization offers a very clear representation of rules but they
 tend to
@@ -795,7 +769,7 @@ easily become cluttered and thus are only viable for very small sets of rules.
 For the following plots we select the 10 rules with the highest lift.
 
 <<>>=
-subrules2 <- head(sort(rules, by="lift"), 10)
+subrules2 <- head(rules, n = 10, by = "lift")
 @
 
 \pkg{arulesViz} contains several graph-based visualizations
@@ -806,12 +780,15 @@ or
 the interface to the \emph{GraphViz} software in
 package \pkg{Rgraphviz}~\citep{arules:Gentry:2010}.
 By default igraph is used.
-The following
+The following 
 plot represents items and rules as vertices connecting them with directed edges
 (shown in Figure~\ref{fig:graph1}).
+This representation focuses on how the rules are composed of individual items
+and shows which rules share items.
+
 
 <<graph1, fig=TRUE, width=10, height=10, include=FALSE>>=
-plot(subrules2, method="graph")
+plot(subrules2, method = "graph")
 @
 
 \begin{figure}
@@ -821,24 +798,6 @@ plot(subrules2, method="graph")
 \label{fig:graph1}}
 \end{figure}
 
-
-Another variation uses itemsets as vertices and rules are represented by
-directed edges.
-
-<<graph3, fig=TRUE, width=10, height=10, include=FALSE>>=
-plot(subrules2, method="graph", control=list(type="itemsets"))
-@
-
-\begin{figure}
-\centering
-\includegraphics[width=\linewidth]{arulesViz-graph3}
-\caption{Graph-based visualization with itemsets as vertices.
-\label{fig:graph3}}
-\end{figure}
-
-Figure~\ref{fig:graph3} shows the resulting graph.
-This representation focuses on how the rules are composed of individual items
-and shows which rules share items.
 
 An interactive visualization is available in \pkg{arulesViz},
 however,
@@ -855,7 +814,7 @@ to be explored in tools like Gephi. For example the
 1000 rules with the highest lift are exported by:
 
 <<eval=FALSE>>=
-saveAsGraph(head(sort(rules, by="lift"),1000), file="rules.graphml")
+saveAsGraph(head(rules, n = 1000, by = "lift"), file = "rules.graphml")
 @
 
 Figure~\ref{fig:gephi} shows a screenshot of exploring these rules
@@ -889,7 +848,7 @@ Arrows only span enough positions on the x-axis to represent all the items in
 the rule, i.e., rules with less items are shorter arrows.
 
 <<pc1, fig=TRUE, include=FALSE, width=10>>=
-plot(subrules2, method="paracoord")
+plot(subrules2, method = "paracoord")
 @
 
 Figure~\ref{fig:pc1} shows a parallel coordinates plot for 10 rules.
@@ -919,12 +878,8 @@ of tries.
 \end{enumerate}
 
 Reordering is achieved with \code{reorder=TRUE}.
-<<echo=FALSE>>=
-### for sampling
-set.seed(4321)
-@
 <<pc2, fig=TRUE, include=FALSE, width=10>>=
-plot(subrules2, method="paracoord", control=list(reorder=TRUE))
+plot(subrules2, method = "paracoord", control = list(reorder = TRUE))
 @
 
 Figure~\ref{fig:pc2}
@@ -964,7 +919,7 @@ inspect(oneRule)
 @
 
 <<doubledecker1, fig=TRUE, include=FALSE>>=
-plot(oneRule, method="doubledecker", data = Groceries)
+plot(oneRule, method = "doubledecker", data = Groceries)
 @
 \begin{figure}
 \centering
@@ -1083,7 +1038,12 @@ Double decker & \tt "doubledecker" & single rule & (2) & & & --\\
 %This clustering can be applied to 3D matrix and cluster plot. As we are using this clustering to accomodate more number of rules and also to find which of the consequent items have the similar antecedent items.
 %
 
+\section{Further Reading}
 
+Details on the grouped matrix plot are reported in
+\cite{arulesViz:Hahsler2016c}.
+Interactive visualization using htmlWidgets with examples is 
+describe in \cite{arulesViz:Hahsler2017b}.
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -1096,13 +1056,6 @@ sets of association rules.
 In addition we present a new interactive visualization method called
 grouped matrix-based visualization which can used to effectively
 explore large rule sets.
-
-Future development will focus on
-enhancing the visualizing techniques with advanced interactive features
-using for example \pkg{iplots}~\citep{arulesViz:Urbanek:2003}
-which supports in addition to selection and zooming
-also brushing and linking between different plots.
-
 %\bibliographystyle{abbrvnat}
 \bibliography{arulesViz,arules}
 
