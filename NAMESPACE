@@ -1,22 +1,22 @@
 import("arules")
 
 importFrom("graphics", "par", "plot", "mtext", "text", "axis", "box")
-importFrom("stats", "median", "kmeans", "cutree", "dist", "hclust", "na.omit")
-importFrom("grDevices", "hcl", "rgb", "gray.colors", "gray", "col2rgb", 
+importFrom("stats", "median", "kmeans", "cutree", "dist", "hclust", "na.omit", "quantile")
+importFrom("grDevices", "hcl", "rgb", "gray.colors", "gray", "col2rgb",
   "colorRampPalette", "rainbow")
 importFrom("methods", "is", "as", "new")
-importFrom("utils", "installed.packages")
+importFrom("utils", "installed.packages", "write.csv")
 import("grid") ### need to use as depends in DESCRIPTION because of vcd
 #import(igraph) ### we use now igraph::
-importFrom("seriation", "seriate", "ser_permutation", "set_seriation_method", 
+importFrom("seriation", "seriate", "ser_permutation", "set_seriation_method",
   "permute", "get_order")
 importFrom("scatterplot3d", "scatterplot3d")
 importFrom("vcd", "mosaic", "doubledecker")
 importFrom("colorspace", "heat_hcl", "sequential_hcl")
 importFrom("DT", "datatable", "%>%", "formatRound")
-importFrom("plotly", "plot_ly", "layout")
-importFrom("visNetwork", "visNetwork", "visIgraphLayout", 
-  "visOptions", "visNodes")
+importFrom("plotly","plot_ly","layout","renderPlotly","plotlyOutput")
+importFrom("visNetwork", "visNetwork", "visIgraphLayout",
+  "visOptions", "visNodes","renderVisNetwork","visNetworkOutput")
 
 export("saveAsGraph")
 
@@ -28,4 +28,5 @@ export("inspectDT")
 S3method(inspectDT, rules)
 S3method(inspectDT, itemsets)
 
+export("shiny_arules")
 export("plotly_arules")
