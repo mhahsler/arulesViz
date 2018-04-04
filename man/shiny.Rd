@@ -6,26 +6,30 @@
 Visualize assocation rules and itemsets using \pkg{shiny}.
 }
 \usage{
-shiny_arules(dataset, vars=0, supp=0.1, conf=0.5, lift = 0)
+shiny_arules(x, support=0.1, confidence = 0.8)
 }
 \arguments{
-  \item{dataset}{Base transactions object from which rules will be mined and visualized. Also takes a rules object containing already mined rules.}
-  \item{vars}{Default number of variables to include in initial rule mining. If a value is not passed to this parameter, all available variables will be used.}
-  \item{supp}{Default minimum support threshold for rule mining}
-  \item{conf}{Default minimum confidence threshold for rule mining}
-  \item{lift}{Default minimum lift threshold for displayed rules}
+  \item{x}{ a set of rules, a transactions object or a data.frame. } 
+  \item{support, confidence}{initial minimum support and confidence to mine rules if
+  transactions or a data.frame are supplied. Ignored for rules.}
 }
 %\details{}
 %\value{}
 \author{
-Tyler Giallanza. Adapted from functions originally created by Andrew Brooks.
+Tyler Giallanza and Michael Hahsler. 
+Adapted from functions originally created by Andrew Brooks.
 See https://github.com/brooksandrew/Rsenal for the original code.
 }
 %\references{}
 %\seealso{}
 \examples{
-data(Adult)
 \dontrun{
-  shiny_arules(Adult)
+data(Groceries)
+rules <- apriori(Groceries, parameter=list(support=0.001, confidence=0.8))
+rules
+
+shiny_arules(rules)
+
+shiny_arules(Groceries, supp = 0.002, conf = 0.8)
 }
 }
