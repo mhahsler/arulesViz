@@ -1,6 +1,0 @@
-name	user	system	elapsed
-inspectDT	0	0	0	
-plot	1.840	0.012	1.852	
-plotly_arules	0.001	0.000	0.001	
-save	0.04	0.00	0.04	
-shiny	0.025	0.008	0.033	
