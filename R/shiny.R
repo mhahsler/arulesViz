@@ -22,14 +22,14 @@
 
 ### TODO:
 #
-# * scatterplot: presets for x, y, and z are not kept for other plots
-# * Error with 0 rules
-# * support of 0 
-# * Can the log go into a frame in shiny?
-# * add shading selector to grouped and matrix
-# * error when using a plot for the first time then reloads.
-# * suppress warning messages?
-
+# * support of 0 for dataset may hang the system 
+# * put the output (log) into a frame in shiny?
+# * suppress warning messages? widget IDs will be fixed by plotly soon.
+# * should the parametes be parameters of apriori?
+# * name of the function?
+# * show number of rules somewhere (sidebar)?
+# * toggle remove/require/can only contain items.
+#
 
 shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
   
@@ -56,6 +56,8 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
   zIndexCached <- "lift"
 
   if(is(dataset, "rules")) {
+    if(length(dataset) < 1) stop("Zero rules provided!")
+    
     minSupp <- roundDown(min(quality(dataset)$support), 3)
     maxSupp <- roundUp(max(quality(dataset)$support), 3)
     minConf <- roundDown(min(quality(dataset)$confidence), 3)
@@ -85,7 +87,7 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
     shiny::sidebarPanel(
       
       shiny::conditionalPanel(
-        condition = "input.mytab %in%' c('grouped', 'graph', 'datatable', 'scatter', 'paracoord', 'matrix')",
+        condition = "input.mytab %in% c('grouped', 'graph', 'datatable', 'scatter', 'paracoord', 'matrix')",
         shiny::uiOutput("kSelectInput"),
         shiny::uiOutput("xAxisSelectInput"),
         shiny::uiOutput("yAxisSelectInput"),
@@ -123,25 +125,25 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
     
     output$kSelectInput <- shiny::renderUI({
       if(input$mytab == 'grouped') {
-        shiny::sliderInput('k', label='Choose # of rule clusters', min=1, max=150, step=1, value=15)
+        shiny::sliderInput('k', label='Choose # of rule clusters', min=1, max=50, step=1, value=15)
       }
     })
     
     output$xAxisSelectInput <- shiny::renderUI({
       if(input$mytab == 'scatter') {
-        shiny::selectInput("xAxis","X Axis:",xNames(), selected=xIndexCached)
+        shiny::selectInput("xAxis","X Axis:", colnames(quality(rules())), selected=xIndexCached)
       }
     })
     
     output$yAxisSelectInput <- shiny::renderUI({
       if(input$mytab == 'scatter') {
-        shiny::selectInput("yAxis","Y Axis:",yNames(), selected=yIndexCached)
+        shiny::selectInput("yAxis","Y Axis:", colnames(quality(rules())), selected=yIndexCached)
       }
     })
     
     output$cAxisSelectInput <- shiny::renderUI({
-      if(input$mytab == 'scatter' || input$mytab == 'matrix') {
-        shiny::selectInput("cAxis","Shading:",cNames(), selected=zIndexCached)
+      if(input$mytab %in% c('scatter', 'matrix', 'graph', 'grouped')) {
+        shiny::selectInput("cAxis","Shading:", colnames(quality(rules())), selected=zIndexCached)
       }
     })
     
@@ -176,7 +178,7 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
       cachedRules <- dataset
       cachedSupp <<- info(dataset)$support
       cachedConf <<- info(dataset)$confidence
-      cachedLift <<- min(quality(dataset)$Lift)
+      cachedLift <<- min(quality(dataset)$lift)
       cachedMinL <<- min(size(dataset))
       cachedMaxL <<- max(size(dataset))
     }
@@ -261,15 +263,10 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
     }
     )
     
-    # Rule length
-    xNames <- shiny::reactive({ colnames(quality(rules())) })
-    yNames <- shiny::reactive({ colnames(quality(rules())) })
-    cNames <- shiny::reactive({ colnames(quality(rules())) })
-    
-    # this sets them to support
-    #shiny::observe({ xIndexCached <<- input$xAxis })
-    #shiny::observe({ yIndexCached <<- input$yAxis })
-    #shiny::observe({ zIndexCached <<- input$cAxis })
+    # remember settings for other plots
+    shiny::observe({ shiny::req(input$xAxis); xIndexCached <<- input$xAxis })
+    shiny::observe({ shiny::req(input$yAxis); yIndexCached <<- input$yAxis })
+    shiny::observe({ shiny::req(input$cAxis); zIndexCached <<- input$cAxis })
     
     
     # Present errors nicely to the user
@@ -283,17 +280,19 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
     
     ## Grouped Plot #########################
     output$groupedPlot <- shiny::renderPlot({
+      shiny::req(input$cAxis, input$k)
       handleErrors()
       
-      plot(rules(), method='grouped', control=list(k=input$k))
+      plot(rules(), method='grouped', shading = input$cAxis, control=list(k=input$k))
     }, height=800, width=800)
     
     
     ## Graph Plot ##########################
     output$graphPlot <- renderVisNetwork({
+      shiny::req(input$cAxis)
       handleErrors()
       
-      plt <- plot(rules(), method='graph', engine='htmlwidget')
+      plt <- plot(rules(), method='graph', shading = input$cAxis, engine='htmlwidget')
       
       plt$sizingPolicy <- htmlwidgets::sizingPolicy(
         viewer.paneHeight=1000,
@@ -310,8 +309,9 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
     
     ## Scatter Plot ##########################
     output$scatterPlot <- renderPlotly({
+      shiny::req(input$xAxis, input$yAxis, input$cAxis)
       handleErrors()
-      
+       
       plotly_arules(rules(), method = 'scatterplot',
                     measure=c(input$xAxis, input$yAxis), shading = input$cAxis)
       })
@@ -344,8 +344,12 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
     
     ## Download data to csv ########################
     output$downloadData <- shiny::downloadHandler(
-      filename = 'arules_data.csv',
-      content = function(file) { write.csv(as(rules(), "data.frame"), file) }
+      filename = 'rules.csv',
+      content = function(file) { 
+        x <- rules()
+        data <- data.frame(LHS = labels(lhs(x)), RHS = labels(rhs(x)), quality(x))
+        write.csv(data, file) 
+        }
     )
     
     
