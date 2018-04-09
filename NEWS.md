@@ -1,11 +1,15 @@
-# arulesViz 1.3-0.1 (xx/xx/2017)
+# arulesViz 1.3-0.1 (xx/xx/2018)
 
 ## New features
 * plot method matrix now supports different reordering methods: 'none',
     'measure', 'support/confidence', 'similarity'. Default is measure,
     the measure for used for shading.
 * measure and shading now auto-completes measure names.
+* interactive visualization with arules_shiny was added.
 
+## Bug Fix
+* Fixed problem with quality measures (offset of 1) when creating igraph 
+    graphs (reported by sostahl). 
 
 # arulesViz 1.3-0 (09/07/2017)
 

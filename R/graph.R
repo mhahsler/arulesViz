@@ -131,7 +131,7 @@ graph_arules <- function(x, measure = "support", shading = "lift",
   
   ## add quality measures
   for(m in names(quality(x))) {
-    g <- igraph::set.vertex.attribute(g, m, which(type==2)-1, 
+    g <- igraph::set.vertex.attribute(g, m, which(type==2), 
       quality(x)[[m]])
   }
   
