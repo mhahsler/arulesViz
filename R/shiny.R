@@ -23,15 +23,23 @@
 ### TODO:
 #
 # * support of 0 for dataset may hang the system 
+#   -> include warning in docs? looks like that's what apriori does
 # * put the output (log) into a frame in shiny?
+#   -> Logs when rules are remined
 # * suppress warning messages? widget IDs will be fixed by plotly soon.
+#   -> tried capture.output and that didn't work - not sure how to do this
 # * should the parametes be parameters of apriori?
+#   -> does not use "AParameter" object but can
 # * name of the function?
+#   -> Don't know
 # * show number of rules somewhere (sidebar)?
+#   -> Done
 # * toggle remove/require/can only contain items.
+#   -> mix remove with must contain at least one of
 #
 
-shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
+#shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
+shiny_arules <- function(x, parameter = NULL) {
   
   if (!requireNamespace("shiny", quietly = TRUE)) {
     stop("Package shiny is required to run this method.", call. = FALSE)
@@ -41,8 +49,8 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
   
   ### dataset can be rules or transactions
   dataset <- x
-  supp <- support
-  conf <- confidence
+  supp <- parameter$supp
+  conf <- parameter$conf
   
   ### make sure we have transactions or rules
   if(is(dataset, "data.frame")) {
@@ -54,6 +62,8 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
   xIndexCached <- "support"
   yIndexCached <- "confidence"
   zIndexCached <- "lift"
+
+  logOutput <- reactiveVal('Output log')
 
   if(is(dataset, "rules")) {
     if(length(dataset) < 1) stop("Zero rules provided!")
@@ -86,6 +96,7 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
     
     shiny::sidebarPanel(
       
+      shiny::htmlOutput('numRulesOutput'),
       shiny::conditionalPanel(
         condition = "input.mytab %in% c('grouped', 'graph', 'datatable', 'scatter', 'paracoord', 'matrix')",
         shiny::uiOutput("kSelectInput"),
@@ -103,7 +114,8 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
         shiny::uiOutput("choose_lhs"), 
         shiny::uiOutput("choose_rhs"), 
         shiny::br(),
-        shiny::downloadButton('downloadData', 'Download Rules as CSV')
+        shiny::downloadButton('downloadData', 'Download Rules as CSV'),
+        shiny::verbatimTextOutput('logOutput')
       )
       
       
@@ -123,6 +135,12 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
   
   server = function(input, output, session) {
     
+    output$numRulesOutput <- shiny::renderUI({
+        HTML(paste('<b>',length(rules()),'rules selected</b>'))
+    })
+    output$logOutput <- shiny::renderText({
+        logOutput()
+    })
     output$kSelectInput <- shiny::renderUI({
       if(input$mytab == 'grouped') {
         shiny::sliderInput('k', label='Choose # of rule clusters', min=1, max=50, step=1, value=15)
@@ -195,6 +213,8 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
       quality(rules) <- interestMeasure(rules, transactions = dataset)
       
       message("Remined ", length(rules), " rules.")
+      lo <- paste(logOutput(),'\nRemined',length(rules),'rules.')
+      logOutput(lo)
       
       cachedRules <<- rules
       cachedSupp <<- input$supp
