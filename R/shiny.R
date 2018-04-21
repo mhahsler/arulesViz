@@ -20,31 +20,6 @@
 #                 https://github.com/brooksandrew/Rsenal
 #
 
-### TODO:
-#
-# do remove/must contain for rule selection
-
-
-# * support of 0 for dataset may hang the system 
-#   -> include warning in docs? looks like that's what apriori does
-#      -> see if shiny has popups
-# * put the output (log) into a frame in shiny?
-#   -> Logs when rules are remined
-# * suppress warning messages? widget IDs will be fixed by plotly soon.
-#   -> tried capture.output and that didn't work - not sure how to do this
-# * should the parametes be parameters of apriori?
-#   -> does not use "AParameter" object but can
-# * name of the function?
-#   -> Don't know
-# * show number of rules somewhere (sidebar)?
-#   -> Done
-# * toggle remove/require/can only contain items.
-#   -> mix remove with must contain at least one of
-#
-# control verbose false for apriori
-# 
-
-#shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
 shiny_arules <- function(x, parameter = NULL) {
   
   if (!requireNamespace("shiny", quietly = TRUE)) {
@@ -220,7 +195,7 @@ shiny_arules <- function(x, parameter = NULL) {
         confidence=as.numeric(input$conf), 
         minlen=input$minL, 
         maxlen=input$maxL),
-        control = list(verbose = T))
+        control = list(verbose = F))
       quality(rules) <- interestMeasure(rules, transactions = dataset)
       
       message("Remined ", length(rules), " rules.")
@@ -311,7 +286,8 @@ shiny_arules <- function(x, parameter = NULL) {
     tempSupp <- 0
     warn <- TRUE
     shiny::observeEvent(input$supp, {
-        if(input$supp <= 0.2) {
+        print(c(input$supp*length(dataset),is(dataset,'rules')))
+        if(!is(dataset,'rules') && input$supp*length(dataset) < 5) {
             if(warn) {
                 tempSupp <<- input$supp
                 shiny::updateSliderInput(session,"supp",value = cachedSupp, min=minSupp, max=maxSupp, step = (maxSupp-minSupp)/10000)
