@@ -6,12 +6,13 @@
 Visualize assocation rules and itemsets using \pkg{shiny}.
 }
 \usage{
-shiny_arules(x, support=0.1, confidence = 0.8)
+shiny_arules(x, parameter)
 }
 \arguments{
   \item{x}{ a set of rules, a transactions object or a data.frame. } 
-  \item{support, confidence}{initial minimum support and confidence to mine rules if
-  transactions or a data.frame are supplied. Ignored for rules.}
+  \item{parameter}{a list with parameters passed on to \code{\link[arules]{apriori}}. 
+    the list can be used to set the initial support and confidence, etc.
+    Values are ignored if \code{x} contains rules.}
 }
 %\details{}
 %\value{}
@@ -25,11 +26,14 @@ See https://github.com/brooksandrew/Rsenal for the original code.
 \examples{
 \dontrun{
 data(Groceries)
+
+# visualize pre-mined rules
 rules <- apriori(Groceries, parameter=list(support=0.001, confidence=0.8))
 rules
 
 shiny_arules(rules)
 
-shiny_arules(Groceries, supp = 0.002, conf = 0.8)
+# mine and visualize rules on the fly
+shiny_arules(Groceries)
 }
 }

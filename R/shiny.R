@@ -44,9 +44,9 @@ shiny_arules <- function(x, parameter = NULL) {
   xIndexCached <- "support"
   yIndexCached <- "confidence"
   zIndexCached <- "lift"
-
-  logOutput <- shiny::reactiveVal('Output log')
-
+  
+  #logOutput <- shiny::reactiveVal('Output log')
+  
   if(is(dataset, "rules")) {
     if(length(dataset) < 1) stop("Zero rules provided!")
     
@@ -67,20 +67,20 @@ shiny_arules <- function(x, parameter = NULL) {
     minConf <- 0
     maxConf <- 1
     minLift <- 0
-    maxLift <- 1
+    maxLift <- 25
     lift <- 0
-  
+    
   }
   
   ## create Shiny UI and server code
-  shiny::shinyApp(ui = shiny::shinyUI(shiny::pageWithSidebar(
-    shiny::headerPanel("Association Rules"),
+  shiny::shinyApp(ui = shiny::shinyUI(shiny::fluidPage(
+    #shiny::titlePanel("Association Rules"),
     
-    shiny::sidebarPanel(
-      
-      shiny::htmlOutput('numRulesOutput'),
-      shiny::conditionalPanel(
-        condition = "input.mytab %in% c('grouped', 'graph', 'datatable', 'scatter', 'paracoord', 'matrix')",
+    shiny::sidebarLayout(
+      shiny::sidebarPanel(
+        
+        shiny::htmlOutput('numRulesOutput'),
+        shiny::br(),
         shiny::uiOutput("kSelectInput"),
         shiny::uiOutput("xAxisSelectInput"),
         shiny::uiOutput("yAxisSelectInput"),
@@ -92,6 +92,8 @@ shiny_arules <- function(x, parameter = NULL) {
         shiny::numericInput("minL", "Min. items in rule:", 2), 
         shiny::numericInput("maxL", "Max. items in rule:", 10), 
         shiny::br(),
+        shiny::HTML('<b>Filter items</b>'),
+        shiny::br(),
         shiny::selectInput('colsType',NULL,c('Remove rules including:'='rem','Require rules to include:'='req')),
         shiny::uiOutput("choose_columns"), 
         shiny::selectInput('colsLHSType',NULL,c('Remove rules with LHS including:'='rem','Require rules to have LHS include:'='req')),
@@ -99,310 +101,318 @@ shiny_arules <- function(x, parameter = NULL) {
         shiny::selectInput('colsRHSType',NULL,c('Remove rules with RHS including:'='rem','Require rules to have RHS include:'='req')),
         shiny::uiOutput("choose_rhs"), 
         shiny::br(),
-        shiny::downloadButton('downloadData', 'Download Rules as CSV'),
-        shiny::verbatimTextOutput('logOutput')
-      )
+        shiny::downloadButton('rules.csv', 'Download Rules as CSV')
+        #,
+      #  shiny::br(),
+      #  shiny::verbatimTextOutput('logOutput')
+      ),
       
-      
-    ),
-    
-    shiny::mainPanel(
-      shiny::tabsetPanel(id='mytab',
-                         shiny::tabPanel('Data Table', value='datatable', shiny::dataTableOutput("rulesDataTable")),
-                         shiny::tabPanel('Scatter', value='scatter', plotlyOutput("scatterPlot", width='100%', height='100%')),
-                         shiny::tabPanel('Matrix', value='matrix', plotlyOutput("matrixPlot", width='100%', height='100%')),
-                         shiny::tabPanel('Grouped', value='grouped', shiny::plotOutput("groupedPlot", width='100%', height='100%')),
-                         shiny::tabPanel('Graph', value='graph', visNetworkOutput("graphPlot", width='100%', height='800px'))
+      shiny::mainPanel(
+        shiny::tabsetPanel(id='mytab',
+          shiny::tabPanel('Data Table', value='datatable', shiny::dataTableOutput("rulesDataTable")),
+          shiny::tabPanel('Scatter', value='scatter', plotlyOutput("scatterPlot", width='100%', height='100%')),
+          shiny::tabPanel('Matrix', value='matrix', plotlyOutput("matrixPlot", width='100%', height='100%')),
+          shiny::tabPanel('Grouped', value='grouped', shiny::plotOutput("groupedPlot", width='100%', height='100%')),
+          shiny::tabPanel('Graph', value='graph', visNetworkOutput("graphPlot", width='100%', height='800px'))
+        )
       )
-    )
-    
+    ) 
   )),
-  
-  server = function(input, output, session) {
     
-
-    output$numRulesOutput <- shiny::renderUI({
-        HTML(paste('<b>',length(rules()),'rules selected</b>'))
-    })
-    output$logOutput <- shiny::renderText({
-        logOutput()
-    })
-    output$kSelectInput <- shiny::renderUI({
-      if(input$mytab == 'grouped') {
-        shiny::sliderInput('k', label='Choose # of rule clusters', min=1, max=50, step=1, value=15)
-      }
-    })
-    
-    output$xAxisSelectInput <- shiny::renderUI({
-      if(input$mytab == 'scatter') {
-        shiny::selectInput("xAxis","X Axis:", colnames(quality(rules())), selected=xIndexCached)
-      }
-    })
-    
-    output$yAxisSelectInput <- shiny::renderUI({
-      if(input$mytab == 'scatter') {
-        shiny::selectInput("yAxis","Y Axis:", colnames(quality(rules())), selected=yIndexCached)
-      }
-    })
-    
-    output$cAxisSelectInput <- shiny::renderUI({
-      if(input$mytab %in% c('scatter', 'matrix', 'graph', 'grouped')) {
-        shiny::selectInput("cAxis","Shading:", colnames(quality(rules())), selected=zIndexCached)
-      }
-    })
-    
-    output$choose_columns <- shiny::renderUI({
-        shiny::selectizeInput('cols',NULL,
-                              itemLabels(dataset),
-                              multiple = TRUE)
-    })
-    
-    
-    output$choose_lhs <- shiny::renderUI({
-      shiny::selectizeInput('colsLHS',NULL,
-                            itemLabels(dataset),
-                            multiple = TRUE)
-    })
-    
-    output$choose_rhs <- shiny::renderUI({
-      shiny::selectizeInput('colsRHS',NULL,
-                            itemLabels(dataset),
-                            multiple = TRUE)
-    })
-    
-    ## caching data
-    cachedRules <- NULL
-    cachedSupp <- supp
-    cachedConf <- conf
-    cachedLift <- lift
-    cachedMinL <- minLift
-    cachedMaxL <- maxLift
-    
-    if(is(dataset, "rules")) {
-      cachedRules <- dataset
-      cachedSupp <<- info(dataset)$support
-      cachedConf <<- info(dataset)$confidence
-      cachedLift <<- min(quality(dataset)$lift)
-      cachedMinL <<- min(size(dataset))
-      cachedMaxL <<- max(size(dataset))
-    }
-    
-    ### remine rules if necessary dataset is transactions!
-    remineRules <- shiny::reactive({
-      
-      rules <- apriori(dataset, parameter=list(
-        support=as.numeric(input$supp), 
-        confidence=as.numeric(input$conf), 
-        minlen=input$minL, 
-        maxlen=input$maxL),
-        control = list(verbose = F))
-      quality(rules) <- interestMeasure(rules, transactions = dataset)
-      
-      message("Remined ", length(rules), " rules.")
-      lo <- paste(logOutput(),'\nRemined',length(rules),'rules.')
-      logOutput(lo)
-      
-      cachedRules <<- rules
-      cachedSupp <<- input$supp
-      cachedConf <<- input$conf
-      cachedLift <<- input$lift
-      cachedMinL <<- input$minL
-      cachedMaxL <<- input$maxL
-    }
-    )
-    
-    rules <- shiny::reactive({
-      
-      ### recalculate rules?
-      if(is(dataset, 'transactions')) {
-        if(is.null(cachedRules)) remineRules()
-        if((tempSupp == 0 && input$supp < cachedSupp) || input$conf < cachedConf) remineRules()
-        if(input$minL < cachedMinL || input$maxL > cachedMaxL) remineRules()
-      }
-      
-      ar <- cachedRules
-      
-      if(input$supp > cachedSupp) {
-        ar <- subset(ar, subset = support > input$supp)
-      }
-      
-      if(input$conf > cachedConf) {
-        ar <- subset(ar, subset = confidence > input$conf)
-      }
-      
-      if(input$lift > cachedLift) {
-        ar <- subset(ar, subset= lift > input$lift)
-      }
-      
-      if(input$minL > cachedMinL) {
-        ar <- ar[size(ar) >= input$minL]   
-      }
-      
-      if(input$maxL < cachedMaxL) {
-        ar <- ar[size(ar) <= input$maxL]   
-      }
-      
-      if(input$colsType == 'rem' && length(input$cols) > 0) {
-        ar <- subset(ar, subset=!(items %in% input$cols))
-      }
-      if(input$colsType == 'req' && length(input$cols) > 0) {
-        ar <- subset(ar, subset=items %in% input$cols)
-      }
-
-      
-      if(input$colsLHSType == 'rem' && length(input$colsLHS) > 0) {
-        ar <- subset(ar, subset=!(lhs %in% input$colsLHS))
-      }
-      if(input$colsLHSType == 'req' && length(input$colsLHS) > 0) {
-        ar <- subset(ar, subset=lhs %in% input$colsLHS)
-      }
-      
-      if(input$colsRHSType == 'rem' && length(input$colsRHS) > 0) {
-        ar <- subset(ar, subset=!(rhs %in% input$colsRHS))
-      }
-      if(input$colsRHSType == 'req' && length(input$colsRHS) > 0) {
-        ar <- subset(ar, subset=rhs %in% input$colsRHS)
-      }
+    server = function(input, output, session) {
       
       
-      ### update lift slider
-      #maxLift <<- ceiling(max(quality(ar)$lift))
-      #shiny::updateSliderInput(session,"lift",value = input$lift, min=minLift, max=maxLift, step = 1/10000)
-      
-      shiny::validate(
-        shiny::need(length(ar) > 0, "No matching rules found!")
-      )
-      
-      ar
-      
-    }
-    )
-    
-    # remember settings for other plots
-    shiny::observe({ shiny::req(input$xAxis); xIndexCached <<- input$xAxis })
-    shiny::observe({ shiny::req(input$yAxis); yIndexCached <<- input$yAxis })
-    shiny::observe({ shiny::req(input$cAxis); zIndexCached <<- input$cAxis })
-
-    tempSupp <- 0
-    warn <- TRUE
-    shiny::observeEvent(input$supp, {
-        print(c(input$supp*length(dataset),is(dataset,'rules')))
-        if(!is(dataset,'rules') && input$supp*length(dataset) < 5) {
-            if(warn) {
-                tempSupp <<- input$supp
-                shiny::updateSliderInput(session,"supp",value = cachedSupp, min=minSupp, max=maxSupp, step = (maxSupp-minSupp)/10000)
-                showModal(modalDialog(
-                    title='Warning',
-                    'Warning - low support could result in long computation time.
-                    Click cancel to reset and continue to continue.',
-                    footer=tagList(
-                        actionButton('cancel','cancel'),
-                        actionButton('continue','continue')
-                    )
-                    ))
-            } else {
-                warn <<- TRUE
-            }
-        }
-    });
-    shiny::observeEvent(input$continue, {
-            shiny::updateSliderInput(session,"supp",value = tempSupp, min=minSupp, max=maxSupp, step = (maxSupp-minSupp)/10000)
-            warn <<- FALSE
-            tempSupp <<- 0
-            removeModal()
-        }
-    )
-    shiny::observeEvent(input$cancel, {
-            tempSupp <<- 0
-            removeModal()
-        }
-    )
-    
-    
-    # Present errors nicely to the user
-   handleErrors <- shiny::reactive({
-#      ar <- rules()
-#      shiny::validate(
-#        shiny::need(nR() <= length(ar), 'Please decrease the number of rules')
-#      )
-    })
-    
-    
-    ## Grouped Plot #########################
-    output$groupedPlot <- shiny::renderPlot({
-      shiny::req(input$cAxis, input$k)
-      handleErrors()
-      
-      plot(rules(), method='grouped', shading = input$cAxis, control=list(k=input$k))
-    }, height=800, width=800)
-    
-    
-    ## Graph Plot ##########################
-    output$graphPlot <- renderVisNetwork({
-      shiny::req(input$cAxis)
-      handleErrors()
-      
-      plt <- plot(rules(), method='graph', shading = input$cAxis, engine='htmlwidget')
-      
-      plt$sizingPolicy <- htmlwidgets::sizingPolicy(
-        viewer.paneHeight=1000,
-        browser.defaultHeight=1000,
-        knitr.defaultHeight=1000,
-        defaultHeight=1000,defaultWidth=1000,
-        browser.fill=TRUE
-      )
-      plt$height <- 1000
-      plt$x$height <- 1000
-      plt
-    })
-    
-    
-    ## Scatter Plot ##########################
-    output$scatterPlot <- renderPlotly({
-      shiny::req(input$xAxis, input$yAxis, input$cAxis)
-      handleErrors()
-       
-      plotly_arules(rules(), method = 'scatterplot',
-                    measure=c(input$xAxis, input$yAxis), shading = input$cAxis)
+      output$numRulesOutput <- shiny::renderUI({
+        shiny::HTML(paste('<b>', 'Rules selected: ', length(rules()), '</b>'))
       })
-    
-    
-    ## Parallel Coordinates Plot ###################
-    output$paracoordPlot <- shiny::renderPlot({
-      handleErrors()
-      
-      plot(rules(), method='paracoord')
-    }, height=800, width=800)
-    
-    
-    ## Matrix Plot ###################
-    output$matrixPlot <- renderPlotly({
-      handleErrors()
-      
-      plotly_arules(rules(), method='matrix', shading=input$cAxis)
-    })
-    
-    ## Rules Data Table ##########################
-    output$rulesDataTable <- shiny::renderDataTable({
-      handleErrors()
-      
-      
-      x <- rules()
-      data.frame(LHS = labels(lhs(x)), RHS = labels(rhs(x)), quality(x))
-    }, options = list(filter = "top", rownames = paste0('[', 1:length(x), ']'))
-    )
-    
-    ## Download data to csv ########################
-    output$downloadData <- shiny::downloadHandler(
-      filename = 'rules.csv',
-      content = function(file) { 
-        x <- rules()
-        data <- data.frame(LHS = labels(lhs(x)), RHS = labels(rhs(x)), quality(x))
-        write.csv(data, file) 
+
+      output$kSelectInput <- shiny::renderUI({
+        if(input$mytab == 'grouped') {
+          shiny::sliderInput('k', label='Choose # of rule clusters', min=1, max=50, step=1, value=15)
         }
-    )
-    
-    
-  }
+      })
+      
+      output$xAxisSelectInput <- shiny::renderUI({
+        if(input$mytab == 'scatter') {
+          shiny::selectInput("xAxis","X Axis:", colnames(quality(rules())), selected=xIndexCached)
+        }
+      })
+      
+      output$yAxisSelectInput <- shiny::renderUI({
+        if(input$mytab == 'scatter') {
+          shiny::selectInput("yAxis","Y Axis:", colnames(quality(rules())), selected=yIndexCached)
+        }
+      })
+      
+      output$cAxisSelectInput <- shiny::renderUI({
+        if(input$mytab %in% c('scatter', 'matrix', 'graph', 'grouped')) {
+          shiny::selectInput("cAxis","Shading:", colnames(quality(rules())), selected=zIndexCached)
+        }
+      })
+      
+      output$choose_columns <- shiny::renderUI({
+        shiny::selectizeInput('cols',NULL,
+          itemLabels(dataset),
+          multiple = TRUE)
+      })
+      
+      
+      output$choose_lhs <- shiny::renderUI({
+        shiny::selectizeInput('colsLHS',NULL,
+          itemLabels(dataset),
+          multiple = TRUE)
+      })
+      
+      output$choose_rhs <- shiny::renderUI({
+        shiny::selectizeInput('colsRHS',NULL,
+          itemLabels(dataset),
+          multiple = TRUE)
+      })
+      
+      #output$logOutput <- shiny::renderText({
+      #  logOutput()
+      #})
+      
+      ## caching data
+      cachedRules <- NULL
+      cachedSupp <- supp
+      cachedConf <- conf
+      cachedLift <- lift
+      cachedMinL <- minLift
+      cachedMaxL <- maxLift
+      
+      if(is(dataset, "rules")) {
+        cachedRules <- dataset
+        cachedSupp <<- info(dataset)$support
+        cachedConf <<- info(dataset)$confidence
+        cachedLift <<- min(quality(dataset)$lift)
+        cachedMinL <<- min(size(dataset))
+        cachedMaxL <<- max(size(dataset))
+      }
+      
+      ### remine rules if necessary dataset is transactions!
+      remineRules <- shiny::reactive({
+       
+        ### use a minimum of 1 absolute support!
+        supp <- input$supp
+        if(supp == 0) supp <- 1/length(dataset)
+         
+        rules <- apriori(dataset, parameter = list(
+          support = as.numeric(supp), 
+          confidence = as.numeric(input$conf), 
+          minlen = input$minL, 
+          maxlen = input$maxL),
+          control = list(verbose = TRUE))
+        quality(rules) <- interestMeasure(rules, transactions = dataset)
+        
+        message("Remined ", length(rules), " rules.")
+        #lo <- paste(logOutput(),'\nRemined',length(rules),'rules.')
+        #logOutput(lo)
+        
+        cachedRules <<- rules
+        cachedSupp <<- input$supp
+        cachedConf <<- input$conf
+        cachedLift <<- input$lift
+        cachedMinL <<- input$minL
+        cachedMaxL <<- input$maxL
+      })
+     
+      ### handle warning for too low support
+      override <- shiny::reactiveVal(FALSE)
+      
+      shiny::observeEvent(input$cancel, {
+        shiny::removeModal() 
+        # reset the slider (Note this does not change input$supp!)
+        shiny::updateSliderInput(session, "supp", value = cachedSupp)
+      })
+
+      shiny::observeEvent(input$continue, { 
+        shiny::removeModal() 
+        override(TRUE)
+      })
+          
+      rules <- shiny::reactive({
+        ### recalculate rules?
+        
+        if(is(dataset, 'transactions')) {
+          
+        # cat("input supp: ", input$supp, "\n")  
+        #  cat("cached supp: ", cachedSupp, "\n")  
+        #  cat("abs supp: ", input$supp*length(dataset), "\n")  
+        #  cat("override: ", override(), "\n")  
+          
+          # check for low minimum support first
+          if(input$supp*length(dataset) > 10 || override()) {
+        
+            if(is.null(cachedRules)) remineRules()
+            if((input$supp < cachedSupp) || input$conf < cachedConf) remineRules()
+            if(input$minL < cachedMinL || input$maxL > cachedMaxL) remineRules()
+            
+          } else { 
+              shiny::showModal(shiny::modalDialog(
+                title='Warning',
+                'Very low minimum support! Too low values can result in long wait times and memory issues.',
+                footer=shiny::tagList(
+                  shiny::actionButton('cancel','cancel'),
+                  shiny::actionButton('continue','proceed')
+                )
+              ))
+          }
+        }
+        
+        ar <- cachedRules
+        
+        if(input$supp > cachedSupp) {
+          ar <- subset(ar, subset = support > input$supp)
+        }
+       
+        if(input$conf > cachedConf) {
+          ### FIXME: R CMD check complains about: 
+          ### shiny_arules : <anonymous>: no visible binding for global variable ‘confidence’ 
+          #ar <- subset(ar, subset = quality(ar)$confidence > input$conf)
+          ar <- subset(ar, subset = quality(ar)$confidence > input$conf)
+        }
+        
+        if(input$lift > cachedLift) {
+          ar <- subset(ar, subset= lift > input$lift)
+        }
+        
+        if(input$minL > cachedMinL) {
+          ar <- ar[size(ar) >= input$minL]   
+        }
+        
+        if(input$maxL < cachedMaxL) {
+          ar <- ar[size(ar) <= input$maxL]   
+        }
+        
+        if(input$colsType == 'rem' && length(input$cols) > 0) {
+          ar <- subset(ar, subset=!(items %in% input$cols))
+        }
+        
+        if(input$colsType == 'req' && length(input$cols) > 0) {
+          ar <- subset(ar, subset=items %in% input$cols)
+        }
+        
+        
+        if(input$colsLHSType == 'rem' && length(input$colsLHS) > 0) {
+          ar <- subset(ar, subset=!(lhs %in% input$colsLHS))
+        }
+        
+        if(input$colsLHSType == 'req' && length(input$colsLHS) > 0) {
+          ar <- subset(ar, subset=lhs %in% input$colsLHS)
+        }
+        
+        if(input$colsRHSType == 'rem' && length(input$colsRHS) > 0) {
+          ar <- subset(ar, subset=!(rhs %in% input$colsRHS))
+        }
+        
+        if(input$colsRHSType == 'req' && length(input$colsRHS) > 0) {
+          ar <- subset(ar, subset=rhs %in% input$colsRHS)
+        }
+        
+        
+        ### update lift slider
+        #maxLift <<- ceiling(max(quality(ar)$lift))
+        #shiny::updateSliderInput(session,"lift",value = input$lift, min=minLift, max=maxLift, step = 1/10000)
+        
+        shiny::validate(
+          #shiny::need(length(ar) > 0, "No matching rules found!")
+        )
+        
+        ar
+        
+      }
+      )
+      
+      # remember settings for other plots
+      shiny::observe({ shiny::req(input$xAxis); xIndexCached <<- input$xAxis })
+      shiny::observe({ shiny::req(input$yAxis); yIndexCached <<- input$yAxis })
+      shiny::observe({ shiny::req(input$cAxis); zIndexCached <<- input$cAxis })
+      
+      
+      # Present errors nicely to the user
+      handleErrors <- shiny::reactive({
+        shiny::validate(
+          shiny::need(length(rules())>0, 'No rules to visualize! Decrease support, confidence or lift.')
+        )
+      })
+      
+      
+      ## Grouped Plot #########################
+      output$groupedPlot <- shiny::renderPlot({
+        shiny::req(input$cAxis, input$k)
+        handleErrors()
+        
+        plot(rules(), method='grouped', shading = input$cAxis, control=list(k=input$k))
+      }, height=800, width=800)
+      
+      
+      ## Graph Plot ##########################
+      output$graphPlot <- renderVisNetwork({
+        shiny::req(input$cAxis)
+        handleErrors()
+        
+        plt <- plot(rules(), method='graph', shading = input$cAxis, engine='htmlwidget')
+        
+        plt$sizingPolicy <- htmlwidgets::sizingPolicy(
+          viewer.paneHeight=1000,
+          browser.defaultHeight=1000,
+          knitr.defaultHeight=1000,
+          defaultHeight=1000,defaultWidth=1000,
+          browser.fill=TRUE
+        )
+        plt$height <- 1000
+        plt$x$height <- 1000
+        plt
+      })
+      
+      
+      ## Scatter Plot ##########################
+      output$scatterPlot <- renderPlotly({
+        shiny::req(input$xAxis, input$yAxis, input$cAxis)
+        handleErrors()
+        
+        plotly_arules(rules(), method = 'scatterplot',
+          measure=c(input$xAxis, input$yAxis), shading = input$cAxis)
+      })
+      
+      
+      ## Parallel Coordinates Plot ###################
+      output$paracoordPlot <- shiny::renderPlot({
+        handleErrors()
+        
+        plot(rules(), method='paracoord')
+      }, height=800, width=800)
+      
+      
+      ## Matrix Plot ###################
+      output$matrixPlot <- renderPlotly({
+        handleErrors()
+        
+        plotly_arules(rules(), method='matrix', shading=input$cAxis)
+      })
+      
+      ## Rules Data Table ##########################
+      output$rulesDataTable <- shiny::renderDataTable({
+        handleErrors()
+        
+        
+        x <- rules()
+        data.frame(LHS = labels(lhs(x)), RHS = labels(rhs(x)), quality(x))
+      }, options = list(filter = "top", rownames = paste0('[', 1:length(x), ']'))
+      )
+      
+      ## Download data to csv ########################
+      output$rules.csv <- shiny::downloadHandler(
+        filename = 'rules.csv',
+        content = function(file) { 
+          x <- rules()
+          data <- data.frame(LHS = labels(lhs(x)), RHS = labels(rhs(x)), quality(x))
+          write.csv(data, file) 
+        }
+      )
+      
+      
+    }
   )
 }
