@@ -20,18 +20,7 @@
 #                 https://github.com/brooksandrew/Rsenal
 #
 
-### TODO:
-#
-# * support of 0 for dataset may hang the system 
-# * put the output (log) into a frame in shiny?
-# * suppress warning messages? widget IDs will be fixed by plotly soon.
-# * should the parametes be parameters of apriori?
-# * name of the function?
-# * show number of rules somewhere (sidebar)?
-# * toggle remove/require/can only contain items.
-#
-
-shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
+shiny_arules <- function(x, parameter = NULL) {
   
   if (!requireNamespace("shiny", quietly = TRUE)) {
     stop("Package shiny is required to run this method.", call. = FALSE)
@@ -41,8 +30,9 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
   
   ### dataset can be rules or transactions
   dataset <- x
-  supp <- support
-  conf <- confidence
+  aparameter <- as(parameter,'APparameter')
+  supp <- aparameter@support
+  conf <- aparameter@confidence
   
   ### make sure we have transactions or rules
   if(is(dataset, "data.frame")) {
@@ -54,6 +44,8 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
   xIndexCached <- "support"
   yIndexCached <- "confidence"
   zIndexCached <- "lift"
+
+  logOutput <- shiny::reactiveVal('Output log')
 
   if(is(dataset, "rules")) {
     if(length(dataset) < 1) stop("Zero rules provided!")
@@ -86,6 +78,7 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
     
     shiny::sidebarPanel(
       
+      shiny::htmlOutput('numRulesOutput'),
       shiny::conditionalPanel(
         condition = "input.mytab %in% c('grouped', 'graph', 'datatable', 'scatter', 'paracoord', 'matrix')",
         shiny::uiOutput("kSelectInput"),
@@ -99,11 +92,15 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
         shiny::numericInput("minL", "Min. items in rule:", 2), 
         shiny::numericInput("maxL", "Max. items in rule:", 10), 
         shiny::br(),
+        shiny::selectInput('colsType',NULL,c('Remove rules including:'='rem','Require rules to include:'='req')),
         shiny::uiOutput("choose_columns"), 
+        shiny::selectInput('colsLHSType',NULL,c('Remove rules with LHS including:'='rem','Require rules to have LHS include:'='req')),
         shiny::uiOutput("choose_lhs"), 
+        shiny::selectInput('colsRHSType',NULL,c('Remove rules with RHS including:'='rem','Require rules to have RHS include:'='req')),
         shiny::uiOutput("choose_rhs"), 
         shiny::br(),
-        shiny::downloadButton('downloadData', 'Download Rules as CSV')
+        shiny::downloadButton('downloadData', 'Download Rules as CSV'),
+        shiny::verbatimTextOutput('logOutput')
       )
       
       
@@ -123,6 +120,13 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
   
   server = function(input, output, session) {
     
+
+    output$numRulesOutput <- shiny::renderUI({
+        HTML(paste('<b>',length(rules()),'rules selected</b>'))
+    })
+    output$logOutput <- shiny::renderText({
+        logOutput()
+    })
     output$kSelectInput <- shiny::renderUI({
       if(input$mytab == 'grouped') {
         shiny::sliderInput('k', label='Choose # of rule clusters', min=1, max=50, step=1, value=15)
@@ -148,20 +152,20 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
     })
     
     output$choose_columns <- shiny::renderUI({
-        shiny::selectizeInput('cols','Remove rules including:',
+        shiny::selectizeInput('cols',NULL,
                               itemLabels(dataset),
                               multiple = TRUE)
     })
     
     
     output$choose_lhs <- shiny::renderUI({
-      shiny::selectizeInput('colsLHS','Remove rules with LHS including:',
+      shiny::selectizeInput('colsLHS',NULL,
                             itemLabels(dataset),
                             multiple = TRUE)
     })
     
     output$choose_rhs <- shiny::renderUI({
-      shiny::selectizeInput('colsRHS','Remove rules with RHS including:',
+      shiny::selectizeInput('colsRHS',NULL,
                             itemLabels(dataset),
                             multiple = TRUE)
     })
@@ -191,10 +195,12 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
         confidence=as.numeric(input$conf), 
         minlen=input$minL, 
         maxlen=input$maxL),
-        control = list(verbose = T))
+        control = list(verbose = F))
       quality(rules) <- interestMeasure(rules, transactions = dataset)
       
       message("Remined ", length(rules), " rules.")
+      lo <- paste(logOutput(),'\nRemined',length(rules),'rules.')
+      logOutput(lo)
       
       cachedRules <<- rules
       cachedSupp <<- input$supp
@@ -210,7 +216,7 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
       ### recalculate rules?
       if(is(dataset, 'transactions')) {
         if(is.null(cachedRules)) remineRules()
-        if(input$supp < cachedSupp || input$conf < cachedConf) remineRules()
+        if((tempSupp == 0 && input$supp < cachedSupp) || input$conf < cachedConf) remineRules()
         if(input$minL < cachedMinL || input$maxL > cachedMaxL) remineRules()
       }
       
@@ -236,17 +242,26 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
         ar <- ar[size(ar) <= input$maxL]   
       }
       
-      if(length(input$cols) > 0) {
+      if(input$colsType == 'rem' && length(input$cols) > 0) {
         ar <- subset(ar, subset=!(items %in% input$cols))
+      }
+      if(input$colsType == 'req' && length(input$cols) > 0) {
+        ar <- subset(ar, subset=items %in% input$cols)
       }
 
       
-      if(length(input$colsLHS) > 0) {
+      if(input$colsLHSType == 'rem' && length(input$colsLHS) > 0) {
         ar <- subset(ar, subset=!(lhs %in% input$colsLHS))
       }
+      if(input$colsLHSType == 'req' && length(input$colsLHS) > 0) {
+        ar <- subset(ar, subset=lhs %in% input$colsLHS)
+      }
       
-      if(length(input$colsRHS) > 0) {
+      if(input$colsRHSType == 'rem' && length(input$colsRHS) > 0) {
         ar <- subset(ar, subset=!(rhs %in% input$colsRHS))
+      }
+      if(input$colsRHSType == 'req' && length(input$colsRHS) > 0) {
+        ar <- subset(ar, subset=rhs %in% input$colsRHS)
       }
       
       
@@ -267,6 +282,41 @@ shiny_arules <- function(x, support = 0.1, confidence = 0.8) {
     shiny::observe({ shiny::req(input$xAxis); xIndexCached <<- input$xAxis })
     shiny::observe({ shiny::req(input$yAxis); yIndexCached <<- input$yAxis })
     shiny::observe({ shiny::req(input$cAxis); zIndexCached <<- input$cAxis })
+
+    tempSupp <- 0
+    warn <- TRUE
+    shiny::observeEvent(input$supp, {
+        print(c(input$supp*length(dataset),is(dataset,'rules')))
+        if(!is(dataset,'rules') && input$supp*length(dataset) < 5) {
+            if(warn) {
+                tempSupp <<- input$supp
+                shiny::updateSliderInput(session,"supp",value = cachedSupp, min=minSupp, max=maxSupp, step = (maxSupp-minSupp)/10000)
+                showModal(modalDialog(
+                    title='Warning',
+                    'Warning - low support could result in long computation time.
+                    Click cancel to reset and continue to continue.',
+                    footer=tagList(
+                        actionButton('cancel','cancel'),
+                        actionButton('continue','continue')
+                    )
+                    ))
+            } else {
+                warn <<- TRUE
+            }
+        }
+    });
+    shiny::observeEvent(input$continue, {
+            shiny::updateSliderInput(session,"supp",value = tempSupp, min=minSupp, max=maxSupp, step = (maxSupp-minSupp)/10000)
+            warn <<- FALSE
+            tempSupp <<- 0
+            removeModal()
+        }
+    )
+    shiny::observeEvent(input$cancel, {
+            tempSupp <<- 0
+            removeModal()
+        }
+    )
     
     
     # Present errors nicely to the user
