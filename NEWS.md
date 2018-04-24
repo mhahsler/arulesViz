@@ -1,11 +1,14 @@
-# arulesViz 1.3-0.1 (xx/xx/2018)
+# arulesViz 1.3-1 (04/23/2018)
 
 ## New features
+* ruleExplorer: interactive visualization with shiny was added.
 * plot method matrix now supports different reordering methods: 'none',
     'measure', 'support/confidence', 'similarity'. Default is measure,
     the measure for used for shading.
 * measure and shading now auto-completes measure names.
-* interactive visualization with arules_shiny was added.
+
+## Changes
+* plotly_arules is deprecated use plot with engine = "plotly" instead
 
 ## Bug Fix
 * Fixed problem with quality measures (offset of 1) when creating igraph 

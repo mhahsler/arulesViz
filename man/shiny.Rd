@@ -1,18 +1,19 @@
-\name{shiny}
+\name{ruleExplorer}
 \Rdversion{1.1}
-\alias{shiny_arules}
-\title{Visualize Association Rules and Itemsets with Shiny}
+\alias{ruleExplorer}
+\alias{explore}
+\title{Explore Association Rules Interactively}
 \description{
-Visualize assocation rules and itemsets using \pkg{shiny}.
+Explore assocation rules using interactive manipulations and visualization using \pkg{shiny}.
 }
 \usage{
-shiny_arules(x, parameter)
+ruleExplorer(x, parameter = NULL)
 }
 \arguments{
   \item{x}{ a set of rules, a transactions object or a data.frame. } 
   \item{parameter}{a list with parameters passed on to \code{\link[arules]{apriori}}. 
-    the list can be used to set the initial support and confidence, etc.
-    Values are ignored if \code{x} contains rules.}
+    the list can be used to set the initial support and confidence thresholds.
+    Values are ignored if \code{x} contains a set of rules.}
 }
 %\details{}
 %\value{}
@@ -27,13 +28,13 @@ See https://github.com/brooksandrew/Rsenal for the original code.
 \dontrun{
 data(Groceries)
 
-# visualize pre-mined rules
+# explore pre-mined rules
 rules <- apriori(Groceries, parameter=list(support=0.001, confidence=0.8))
 rules
 
-shiny_arules(rules)
+ruleExplorer(rules)
 
-# mine and visualize rules on the fly
-shiny_arules(Groceries)
+# mine and explore rules on the fly
+ruleExplorer(Groceries)
 }
 }

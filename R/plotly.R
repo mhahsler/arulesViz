@@ -18,11 +18,19 @@
 
 # plotly interactive plots using d3.js
 
-#plot <- function(x, method = NULL, measure = "support", 
-#  shading = "lift", interactive = FALSE, data = NULL, control = NULL, ...) {
-
 
 plotly_arules <- function(x, method = "scatterplot", 
+  measure = c("support", "confidence"), shading = "lift", 
+  max = 1000, ...) {
+  
+  .Deprecated("plot")
+
+  .plotly_arules(x, method, 
+    measure, shading, 
+    1000, ...)
+}
+
+.plotly_arules <- function(x, method = "scatterplot", 
   measure = c("support", "confidence"), shading = "lift", 
   max = 1000, ...) {
   

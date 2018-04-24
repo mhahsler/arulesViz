@@ -5,6 +5,8 @@
 \title{Interactive Scatter Plot for Association Rules using plotly}
 \description{
 Plot an interactive scatter plot for association rules using \pkg{plotly}.
+This function is \bold{deprecated}. Use \code{\link{plot}} with parameter 
+\code{engine = "plotly"} instead.
 }
 \usage{
 plotly_arules(x, method = "scatterplot", measure = c("support", "confidence"), 

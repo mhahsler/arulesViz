@@ -20,7 +20,7 @@
 #                 https://github.com/brooksandrew/Rsenal
 #
 
-shiny_arules <- function(x, parameter = NULL) {
+ruleExplorer <- function(x, parameter = NULL) {
   
   if (!requireNamespace("shiny", quietly = TRUE)) {
     stop("Package shiny is required to run this method.", call. = FALSE)
@@ -86,19 +86,19 @@ shiny_arules <- function(x, parameter = NULL) {
         shiny::uiOutput("yAxisSelectInput"),
         shiny::uiOutput("cAxisSelectInput"),
         shiny::br(),
-        shiny::sliderInput("supp", "Support:", min = minSupp, max = maxSupp, value = supp , step = (maxSupp-minSupp)/1000, sep =""),
-        shiny::sliderInput("conf", "Confidence:", min = minConf, max = maxConf, value = conf , step =  (maxConf-minConf)/1000, sep = ""), 
-        shiny::sliderInput("lift", "Lift:", min = minLift, max = maxLift, value = lift , step =  (maxLift-minLift)/1000, sep = ""), 
+        shiny::sliderInput("supp", "Minimum Support:", min = minSupp, max = maxSupp, value = supp , step = (maxSupp-minSupp)/1000, sep =""),
+        shiny::sliderInput("conf", "Minimum Confidence:", min = minConf, max = maxConf, value = conf , step =  (maxConf-minConf)/1000, sep = ""), 
+        shiny::sliderInput("lift", "Minimum Lift:", min = minLift, max = maxLift, value = lift , step =  (maxLift-minLift)/1000, sep = ""), 
         shiny::numericInput("minL", "Min. items in rule:", 2), 
         shiny::numericInput("maxL", "Max. items in rule:", 10), 
         shiny::br(),
-        shiny::HTML('<b>Filter items</b>'),
+        shiny::HTML('<b>Filter rules by items:</b>'),
         shiny::br(),
-        shiny::selectInput('colsType',NULL,c('Remove rules including:'='rem','Require rules to include:'='req')),
+        shiny::selectInput('colsType',NULL,c('Exclude items:'='rem','Require items:'='req')),
         shiny::uiOutput("choose_columns"), 
-        shiny::selectInput('colsLHSType',NULL,c('Remove rules with LHS including:'='rem','Require rules to have LHS include:'='req')),
+        shiny::selectInput('colsLHSType',NULL,c('Exclude items from LHS:'='rem','Require items in LHS:'='req')),
         shiny::uiOutput("choose_lhs"), 
-        shiny::selectInput('colsRHSType',NULL,c('Remove rules with RHS including:'='rem','Require rules to have RHS include:'='req')),
+        shiny::selectInput('colsRHSType',NULL,c('Exclude items from RHS:'='rem','Require items in RHS:'='req')),
         shiny::uiOutput("choose_rhs"), 
         shiny::br(),
         shiny::downloadButton('rules.csv', 'Download Rules as CSV')
@@ -236,7 +236,7 @@ shiny_arules <- function(x, parameter = NULL) {
         
         if(is(dataset, 'transactions')) {
           
-        # cat("input supp: ", input$supp, "\n")  
+        #  cat("input supp: ", input$supp, "\n")  
         #  cat("cached supp: ", cachedSupp, "\n")  
         #  cat("abs supp: ", input$supp*length(dataset), "\n")  
         #  cat("override: ", override(), "\n")  
@@ -268,7 +268,7 @@ shiny_arules <- function(x, parameter = NULL) {
        
         if(input$conf > cachedConf) {
           ### FIXME: R CMD check complains about: 
-          ### shiny_arules : <anonymous>: no visible binding for global variable ‘confidence’ 
+          ### shiny_arules : <anonymous>: no visible binding for global variable 'confidence' 
           #ar <- subset(ar, subset = quality(ar)$confidence > input$conf)
           ar <- subset(ar, subset = quality(ar)$confidence > input$conf)
         }
@@ -372,7 +372,7 @@ shiny_arules <- function(x, parameter = NULL) {
         shiny::req(input$xAxis, input$yAxis, input$cAxis)
         handleErrors()
         
-        plotly_arules(rules(), method = 'scatterplot',
+        .plotly_arules(rules(), method = 'scatterplot',
           measure=c(input$xAxis, input$yAxis), shading = input$cAxis)
       })
       
@@ -389,7 +389,7 @@ shiny_arules <- function(x, parameter = NULL) {
       output$matrixPlot <- renderPlotly({
         handleErrors()
         
-        plotly_arules(rules(), method='matrix', shading=input$cAxis)
+        .plotly_arules(rules(), method='matrix', shading=input$cAxis)
       })
       
       ## Rules Data Table ##########################

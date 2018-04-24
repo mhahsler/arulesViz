@@ -9,5 +9,6 @@ proj$
 ^LICENSE
 ^README/
 ^Work/
-_pkgdown
+^_pkgdown\.yml
+^_config\.yml
 ^docs/

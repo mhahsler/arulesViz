@@ -26,6 +26,8 @@ export("inspectDT")
 S3method(inspectDT, rules)
 S3method(inspectDT, itemsets)
 
-export("shiny_arules")
-export("plotly_arules")
+export("ruleExplorer")
 export("saveAsGraph")
+
+## Deprecated
+export("plotly_arules")
