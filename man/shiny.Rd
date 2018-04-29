@@ -4,7 +4,7 @@
 \alias{explore}
 \title{Explore Association Rules Interactively}
 \description{
-Explore assocation rules using interactive manipulations and visualization using \pkg{shiny}.
+Explore association rules using interactive manipulations and visualization using \pkg{shiny}.
 }
 \usage{
 ruleExplorer(x, parameter = NULL)
@@ -23,7 +23,11 @@ Adapted from functions originally created by Andrew Brooks.
 See https://github.com/brooksandrew/Rsenal for the original code.
 }
 %\references{}
-%\seealso{}
+\seealso{
+    \code{\link{plot}} with \code{engine = "html"},
+    \code{\link{inspectDT}},
+    \code{\link[arules]{apriori}}.
+}
 \examples{
 \dontrun{
 data(Groceries)
