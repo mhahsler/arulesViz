@@ -1,10 +1,15 @@
+# arulesViz 1.3-1.1 (xx/xx/2018)
+
+## Bug Fix
+* ruleExplorer now checks for excessive number of items so shiny does not freeze.
+
 # arulesViz 1.3-1 (04/23/2018)
 
 ## New features
 * ruleExplorer: interactive visualization with shiny was added.
 * plot method matrix now supports different reordering methods: 'none',
-    'measure', 'support/confidence', 'similarity'. Default is measure,
-    the measure for used for shading.
+    'measure', 'support/confidence', 'similarity'. The default is measure,
+    the measure used for shading.
 * measure and shading now auto-completes measure names.
 
 ## Changes

@@ -46,6 +46,11 @@ ruleExplorer <- function(x, parameter = NULL) {
   zIndexCached <- "lift"
   
   #logOutput <- shiny::reactiveVal('Output log')
+ 
+  ### js cannot handle very large arrays
+  itemLabels <- itemLabels(dataset)
+  if(length(itemLabels) > 10000) 
+    itemLabels <- list('Disabled because of excessive number of items (>10,000)'= c(""))
   
   if(is(dataset, "rules")) {
     if(length(dataset) < 1) stop("Zero rules provided!")
@@ -151,22 +156,16 @@ ruleExplorer <- function(x, parameter = NULL) {
       })
       
       output$choose_columns <- shiny::renderUI({
-        shiny::selectizeInput('cols',NULL,
-          itemLabels(dataset),
-          multiple = TRUE)
+        shiny::selectizeInput('cols', NULL, itemLabels, multiple = TRUE)
       })
       
       
       output$choose_lhs <- shiny::renderUI({
-        shiny::selectizeInput('colsLHS',NULL,
-          itemLabels(dataset),
-          multiple = TRUE)
+        shiny::selectizeInput('colsLHS', NULL, itemLabels, multiple = TRUE)
       })
       
       output$choose_rhs <- shiny::renderUI({
-        shiny::selectizeInput('colsRHS',NULL,
-          itemLabels(dataset),
-          multiple = TRUE)
+        shiny::selectizeInput('colsRHS', NULL, itemLabels, multiple = TRUE)
       })
       
       #output$logOutput <- shiny::renderText({
