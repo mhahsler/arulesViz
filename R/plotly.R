@@ -25,9 +25,7 @@ plotly_arules <- function(x, method = "scatterplot",
   
   .Deprecated("plot")
 
-  .plotly_arules(x, method, 
-    measure, shading, 
-    1000, ...)
+  .plotly_arules(x, method, measure, shading, 1000, ...)
 }
 
 .plotly_arules <- function(x, method = "scatterplot", 

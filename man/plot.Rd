@@ -96,7 +96,12 @@ visualization (uses \pkg{plotly}).
 Arranges the association rules as a matrix with the itemsets in the antecedents
 on one axis and the itemsets in the consequents on the other.  The
 measure of interestingness (first element of \code{measure}) is either visualized by a color (darker means a higher value for the
-measure) or as the height of a bar (engine "3d"). Interactive
+measure) or as the height of a bar (engine "3d"). 
+The control parameter \code{reorder} takes the values 
+\code{"none"}, \code{"measure"}, \code{"support/confidence"}, or \code{"similarity"} and 
+can be used to reorder LHS and RHS of the rules differntly. The default reordering average measure 
+(typically lift) pushing the rules with the highest lift value to the top-left corner of the plot.   
+Interactive
 visualizations using engine "interactive" or "htmlwidget" (via \pkg{plotly})
 are available.
 }
@@ -236,6 +241,12 @@ plot(subrules, method="matrix", engine = "3d")
 ## Matrix with two measures
 plot(subrules, method="matrix", shading=c("lift", "confidence"))
 
+## Reorder rules
+plot(subrules, method="matrix", control = list(reorder = "none"))
+plot(subrules, method="matrix", control = list(reorder = "support/confidence"))
+plot(subrules, method="matrix", control = list(reorder = "similarity"))
+
+
 ## Interactive matrix plot (default interactive and as a html widget)
 \dontrun{
 plot(subrules, method="matrix", engine="interactive")
@@ -289,7 +300,7 @@ plot(subrules2, method="graph", engine="htmlwidget",
 ## -------------------------
 
 plot(subrules2, method="paracoord")
-plot(subrules2, method="paracoord", reorder=TRUE)
+plot(subrules2, method="paracoord", control = list(reorder=TRUE))
 
 ## Doubledecker plot 
 ## -----------------

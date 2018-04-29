@@ -102,7 +102,8 @@ matrix_int <- function(rules, measure, control){
     rm <- rowMeans(m_c, na.rm = TRUE)
     m <- m[order(rm, decreasing = FALSE), order(cm, decreasing = TRUE)]
   } else if(reorderType == 4){
-    d <- dissimilarity(lhs(rules), method = "jaccard")
+    ### Note: I hope unique is stable and gives the same order as rulesAsMatrix!
+    d <- dissimilarity(unique(lhs(rules)), method = "jaccard")
     cm <- get_order(seriate(d))
     rm <- rowMeans(m, na.rm = TRUE)
     m <- m[order(rm, decreasing = FALSE), cm]

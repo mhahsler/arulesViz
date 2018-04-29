@@ -91,7 +91,7 @@ ruleExplorer <- function(x, parameter = NULL) {
         shiny::uiOutput("yAxisSelectInput"),
         shiny::uiOutput("cAxisSelectInput"),
         shiny::br(),
-        shiny::sliderInput("supp", "Minimum Support:", min = minSupp, max = maxSupp, value = supp , step = (maxSupp-minSupp)/1000, sep =""),
+        shiny::sliderInput("supp", "Minimum Support:", min = minSupp, max = maxSupp, value = supp , step = (maxSupp-minSupp)/10000, sep =""),
         shiny::sliderInput("conf", "Minimum Confidence:", min = minConf, max = maxConf, value = conf , step =  (maxConf-minConf)/1000, sep = ""), 
         shiny::sliderInput("lift", "Minimum Lift:", min = minLift, max = maxLift, value = lift , step =  (maxLift-minLift)/1000, sep = ""), 
         shiny::numericInput("minL", "Min. items in rule:", 2), 
