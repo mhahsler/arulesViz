@@ -1,4 +1,4 @@
-# arulesViz 1.3-1.1 (xx/xx/2018)
+# arulesViz 1.3-2 (12/04/2018)
 
 ## Bug Fix
 * ruleExplorer now checks for excessive number of items so shiny does not freeze.
