@@ -19,7 +19,11 @@
 
 paracoord_arules <- function(x, measure= "support", shading = "lift", 
   control=list(), ...) {
-
+  
+  ## remove short rules
+  x <- x[size(x)>1]
+  if(length(x)<1) stop("No rules of length 2 or longer.")
+  
   control <- .get_parameters(control, list(
     main = paste("Parallel coordinates plot for", length(x), "rules"),
     reorder = FALSE,
@@ -37,13 +41,8 @@ paracoord_arules <- function(x, measure= "support", shading = "lift",
     stop("Unknown engine for parallel coordinates plot '", control$engine, 
       "' - Valid engine: 'default'.")
     
-  
   if(control$interactive) stop("Interactive mode not available for parallel coordinates plot.")
    
-  ## remove short rules
-  x <- x[size(x)>1]
-  if(length(x)<1) stop("No rules of length 2 or longer.")
-  
   
   ## sort rules to minimize occlusion
   x <- sort(x, by=shading,  decreasing = FALSE)
@@ -57,13 +56,15 @@ paracoord_arules <- function(x, measure= "support", shading = "lift",
   n <- length(u)
   maxLenLHS <- max(sapply(l, length))
   
-  pl <- t(sapply(l, FUN = function(x)  {
-    x <- match(x, u)
+  pl <- sapply(l, FUN = function(ll)  {
+    ll <- match(ll, u)
     # reordering items of antecedent
-    length(x) <- maxLenLHS
-    rev(x) ## so NAs are to the left (we could also use na.last for sort)
-  }))
+    length(ll) <- maxLenLHS
+    rev(ll) ## so NAs are to the left (we could also use na.last for sort)
+  })
   
+  ## special case is if there is only one item to the left
+  if(is.matrix(pl)) pl <- t(pl) else pl <- matrix(pl, ncol = maxLenLHS)
   
   ## RHS is always a single item for now
   pr <- sapply(r, FUN = function(x)  match(x, u))
