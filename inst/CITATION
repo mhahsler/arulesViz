@@ -1,0 +1,17 @@
+citation(auto = meta)
+
+bibentry(bibtype = "article",
+  title = paste("arules{V}iz: {I}nteractive Visualization of Association Rules with {R}"),
+  author = {
+    c(person("Michael", "Hahsler",
+      email = "mhahsler@lyle.smu.edu"))
+  },
+  year = 2017,
+  journal = "R Journal",
+  volume = 9,
+  number = 2,
+  pages = "163--175",
+  url = "https://journal.r-project.org/archive/2017/RJ-2017-047/RJ-2017-047.pdf",
+  month = "December",
+  issn = "2073-4859"
+  )

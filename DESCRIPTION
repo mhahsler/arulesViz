@@ -12,7 +12,6 @@ Imports: scatterplot3d, vcd, seriation, igraph (>= 1.0.0), graphics, methods, ut
 Suggests: graph, Rgraphviz, iplots, shiny, htmlwidgets
 Description: Extends package 'arules' with various visualization techniques for association rules and itemsets. The package also includes several interactive visualizations for rule exploration.
 License: GPL-3
-URL: https://github.com/mhahsler/arulesViz, http://lyle.smu.edu/IDA/arules/
-BugReports: https://github.com/mhahsler/arulesViz
+URL: https://github.com/mhahsler/arulesViz
+BugReports: https://github.com/mhahsler/arulesViz/issues
 Copyright: (C) 2018 Michael Hahsler, Tyler Giallanza and Sudheer Chelluboina
-RoxygenNote: 6.0.1
