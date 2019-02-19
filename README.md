@@ -23,10 +23,10 @@ install_github("mhahsler/arulesViz")
 This might also require the development version of [arules](http://github.com/mhahsler/arules).
 
 ## Features
-* Visualizations using `base` and/or `grid`. 
-* Interactive visualizations using `grid`.
-* Interactive visualizations with package `plotly`.
-* Interactive rule inspection with package `datatable`.
+* Visualizations using `base`, `grid` and `plotly`. 
+* Interactive visualizations using `grid` and `plotly`.
+* Interactive rule inspection with `datatable`.
+* Integrated interactive rule exploration using `ruleExplorer`. 
 
 ### Available Visualizations:
 
@@ -70,8 +70,9 @@ inspectDT(rules)
 
 ## References
 
-* [Intro article](https://cran.r-project.org/package=arulesViz/vignettes/arulesViz.pdf) with complete examples by Michael Hahsler and Sudheer Chelluboina.
-* Michael Hahsler. [arulesViz: Visualizing association rules with R.](https://journal.r-project.org/archive/2017/RJ-2017-047/) _R Journal,_ 9(2):163-175, December 2017.
+* Michael Hahsler and Sudheer Chelluboina. [Visualizing Association Rules: Introduction 
+to the R-extension Package arulesViz](https://cran.r-project.org/package=arulesViz/vignettes/arulesViz.pdf) (with complete examples). 
+* Michael Hahsler. [arulesViz: Interactive visualization of association rules with R.](https://journal.r-project.org/archive/2017/RJ-2017-047/RJ-2017-047.pdf) _R Journal,_ 9(2):163-175, December 2017.
 * Michael Hahsler, Sudheer Chelluboina, Kurt Hornik, and Christian Buchta. [The arules R-package ecosystem: Analyzing interesting patterns from large transaction datasets.](http://jmlr.csail.mit.edu/papers/v12/hahsler11a.html) _Journal of Machine Learning Research,_ 12:1977-1981, 2011.
 
 
