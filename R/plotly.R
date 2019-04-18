@@ -152,20 +152,21 @@ scatterplot_plotly <- function(x,
       hoverinfo = 'text', text = txt, 
       color = as.ordered(q[,shading]),
       mode = 'markers', marker = marker 
-    ) 
+    )
   else
     p <- plot_ly(q, type = "scatter", x = q[,measure[1]], y = q[,measure[2]], 
       hoverinfo = 'text', text = txt, 
       color = q[,shading], colors = colors,
       mode = 'markers', 
-      marker = c(list(colorbar = list(title = shading)), marker)
-    ) 
+      marker = marker
+    )  %>% plotly::colorbar(title = shading) 
   
   
-  p %>% layout(hovermode = "closest", 
-    xaxis = list(title = measure[1]),
-    yaxis = list(title = measure[2])
-  )
+  p %>%
+    plotly::layout(hovermode = "closest", 
+      xaxis = list(title = measure[1]),
+      yaxis = list(title = measure[2])
+    )
 }
 
 ## interface for plot

@@ -1,5 +1,8 @@
 # arulesViz 1.3-2.1 (xx/xx/2019)
 
+## New features
+* ruleExplorer got a cleaner interface and several new features.
+
 ## Bug Fix
 * plot with method "paracoord" works now also with a single item in the LHS. 
 
