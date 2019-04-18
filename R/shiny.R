@@ -121,7 +121,7 @@ ruleExplorer <- function(x, parameter = NULL) {
             
             shiny::tabPanel('Data Table', value='datatable', 
               shiny::br(),
-              shiny::dataTableOutput("rulesDataTable")
+              DT::dataTableOutput("rulesDataTable")
             ),
             
             shiny::tabPanel('Scatter', value='scatter', 
@@ -421,9 +421,9 @@ ruleExplorer <- function(x, parameter = NULL) {
       })
       
       ## Data Table ##########################
-      output$rulesDataTable <- shiny::renderDataTable({
+      output$rulesDataTable <- DT::renderDataTable({
         handleErrors()
-        as(rules(), "data.frame") 
+        inspectDT(rules())
       }
       )
       
