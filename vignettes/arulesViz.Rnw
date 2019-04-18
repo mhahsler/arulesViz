@@ -198,7 +198,7 @@ presentation to clearly highlight the findings.
 Many researchers introduced visualization techniques
 like scatter plots, matrix visualizations, graphs, mosaic plots
 and parallel coordinates plots to analyze association rules
-(see \cite{arulesViz:Bruzzese:2008} for a recent overview paper).
+(see \cite{arulesViz:Bruzzese:2008} and \cite{arulesViz:Jentner:2019} for a recent overview).
 This paper discusses existing techniques and
 demonstrates how their implementation in \pkg{arulesViz}
 can be used via a simple unified interface.
