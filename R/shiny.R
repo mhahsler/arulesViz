@@ -133,7 +133,7 @@ ruleExplorer <- function(x, parameter = NULL) {
                   shiny::column(3, shiny::sliderInput("max_scatter", "Top rules shown (keep below 500):", 
                     min = 1, max = length(x), value = min(100, length(x)), step = 1, sep = ""))
                 )),
-              plotlyOutput("scatterPlot", width='100%', height='100%')
+              plotly::plotlyOutput("scatterPlot", width='100%', height='100%')
             ),
             
             shiny::tabPanel('Matrix', value='matrix', 
@@ -144,7 +144,7 @@ ruleExplorer <- function(x, parameter = NULL) {
                     min = 1, max = length(x), value = min(100, length(x)), step = 1, sep = ""))
                 )),
               
-              plotlyOutput("matrixPlot", width='100%', height='100%')
+              plotly::plotlyOutput("matrixPlot", width='100%', height='100%')
             ),
             
           shiny::tabPanel('Grouped', value='grouped', 
@@ -166,7 +166,7 @@ ruleExplorer <- function(x, parameter = NULL) {
                     min = 1, max = length(x), value = min(100, length(x)), step = 1, sep = ""))
                 )),
               
-              visNetworkOutput("graphPlot", width='100%', height='800px')
+              visNetwork::visNetworkOutput("graphPlot", width='100%', height='800px')
             ),
             
             shiny::tabPanel('Export', value='export', 
@@ -383,7 +383,7 @@ ruleExplorer <- function(x, parameter = NULL) {
       
       
       ## Graph Plot ##########################
-      output$graphPlot <- renderVisNetwork({
+      output$graphPlot <- visNetwork::renderVisNetwork({
         shiny::req(input$cAxis_graph, input$max_graph)
         handleErrors()
         
@@ -403,7 +403,7 @@ ruleExplorer <- function(x, parameter = NULL) {
       
       
       ## Scatter Plot ##########################
-      output$scatterPlot <- renderPlotly({
+      output$scatterPlot <- plotly::renderPlotly({
         shiny::req(input$xAxis, input$yAxis, input$cAxis, input$max_scatter)
         handleErrors()
         plot(rules(), method = 'scatterplot',
@@ -413,7 +413,7 @@ ruleExplorer <- function(x, parameter = NULL) {
       
       
       ## Matrix Plot ###################
-      output$matrixPlot <- renderPlotly({
+      output$matrixPlot <- plotly::renderPlotly({
         shiny::req(input$cAxis_matrix, input$max_matrix)
         handleErrors()
         plot(rules(), method = 'matrix', shading = input$cAxis_matrix, engine = 'htmlwidget',
