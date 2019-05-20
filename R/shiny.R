@@ -252,7 +252,7 @@ ruleExplorer <- function(x, parameter = NULL) {
           support = as.numeric(supp), 
           confidence = as.numeric(input$conf), 
           minlen = input$length[1], 
-          maxlen = input$length[1]),
+          maxlen = input$length[2]),
           control = list(verbose = TRUE))
         quality(rules) <- interestMeasure(rules, transactions = dataset)
         
