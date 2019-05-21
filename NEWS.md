@@ -1,4 +1,4 @@
-# arulesViz 1.3-2.1 (xx/xx/2019)
+# arulesViz 1.3-3 (05/20/2019)
 
 ## New features
 * ruleExplorer got a cleaner interface and several new features.
