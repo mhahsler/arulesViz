@@ -55,7 +55,7 @@ plot(rules)
 
 ### Interactive visualization with plotly
 ```R
-plotly_arules(rules)
+plot(rules, engine = "plotly")
 ```
 
 [Open example output.](https://rawgit.com/mhahsler/arulesViz/master/README/plotly_arules.html)
