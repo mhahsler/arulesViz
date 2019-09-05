@@ -1,3 +1,6 @@
+# arulesViz 1.3-3.1 (xx/xx/2019)
+
+
 # arulesViz 1.3-3 (05/20/2019)
 
 ## New features
