@@ -22,7 +22,10 @@ Tyler Giallanza and Michael Hahsler.
 Adapted from functions originally created by Andrew Brooks.
 See https://github.com/brooksandrew/Rsenal for the original code.
 }
-%\references{}
+\references{
+Hahsler M (2017). arulesViz: Interactive Visualization of Association
+Rules with R. \emph{R Journal,} 9(2):163-175. ISSN 2073-4859. \doi{10.32614/RJ-2017-047}.
+}
 \seealso{
     \code{\link{plot}} with \code{engine = "html"},
     \code{\link{inspectDT}},

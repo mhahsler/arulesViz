@@ -4,6 +4,8 @@
 \alias{plot.itemsets}
 \alias{plot.rules}
 \alias{plot.grouped_matrix}
+\alias{plotly}
+\alias{plotly_arules} ### this is deprecated now!!!
 \title{Visualize Association Rules and Itemsets}
 \description{
 Methods (S3) to visualize association rules and itemsets.
@@ -177,15 +179,16 @@ Michael Hahsler and Sudheer Chelluboina. Some visualizations are based on
 the implementation by Martin Vodenicharov.
 }
 \references{
+Hahsler M (2017). arulesViz: Interactive Visualization of Association
+Rules with R. \emph{R Journal,} 9(2):163-175. ISSN 2073-4859. \doi{10.32614/RJ-2017-047}.
+    
 Bruzzese, D. and Davino, C. (2008), Visual Mining of Association Rules, in
 Visual Data Mining: Theory, Techniques and Tools for Visual Analytics,
-Springer-Verlag, pp. 103-122.
+Springer-Verlag, pp. 103-122. \doi{10.1007/978-3-540-71080-6}
 
-Hahsler, M. and Karpienko, R. (2016), Visualizing Association Rules in Hierarchical Groups. \emph{Journal of Business Economics,} 87(3):17-335, May 2016
+Hahsler, M. and Karpienko, R. (2016), Visualizing Association Rules in Hierarchical Groups. \emph{Journal of Business Economics,} 87(3):17-335. \doi{10.1007/s11573-016-0822-8}
 
 Hahsler, M. (2016), Grouping association rules using lift. In C. Iyigun, R. Moghaddess, and A. Oztekin, editors, 11th INFORMS Workshop on Data Mining and Decision Analytics (DM-DA 2016).
-
-Hahsler, M. (2017), arulesViz: Visualizing association rules with R. \emph{R Journal,} 9(2):163-175, December 2017.
 }
 
 \seealso{

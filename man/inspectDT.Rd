@@ -24,8 +24,10 @@ A datatable htmlwidget.
 \author{
 Michael Hahsler
 }
-%\references{
-%}
+\references{
+Hahsler M (2017). arulesViz: Interactive Visualization of Association
+Rules with R. \emph{R Journal,} 9(2):163-175. ISSN 2073-4859. \doi{10.32614/RJ-2017-047}.
+}
 \seealso{
 \code{\link[DT]{datatable}} in \pkg{DT}.
 }
