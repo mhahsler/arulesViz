@@ -5,7 +5,7 @@
 \alias{plot.rules}
 \alias{plot.grouped_matrix}
 \alias{plotly}
-\alias{plotly_arules} ### this is deprecated now!!!
+\alias{plotly_arules} 
 \title{Visualize Association Rules and Itemsets}
 \description{
 Methods (S3) to visualize association rules and itemsets.
