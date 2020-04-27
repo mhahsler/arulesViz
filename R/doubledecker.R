@@ -42,11 +42,11 @@ doubledecker_arules <- function(rules, measure ="support", data,
   table <- getTable(rules, data)
   
   if(control$type=="doubledecker")
-    do.call(doubledecker, c(list(table, margins=c(2,8,length(dim(table) + 2), 2), 
+    do.call(vcd::doubledecker, c(list(table, margins=c(2,8,length(dim(table) + 2), 2), 
       main = control$main), control$plot_options)) 
   else {
     control$main <- "Mosaic plot for 1 rule"
-    do.call(mosaic, c(list(table, highlighting = length(dim(table)),
+    do.call(vcd::mosaic, c(list(table, highlighting = length(dim(table)),
       main = control$main), control$plot_options))
   }
 }

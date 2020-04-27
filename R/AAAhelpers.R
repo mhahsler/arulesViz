@@ -17,7 +17,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-.installed <- function(pkg) !is(try(installed.packages()[pkg,],
+.installed <- function(pkg) !inherits(try(utils::installed.packages()[pkg,],
   silent=TRUE), "try-error")
 
 ## color paletts
@@ -31,7 +31,7 @@
   col
 }
 
-grey_hcl <- function(n, alpha = 1) sequential_hcl(n, c.=0, alpha = alpha)
+grey_hcl <- function(n, alpha = 1) colorspace::sequential_hcl(n, c.=0, alpha = alpha)
 
 ### default are gray - > red
 default_colors <- function(n , alpha = 1) 

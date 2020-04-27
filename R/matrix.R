@@ -127,7 +127,7 @@ matrix_int <- function(rules, measure, control){
   }
   else if (control$engine == "3d") {
     df <- cbind(which(!is.na(m), arr.ind=TRUE), as.vector(m[!is.na(m)]))
-    do.call(scatterplot3d, c(list(df, zlab = measure, xlab="Consequent (RHS)", 
+    do.call(scatterplot3d::scatterplot3d, c(list(df, zlab = measure, xlab="Consequent (RHS)", 
       ylab= "Antecedent (LHS)", main = control$main,
       type="h", pch=""), control$plot_options))
   }

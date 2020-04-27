@@ -431,7 +431,7 @@ ruleExplorer <- function(x, parameter = NULL) {
       output$rules.csv <- shiny::downloadHandler(
         filename = 'rules.csv',
         content = function(file) { 
-          write.csv(as(rules(), "data.frame"), file) 
+	    utils::write.csv(as(rules(), "data.frame"), file) 
         }
       )
       

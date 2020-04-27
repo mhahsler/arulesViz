@@ -143,18 +143,18 @@ scatterplot_plotly <- function(x,
     for(m in measure) q[[m]] <- jitter(q[[m]], factor = jitter)
 
   if(is.na(shading)) 
-    p <- plot_ly(q, type = "scatter", x = q[,measure[1]], y = q[,measure[2]], 
+    p <- plotly::plot_ly(q, type = "scatter", x = q[,measure[1]], y = q[,measure[2]], 
       hoverinfo = 'text', text = txt,
       mode = 'markers', marker = marker 
     ) 
   else if(shading == "order")
-    p <- plot_ly(q, type = "scatter", x = q[,measure[1]], y = q[,measure[2]], 
+    p <- plotly::plot_ly(q, type = "scatter", x = q[,measure[1]], y = q[,measure[2]], 
       hoverinfo = 'text', text = txt, 
       color = as.ordered(q[,shading]),
       mode = 'markers', marker = marker 
     )
   else
-    p <- plot_ly(q, type = "scatter", x = q[,measure[1]], y = q[,measure[2]], 
+    p <- plotly::plot_ly(q, type = "scatter", x = q[,measure[1]], y = q[,measure[2]], 
       hoverinfo = 'text', text = txt, 
       color = q[,shading], colors = colors,
       mode = 'markers', 
@@ -242,7 +242,7 @@ matrix_plotly <- function(x, measure, shading, control, ...) {
     sep = '')
   txt[is.na(m)] <- NA
   
-  plot_ly(z = m,
+  plotly::plot_ly(z = m,
     x = colnames(m), y = rownames(m),
     type = "heatmap",
     colors = colors,
@@ -250,7 +250,7 @@ matrix_plotly <- function(x, measure, shading, control, ...) {
     hoverinfo = 'text',
     text = txt
   ) %>% 
-    layout(xaxis=list(title="LHS", showticklabels = FALSE, 
+    plotly::layout(xaxis=list(title="LHS", showticklabels = FALSE, 
       showgrid = TRUE, ticks = ""), 
       yaxis=list(title="RHS", showticklabels = FALSE, 
         showgrid = TRUE, ticks = "")

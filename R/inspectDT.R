@@ -25,16 +25,16 @@ inspectDT.default <- function(x, ...)
   stop("inspect 2 not implemented for class ", class(x))
 
 inspectDT.rules <- function(x, precision = 3, ...) {
-  datatable(
+    DT::datatable(
     data.frame(LHS = labels(lhs(x)), RHS = labels(rhs(x)), quality(x)), 
     filter = "top", rownames = paste0('[', 1:length(x), ']'), ...) %>% 
-    formatRound(3:(3+ncol(quality(x))), max(precision))
+    DT::formatRound(3:(3+ncol(quality(x))), max(precision))
 }
 
 inspectDT.itemsets <- function(x, precision = 3, ...) {
-  datatable(
+    DT::datatable(
     data.frame(items = labels(x), quality(x)), 
     filter = "top", rownames = paste0('[', 1:length(x), ']'), 
-    ...) %>% formatRound(2:(2+ncol(quality(x))), 
+    ...) %>% DT::formatRound(2:(2+ncol(quality(x))), 
       precision)
 }

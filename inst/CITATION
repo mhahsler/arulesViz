@@ -12,6 +12,7 @@ bibentry(bibtype = "article",
   number = 2,
   pages = "163--175",
   url = "https://journal.r-project.org/archive/2017/RJ-2017-047/RJ-2017-047.pdf",
+  doi = "10.32614/RJ-2017-047",
   month = "December",
   issn = "2073-4859"
   )
