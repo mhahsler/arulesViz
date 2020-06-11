@@ -12,3 +12,4 @@ proj$
 ^_pkgdown\.yml
 ^_config\.yml
 ^docs/
+^\.github$
