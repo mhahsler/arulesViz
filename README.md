@@ -59,7 +59,7 @@ plot(rules)
 plot(rules, engine = "plotly")
 ```
 
-[Open example output.](https://rawgit.com/mhahsler/arulesViz/master/README/plotly_arules.html)
+[Open example output.](http://mhahsler.github.io/arulesViz/README/plotly_arules.html)
 
 
 ### Interactive inspect with datatable
@@ -67,7 +67,7 @@ plot(rules, engine = "plotly")
 inspectDT(rules)
 ```
 
-[Open example output.](https://rawgit.com/mhahsler/arulesViz/master/README/inspectDT.html)
+[Open example output.](http://mhahsler.github.io/arulesViz/README/inspectDT.html)
 
 ## References
 
