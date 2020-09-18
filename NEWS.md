@@ -1,5 +1,6 @@
 # arulesViz 1.3-3.1 (xx/xx/2020)
 
+* plotly_arules was removed.
 
 # arulesViz 1.3-3 (05/20/2019)
 

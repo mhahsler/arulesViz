@@ -5,7 +5,6 @@
 \alias{plot.rules}
 \alias{plot.grouped_matrix}
 \alias{plotly}
-\alias{plotly_arules} 
 \title{Visualize Association Rules and Itemsets}
 \description{
 Methods (S3) to visualize association rules and itemsets.
@@ -192,7 +191,6 @@ Hahsler, M. (2016), Grouping association rules using lift. In C. Iyigun, R. Mogh
 }
 
 \seealso{
-\code{\link{plotly_arules}},
 \code{\link[scatterplot3d]{scatterplot3d}} in \pkg{scatterplot3d},
 \code{\link[igraph]{plot.igraph}} and
 \code{\link[igraph]{tkplot}} in \pkg{igraph},

@@ -31,6 +31,3 @@ S3method(inspectDT, itemsets)
 
 export("ruleExplorer")
 export("saveAsGraph")
-
-## Deprecated
-export("plotly_arules")
