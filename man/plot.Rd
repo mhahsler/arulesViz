@@ -277,6 +277,19 @@ plot(subrules2, method="graph")
 plot(subrules2, method="graph", 
   nodeCol = grey.colors(10), edgeCol = grey(.7), alpha = 1)
 
+## no shading for lift, set node color to grey and add 
+## labels for support
+plot(subrules2, method="graph", shading = NA, nodeCol = grey(.5), measureLabels = TRUE)
+
+## use plot_options to alter any aspect of the graph 
+## (see: https://igraph.org/r/doc/plot.common.html)
+plot(subrules2, method="graph", 
+  plot_options = list(
+    edge.lty = 2, 
+    vertex.label.cex = .6, 
+    margin = c(.1,.1,.1,.1), 
+    asp = .5))
+
 ## igraph layout generators can be used (see ? igraph::layout_)
 plot(subrules2, method="graph", layout=igraph::in_circle())
 plot(subrules2, method="graph", 

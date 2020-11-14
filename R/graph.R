@@ -53,23 +53,27 @@ graph_arules <- function(x, measure = "support", shading = "lift",
   control <- .get_parameters(control, list(
     main = paste("Graph for", min(length(x), 
       if(!is.null(control$max)) control$max else 100), class(x)),
-    nodeColors = .nodeColors(
-      if(!is.null(control$alpha)) control$alpha else .5),
+    max = 100, # maximum number or rules/itemsets
+    
     nodeCol = default_colors(100),
-    edgeCol = grey_hcl(100),
-    alpha = .5,
-    cex = 1,
+    itemnodeCol = .nodeColors()[1],
+    edgeCol = hcl(l = 70, c = 0, alpha = 1),
+    labelCol = hcl(l = 0, c =0, alpha = .7),
+    
     itemLabels = TRUE,
-    labelCol = hcl(l=0, alpha = .7),
     measureLabels = FALSE,
     precision = 3,
+    
+    arrowSize = .5,
+    alpha = .5,
+    cex = 1,
+    
     layout = NULL,
     layoutParams = list(),
-    arrowSize = .5,
+    
     engine = "igraph",
     plot = TRUE,
-    plot_options = list(),
-    max = 100
+    plot_options = list()
   ))
  
   
@@ -110,7 +114,7 @@ graph_arules <- function(x, measure = "support", shading = "lift",
     rhs <- LIST(rhs(x), decode=FALSE)
     to_rhs <- unlist(rhs)
     from_rhs <- assocNodes[rep(1:length(x), sapply(rhs, length))]
-  } else { ### not used fro itemsets
+  } else { ### not used for itemsets
     lhs <- LIST(items(x), decode=FALSE)
     from_lhs <- unlist(lhs)
     to_lhs <- assocNodes[rep(1:length(x), sapply(lhs, length))]
@@ -150,11 +154,11 @@ graph_arules <- function(x, measure = "support", shading = "lift",
   }
   
   e.width <- 1
-  e.color <- .col_picker(.6, control$edgeCol, control$alpha)
+  e.color <- control$edgeCol
   
   m <- NA
-  if(!is.na(measure)) {
-    m <- quality(x)[[measure]]
+  if(!is.na(measure[1])) {
+    m <- quality(x)[[measure[1]]]
     v.size <- c(rep(15, length(itemNodes)),
       map(m, c(5,20)))
   }
@@ -162,25 +166,26 @@ graph_arules <- function(x, measure = "support", shading = "lift",
   s <- NA
   if(!is.na(shading)) {
     s <- quality(x)[[shading]]
-    v.color <- c(rep(control$nodeColors[1], length(itemNodes)),
+    v.color <- c(rep(control$itemnodeCol, length(itemNodes)),
       .col_picker(map(s, c(0.9,0.1)), control$nodeCol, 
         alpha=control$alpha)) 
-  } else v.color <- c(rep(control$nodeColors[1], length(itemNodes)),
+  } else v.color <- c(rep(control$itemnodeCol, length(itemNodes)),
     .col_picker(rep(.5, length(x)), control$nodeCol, 
       alpha=control$alpha))
   
   
-  if(control$measureLabels) {
-    if(is.na(m) || is.na(s)) {
-      if(!is.na(m)) e.label <- round(m, control$precision)
-      if(!is.na(s)) e.label <- round(s, control$precision)
-    }else{
-      v[type==2] <- paste(round(m, control$precision),"\n", 
-        round(s, control$precision), sep='')
-    }
+  if(control$measureLabels && (!is.na(measure[1]) || !is.na(shading))) {
+      if(!is.na(measure[1]) && !is.na(shading)) 
+        mlabs <- paste(round(m, control$precision), 
+          round(s, control$precision), sep = "\n")
+      else {
+        if(!is.na(measure[1])) mlabs <- round(m, control$precision)
+        if(!is.na(shading)) mlabs <- round(s, control$precision)
+      }
+      v[type==2] <- mlabs
   }
   
-  
+  # Legend
   legend <- ''
   if(!is.na(measure[1])) legend <- paste(legend,
     "size: ", measure[1], " (",
@@ -200,7 +205,7 @@ graph_arules <- function(x, measure = "support", shading = "lift",
     
     if(is.null(control$layout)) control$layout <- "dot"
     att <-  Rgraphviz::getDefaultAttrs(layoutType = control$layout)
-    att$edge$color <- .col_picker(0, control$edgeCol, control$alpha)
+    att$edge$color <- control$edgeCol
     att$edge$len <- 2.0	# neato
     att$graph$rankdir <- "LR" # dot
     att$graph$ranksep <- .75 #dot
@@ -210,10 +215,10 @@ graph_arules <- function(x, measure = "support", shading = "lift",
     s <- NA
     if(!is.na(shading)) {
       s <- quality(x)[[shading]]
-      v.color <- c(rep(control$nodeColors[1], length(itemNodes)),
+      v.color <- c(rep(control$itemnodeCol, length(itemNodes)),
         .col_picker(map(s, c(0.9,0.1)), control$nodeCol, 
           alpha=control$alpha)) 
-    } else v.color <- c(rep(control$nodeColors[1], length(itemNodes)),
+    } else v.color <- c(rep(control$itemnodeCol, length(itemNodes)),
       .col_picker(rep(.5, length(x)), control$nodeCol, 
         alpha=control$alpha))
     
@@ -251,7 +256,7 @@ graph_arules <- function(x, measure = "support", shading = "lift",
   }
   
   if(control$engine=="igraph") {
-    do.call(plot, c(list(g,
+    do.call(plot, c(control$plot_options, list(g,
       #layout=control$layout(g, params=control$layoutParams), 
       layout=igraph::layout_(g, control$layout), 
       vertex.label.family=.font.family,
@@ -268,14 +273,15 @@ graph_arules <- function(x, measure = "support", shading = "lift",
       edge.label.cex=control$cex*.6,
       edge.color=e.color,
       edge.arrow.size=control$arrowSize,
-      main=control$main), control$plot_options)
+      main=control$main))
     )
     
     mtext(legend, adj=1,cex=control$cex*.8)
   }
   
   if(control$engine=="interactive") {
-    do.call(igraph::tkplot, c(list(g, 
+    do.call(igraph::tkplot, c(control$plot_options,
+      list(g, 
       #layout=control$layout(g, params=control$layoutParams),
       layout=igraph::layout_(g, control$layout),
       #vertex.shape=v.shape, 
@@ -289,7 +295,7 @@ graph_arules <- function(x, measure = "support", shading = "lift",
       #edge.label.cex=.5,
       edge.color=e.color
       #main=control$main
-    ), control$plot_options))
+    )))
   }
   
   return(invisible(g))

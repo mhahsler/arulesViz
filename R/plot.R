@@ -41,6 +41,9 @@ plot.rules <- function(x, method = NULL,
   if(is.null(method)) methodNr <- 6
   else methodNr <- pmatch(tolower(method), tolower(methods))
   if(is.na(methodNr)) stop (paste("Unknown method:",sQuote(method), "\nAvailable methods:", paste(sQuote(methods), collapse = ", ")))
+  
+  ## add order
+  quality(x)$order <- size(x)
  
   ## complete measure and shading
   mid <- pmatch(measure, colnames(quality(x)))
@@ -48,8 +51,7 @@ plot.rules <- function(x, method = NULL,
     paste(sQuote(measure[is.na(mid)]), collapse = ", "))
   measure <- colnames(quality(x))[mid]
 
-  ### NA means no shading & add order  
-  quality(x)$order <- size(x)
+  ## NA means no shading
   if(!all(is.na(shading))) {
     sid <- pmatch(shading, colnames(quality(x)))
     if(any(is.na(sid))) stop("Shading measure not available in rule set: ", 
