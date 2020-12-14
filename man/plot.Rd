@@ -27,7 +27,7 @@ and interactive HTML widget-based visualizations.
   \item{x}{ an object of class "rules" or "itemsets". }
   \item{method}{ a string with value "scatterplot", "two-key plot", "matrix", 
   "matrix3D",  "mosaic", 
-  "doubledecker", "graph", "paracoord" or "grouped", "iplots" selecting the 
+  "doubledecker", "graph", "paracoord" or "grouped" selecting the 
   visualization method (see Details). Note that some methods may only be  available for rules or itemsets.}
   
   \item{measure}{ measure(s) of interestingness 
@@ -157,13 +157,6 @@ table. No interactive version is available.
 \item{"paracoord"}{
 Represents the rules (or itemsets) as a parallel coordinate plot.
 Currently there is no interactive version available.
-}
-
-\item{"iplots"}{
-Experimental interactive plots (package \pkg{iplots}) 
-which support selection, highlighting, 
-brushing, etc. Currently plots a scatterplot (support vs. confidence) and
-several histograms. Interactive manipulations are available. 
 }
 
 }

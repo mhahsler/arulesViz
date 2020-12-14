@@ -32,8 +32,7 @@ plot.rules <- function(x, method = NULL,
     "scatterplot",	## standard
     "grouped matrix",
     "two-key plot",
-    "matrix3D",
-    "iplots"
+    "matrix3D"
   )
   
   if(length(x)<1) stop("x contains 0 rules!")
@@ -99,11 +98,6 @@ plot.rules <- function(x, method = NULL,
     warning("method 'matrix3D' is deprecated use method 'matrix' with engine '3d'")
     control$engine <- "3d"
     matrix_arules(x, measure = shading, control = control, ...)
-  }
-  else if (methodNr == 10) {
-    if(length(measure)<2) measure[2] <- "confidence"
-    iplot_arules(x, measure = measure, 
-      shading=shading, data=data, control=control, ...)
   }
 }
 
