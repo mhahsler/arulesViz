@@ -4,7 +4,6 @@
 [![Rdoc](http://www.rdocumentation.org/badges/version/arulesViz)](http://www.rdocumentation.org/packages/arulesViz) 
 [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/arulesViz)](https://cran.r-project.org/package=arulesViz)
 [![R build status](https://github.com/mhahsler/arulesViz/workflows/R-CMD-check/badge.svg)](https://github.com/mhahsler/arulesViz/actions)
-[![Travis-CI Build Status](https://travis-ci.org/mhahsler/arulesViz.svg?branch=master)](https://travis-ci.org/mhahsler/arulesViz)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/mhahsler/arulesViz?branch=master&svg=true)](https://ci.appveyor.com/project/mhahsler/arulesViz)
 
 This R package 
