@@ -234,6 +234,7 @@ plot.grouped_matrix <- function(x, ...) {
   ## get most important item in the lhs
   f <- lapply(split(x$rules, x$cl), FUN = function(r) itemFrequency(lhs(r), 
     type = "absolute"))
+  
   ## divide by sum to find most important item...
   f <- lapply(f, "/", itemFrequency(lhs(x$rules), type = "absolute")+1L)
  
@@ -247,7 +248,7 @@ plot.grouped_matrix <- function(x, ...) {
           paste(paste(names(x[head(order(x, decreasing = TRUE), n = control$lhs_items)]), 
             collapse = ", "), ", +", items-control$lhs_items, " items", sep="")
         }else{
-          paste(names(x[head(order(x, decreasing = TRUE), n = control$lhs_items)]), 
+          paste(names(x[head(order(x, decreasing = TRUE), n = items)]), 
             collapse = ", ")
         }
       })

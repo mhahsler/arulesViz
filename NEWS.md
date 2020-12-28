@@ -1,9 +1,13 @@
 # arulesViz 1.3-3.1 (xx/xx/2020)
 
+## Removed functions
 * plotly_arules was removed.
 * experimental support for iplots was removed.
+
+## Bug Fixes
 * fixed bug that prevented shading = NA in plotting method graph.
 * fixed some control parameter handling and added more example for plot method graph.
+* fixed additional item shown in LHS for grouped matrix plot (reported by Tasos Fasoulis)
 
 # arulesViz 1.3-3 (05/20/2019)
 
