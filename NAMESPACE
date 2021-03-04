@@ -1,5 +1,10 @@
 import("arules")
 
+import("ggplot2")
+import("tibble")
+import("tidyr")
+importFrom("magrittr", "%>%")
+
 import("grid") ### need to use as depends in DESCRIPTION because of vcd
 
 importFrom("graphics", "par", "plot", "mtext", "text", "axis", "box")
@@ -9,7 +14,6 @@ importFrom("grDevices", "hcl", "rgb", "gray.colors", "gray", "col2rgb",
 importFrom("methods", "is", "as", "new")
 importFrom("seriation", "seriate", "ser_permutation", "set_seriation_method",
   "permute", "get_order")
-importFrom("magrittr", "%>%")
 
 # we use :: for the following
 #importFrom("utils", "installed.packages", "write.csv")

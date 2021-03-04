@@ -204,9 +204,21 @@ plot(rules, control = list(col=sequential_hcl(100)))
 plot(rules, col=sequential_hcl(100))
 plot(rules, col=grey.colors(50, alpha =.8))
 
+## Scatterplot with custom measures
+plot(rules, measure = c("support", "lift"), shading = "confidence")
+
 ## See all control options using verbose
 plot(rules, verbose = TRUE)
 
+## Use engine ggplot2
+library(ggplot2)
+plot(rules, engine = "ggplot2")
+plot(rules, engine = "ggplot2") + 
+  scale_color_gradient2(low = "red", mid = "white", high = "blue", 
+    midpoint = 1, limits = c(0,12)) +
+  ggtitle("Scatterplot") +
+  theme_linedraw()
+  
 ## Interactive plot (selected rules are returned)
 \dontrun{
 sel <- plot(rules, engine = "interactive")}
@@ -245,6 +257,10 @@ plot(subrules, method="matrix", control = list(reorder = "similarity"))
 \dontrun{
 plot(subrules, method="matrix", engine="interactive")
 plot(subrules, method="matrix", engine="htmlwidget")}
+
+## ggplot2 matrix plot
+plot(subrules, method="matrix", engine = "ggplot2") +
+  theme_linedraw()
 
 ## Grouped matrix plot
 ## -------------------

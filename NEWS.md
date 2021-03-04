@@ -1,5 +1,8 @@
 # arulesViz 1.3-3.1 (xx/xx/2020)
 
+## New features
+* plot methods "scatterplots" and "matrix" have now engine ggplot2. 
+
 ## Removed functions
 * plotly_arules was removed.
 * experimental support for iplots was removed.
