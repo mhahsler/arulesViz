@@ -22,7 +22,7 @@ install_github("mhahsler/arulesViz")
 This might also require the development version of [arules](https://github.com/mhahsler/arules).
 
 ## Features
-* Visualizations using `base`, `grid` and `plotly`. 
+* Visualizations using `base`, `grid`, `ggplot2`, `plotly`, and `viznetwork`. 
 * Interactive visualizations using `grid` and `plotly`.
 * Interactive rule inspection with `datatable`.
 * Integrated interactive rule exploration using `ruleExplorer`. 
