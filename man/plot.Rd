@@ -34,7 +34,7 @@ and interactive HTML widget-based visualizations.
   (e.g., "support", "confidence", "lift", "order") used in the visualization. Some 
   visualization methods need one measure, others take a vector with two 
   measures (e.g., scatterplot). In some plots (e.g., graphs) \code{NA} 
-  can be used to suppress using a measure. }
+  can be used to suppress using a measure. See Details Section.}
   
   \item{shading}{ measure of interestingness used
   for the color of the points/arrows/nodes
@@ -52,13 +52,13 @@ and interactive HTML widget-based visualizations.
   
   \item{engine}{ a string indicating the plotting engine used to 
     render the plot. 
-    The "default" engine uses (mostly) \pkg{grid}, 
-    but some plots can produce interactive 
-    interactive grid visualizations using engine "interactive", or
-    HTML widgets using engine 
-    "htmlwidget". These widgets can be saved as stand-alone web pages 
-    (see Examples). Note that HTML widgets tend to get very slow 
-    or unresponsive for 
+    The "default" engine uses (mostly) \pkg{grid}.
+    Other engines include "base" (base R plots), 
+    "ggplot2", "interactive", "plotly", "viznetwork", "igraph", "graphviz".
+    Note that not all engines are available for all methods.
+    The engine "htmlwidget" uses an appropriate engine to create a 
+    widget that can be included in markdown documents and web pages (see Examples). 
+    Note that HTML widgets tend to get very slow or unresponsive for 
     too many rules. To prevent this situation, the control parameter 
     \code{max} sets a limit, and the user is warned if the limit is reached. 
   }
@@ -131,7 +131,7 @@ can be any function computing a scalar from a vector
 to reorder the balloons in the plot.}
 \item{"col"}{color palette (default is 100 heat colors.)}
 \item{"gp_labels", "gp_main", "gp_labs", "gp_lines"}{\code{gpar()} objects used to specify color, font and font size for
-    different elements.}
+    different elements. Note: You need load \pkg{grid} to use \code{gpar()}.}
 }
 }
 
@@ -204,9 +204,21 @@ plot(rules, control = list(col=sequential_hcl(100)))
 plot(rules, col=sequential_hcl(100))
 plot(rules, col=grey.colors(50, alpha =.8))
 
+## Scatterplot with custom measures
+plot(rules, measure = c("support", "lift"), shading = "confidence")
+
 ## See all control options using verbose
 plot(rules, verbose = TRUE)
 
+## Use engine ggplot2
+library(ggplot2)
+plot(rules, engine = "ggplot2")
+plot(rules, engine = "ggplot2") + 
+  scale_color_gradient2(low = "red", mid = "white", high = "blue", 
+    midpoint = 1, limits = c(0,12)) +
+  ggtitle("Scatterplot") +
+  theme_linedraw()
+  
 ## Interactive plot (selected rules are returned)
 \dontrun{
 sel <- plot(rules, engine = "interactive")}
@@ -246,13 +258,16 @@ plot(subrules, method="matrix", control = list(reorder = "similarity"))
 plot(subrules, method="matrix", engine="interactive")
 plot(subrules, method="matrix", engine="htmlwidget")}
 
+## ggplot2 matrix plot
+plot(subrules, method="matrix", engine = "ggplot2") +
+  theme_linedraw()
+
 ## Grouped matrix plot
 ## -------------------
-
 plot(rules, method="grouped matrix")
 plot(rules, method="grouped matrix", 
   col = grey.colors(10), 
-  gp_labels = gpar(col = "blue", cex=1, fontface="italic"))
+  gp_labels = grid::gpar(col = "blue", cex=1, fontface="italic"))
 
 ## Interactive grouped matrix plot
 \dontrun{

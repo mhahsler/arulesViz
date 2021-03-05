@@ -18,7 +18,7 @@
 
 matrix_arules <- function(rules, measure = "lift", control = NULL, ...){
  
-  engines <- c("default", "interactive", "base", "3d", "plotly", "htmlwidget")
+  engines <- c("default", "interactive", "base", "3d", "ggplot2", "plotly", "htmlwidget")
   m <- pmatch(control$engine, engines, nomatch = 0)
   if(m == 0) stop("Unknown engine: ", sQuote(control$engine), 
     " Valid engines: ", paste(sQuote(engines), collapse = ", "))
@@ -29,6 +29,8 @@ matrix_arules <- function(rules, measure = "lift", control = NULL, ...){
   ### FIXME: fix max and control & reorder!
   if(pmatch(control$engine, c("plotly", "htmlwidget"), nomatch = 0) >0) { 
     return(matrix_plotly(rules, measure = measure, control = control)) 
+  } else if(pmatch(control$engine, c("ggplot2"), nomatch = 0) >0) {
+    return(matrix_ggplot2(rules, measure = measure, control = control)) 
   }
   
   control <- .get_parameters(control, list(
@@ -131,8 +133,7 @@ matrix_int <- function(rules, measure, control){
       ylab= "Antecedent (LHS)", main = control$main,
       type="h", pch=""), control$plot_options))
   }
-  else
-  {
+  else {
     #dimnames(m) <- NULL
     #plot(levelplot(t(m), xlab = "Antecedent (LHS)", 
     #		ylab = "Consequent (RHS)", 

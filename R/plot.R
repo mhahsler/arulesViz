@@ -45,7 +45,7 @@ plot.rules <- function(x, method = NULL,
   quality(x)$order <- size(x)
  
   ## complete measure and shading
-  mid <- pmatch(measure, colnames(quality(x)))
+  mid <- pmatch(measure, colnames(quality(x)), duplicates.ok = TRUE)
   if(any(is.na(mid))) stop("Measure not available in rule set: ", 
     paste(sQuote(measure[is.na(mid)]), collapse = ", "))
   measure <- colnames(quality(x))[mid]
@@ -53,8 +53,7 @@ plot.rules <- function(x, method = NULL,
   ## NA means no shading
   if(!all(is.na(shading))) {
     sid <- pmatch(shading, colnames(quality(x)))
-    if(any(is.na(sid))) stop("Shading measure not available in rule set: ", 
-      paste(sQuote(shading[is.na(sid)]), collapse = ", "))
+    if(any(is.na(sid))) stop("Shading measure not available in rule set: ",       paste(sQuote(shading[is.na(sid)]), collapse = ", "))
     shading <- colnames(quality(x))[sid]
   }
    
@@ -89,7 +88,6 @@ plot.rules <- function(x, method = NULL,
     shading = shading, control=control, ...)
   else if (methodNr == 8) { 
     if(is.null(control$col)) control$col <- rainbow(max(size(x))-1L)
-    if(is.null(control$main)) control$main <- "Two-key plot"
     scatterplot_arules(x, 
     measure = c("support", "confidence"), shading = "order", 
     control, ...)

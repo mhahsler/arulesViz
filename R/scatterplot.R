@@ -22,7 +22,7 @@ scatterplot_arules <- function(rules, measure = c("support","confidence"),
   
   control <- c(control, list(...))  
 
-  engines <- c("default", "interactive", "plotly", "htmlwidget")
+  engines <- c("default", "ggplot2", "interactive", "plotly", "htmlwidget")
   m <- pmatch(control$engine, engines, nomatch = 0)
   if(m == 0) stop("Unknown engine: ", sQuote(control$engine), 
     " Valid engines: ", paste(sQuote(engines), collapse = ", "))
@@ -32,7 +32,21 @@ scatterplot_arules <- function(rules, measure = c("support","confidence"),
     return(scatterplot_plotly(rules, measure = measure,
       shading = shading, control = control)) ### control has max
   }
- 
+
+  if(pmatch(control$engine, c("ggplot2"), nomatch = 0) >0) { 
+    return(scatterplot_ggplot2(rules, measure = measure,
+      shading = shading, control = control)) ### control has max
+  }
+  
+  return(scatterplot_grid(rules, measure = measure,
+    shading = shading, control = control))
+}   
+
+
+
+scatterplot_grid <- function(rules, measure = c("support","confidence"), 
+  shading = "lift", control = NULL, ...){
+  
   control <- .get_parameters(control, list(
     main =paste("Scatter plot for", length(rules), class(rules)),
     engine = "default",
@@ -73,7 +87,7 @@ scatterplot_arules <- function(rules, measure = c("support","confidence"),
   scatterplot_int(rules, measure, shading, control, ...)
   
   if(control$engine != "interactive") return(invisible())
-   
+  
   ## interactive mode
   cat("Interactive mode.\nSelect a region with two clicks!\n")
   
@@ -231,7 +245,7 @@ scatterplot_int <- function(rules, measure, shading, control, ...){
         replinfin, ")!", call. = FALSE)
       q[[i]][infin] <- replinfin
     }
- }
+  }
   
   if(control$newpage) grid.newpage()
   
@@ -301,13 +315,13 @@ scatterplot_int <- function(rules, measure, shading, control, ...){
     just = c("left", "bottom")))
   
   x <- q[, c(measure[1], measure[2])]
- 
+  
   control$jitter <- control$jitter[1]
   if(is.na(control$jitter) && any(duplicated(x))) {
     message("To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.")
     control$jitter <- .2
-    }
-   
+  }
+  
   if(!is.na(control$jitter) && control$jitter>0) {
     x[,1] <- jitter(x[,1], factor=control$jitter, amount = 0)
     x[,2] <- jitter(x[,2], factor=control$jitter, amount = 0)
@@ -336,4 +350,5 @@ scatterplot_int <- function(rules, measure, shading, control, ...){
   
   upViewport(1)
 }
+
 
