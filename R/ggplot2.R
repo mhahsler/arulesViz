@@ -150,11 +150,14 @@ matrix_ggplot2 <- function(x,
  
   dimnames(m) <- list(seq_len(nrow(m)), seq_len(ncol(m)))
    
+  # NOTE: nullify variables used for non-standard evaluation for tidyverse/ggplot2 below
+  RHS <- LHS <- value <- NULL
+  
   d <- m %>% as_tibble() %>% dplyr::mutate(RHS = seq_len(nrow(m))) %>% 
     pivot_longer(cols = -c(RHS), names_to = "LHS")  
   d$LHS <- as.integer(d$LHS)
   
-  ggplot(d, aes(x = LHS, y = RHS, fill = value)) + geom_tile() +
+  ggplot(d, aes_string(x = 'LHS', y = 'RHS', fill = 'value')) + geom_tile() +
     scale_fill_gradient(low=colors[1], high=colors[2], na.value = 0) 
 }
 
