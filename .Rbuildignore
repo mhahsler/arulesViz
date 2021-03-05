@@ -1,7 +1,6 @@
 proj$
 ^\.Rproj\.user$
 ^cran-comments\.md$
-^appveyor\.yml$
 ^revdep$
 ^.*\.o$
 ^.*\.Rproj$
