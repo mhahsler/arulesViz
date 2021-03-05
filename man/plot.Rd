@@ -34,7 +34,7 @@ and interactive HTML widget-based visualizations.
   (e.g., "support", "confidence", "lift", "order") used in the visualization. Some 
   visualization methods need one measure, others take a vector with two 
   measures (e.g., scatterplot). In some plots (e.g., graphs) \code{NA} 
-  can be used to suppress using a measure. }
+  can be used to suppress using a measure. See Details Section.}
   
   \item{shading}{ measure of interestingness used
   for the color of the points/arrows/nodes
@@ -52,13 +52,13 @@ and interactive HTML widget-based visualizations.
   
   \item{engine}{ a string indicating the plotting engine used to 
     render the plot. 
-    The "default" engine uses (mostly) \pkg{grid}, 
-    but some plots can produce interactive 
-    interactive grid visualizations using engine "interactive", or
-    HTML widgets using engine 
-    "htmlwidget". These widgets can be saved as stand-alone web pages 
-    (see Examples). Note that HTML widgets tend to get very slow 
-    or unresponsive for 
+    The "default" engine uses (mostly) \pkg{grid}.
+    Other engines include "base" (base R plots), 
+    "ggplot2", "interactive", "plotly", "viznetwork", "igraph", "graphviz".
+    Note that not all engines are available for all methods.
+    The engine "htmlwidget" uses an appropriate engine to create a 
+    widget that can be included in markdown documents and web pages (see Examples). 
+    Note that HTML widgets tend to get very slow or unresponsive for 
     too many rules. To prevent this situation, the control parameter 
     \code{max} sets a limit, and the user is warned if the limit is reached. 
   }
@@ -131,7 +131,7 @@ can be any function computing a scalar from a vector
 to reorder the balloons in the plot.}
 \item{"col"}{color palette (default is 100 heat colors.)}
 \item{"gp_labels", "gp_main", "gp_labs", "gp_lines"}{\code{gpar()} objects used to specify color, font and font size for
-    different elements.}
+    different elements. Note: You need load \pkg{grid} to use \code{gpar()}.}
 }
 }
 
@@ -264,11 +264,10 @@ plot(subrules, method="matrix", engine = "ggplot2") +
 
 ## Grouped matrix plot
 ## -------------------
-
 plot(rules, method="grouped matrix")
 plot(rules, method="grouped matrix", 
   col = grey.colors(10), 
-  gp_labels = gpar(col = "blue", cex=1, fontface="italic"))
+  gp_labels = grid::gpar(col = "blue", cex=1, fontface="italic"))
 
 ## Interactive grouped matrix plot
 \dontrun{
