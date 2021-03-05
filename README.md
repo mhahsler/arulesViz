@@ -16,8 +16,7 @@ install.packages("arulesViz")
 ```
 __Current development version:__ install from GitHub (needs devtools) with
 ```R 
-library("devtools")
-install_github("mhahsler/arulesViz")
+devtools::install_github("mhahsler/arulesViz")
 ```
 This might also require the development version of [arules](https://github.com/mhahsler/arules).
 
