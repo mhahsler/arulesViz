@@ -3,9 +3,10 @@ import("arules")
 import("ggplot2")
 import("tibble")
 import("tidyr")
-importFrom("magrittr", "%>%")
+# dplyr has many NAMESPACE conflicts with arules so we use ::
+#import("dplyr")
 
-import("grid") ### need to use as depends in DESCRIPTION because of vcd
+import("grid") 
 
 importFrom("graphics", "par", "plot", "mtext", "text", "axis", "box")
 importFrom("stats", "median", "kmeans", "cutree", "dist", "hclust", "na.omit", "quantile")
