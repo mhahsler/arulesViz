@@ -17,16 +17,17 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-paracoord_arules <- function(x, measure= "support", shading = "lift", 
+paracoord_rules <- function(x, measure= "support", shading = "lift", 
   control=list(), ...) {
   
   ## remove short rules
   x <- x[size(x)>1]
   if(length(x)<1) stop("No rules of length 2 or longer.")
   
+  control <- c(control, list(...))
   control <- .get_parameters(control, list(
     main = paste("Parallel coordinates plot for", length(x), "rules"),
-    reorder = FALSE,
+    reorder = TRUE,
     interactive = FALSE,
     engine = "default",
     gp_labels = gpar(),
@@ -43,7 +44,6 @@ paracoord_arules <- function(x, measure= "support", shading = "lift",
     
   if(control$interactive) stop("Interactive mode not available for parallel coordinates plot.")
    
-  
   ## sort rules to minimize occlusion
   x <- sort(x, by=shading,  decreasing = FALSE)
   lwd <- map(quality(x)[[measure]], c(1,5))
@@ -143,12 +143,11 @@ paracoord_arules <- function(x, measure= "support", shading = "lift",
 paracoord_items <- function(x, measure= "support", shading = NULL,
   control=list(), ...) {
  
-    control <- c(control, list(...))
-
+  control <- c(control, list(...))
   control <- .get_parameters(control, list(
     main =paste("Parallel coordinates plot for", 
       length(x), "itemsets"),
-    reorder = FALSE,
+    reorder = TRUE,
     engine = "default",
     interactive = FALSE,
     gp_labels = gpar(),
@@ -160,11 +159,8 @@ paracoord_items <- function(x, measure= "support", shading = NULL,
     stop("Unknown engine for parallel coordinates plot '", control$engine, 
       "' - Valid engine: 'default'.")
     
-  
   if(control$interactive) stop("Interactive mode not available for parallel coordinates plot.")
    
-  
-  
   ## remove single items
   x <- x[size(x)>1]
   
@@ -208,39 +204,11 @@ paracoord_items <- function(x, measure= "support", shading = NULL,
   gParacoords(m, xlab="Position", discreteNames = u, 
     col=col, lwd=lwd,
     gp_lines=gpar(alpha=control$alpha))
-  
 }
 
 
-#no use of this funtion can be deleted later
-makeMatrix <- function(l=NULL, r=NULL, u=NULL, control=NULL)
-{
-  maxLenLHS <- max(sapply(l, length))
-  pl <- t(sapply(l, FUN = function(x)  {
-    x <- match(x, u)
-    if(control$reorder) x <- sort(x, decreasing = TRUE)
-    length(x) <- maxLenLHS
-    rev(x) ## so NAs are to the left (we could also use na.last for sort)
-  }))
-  
-  ## RHS is always 1 for now
-  pr <- sapply(r, FUN = function(x)  match(x, u))
-  
-  m <- cbind(pl, pr)
-  colnames(m) <- c(ncol(pl):1, "rhs")
-  m
-}
-
-swap <- function(v=NULL, i=NULL, j=NULL)
-{
-  temp <- v[i]
-  v[i] <- v[j]
-  v[j] <- temp
-  v
-}
-
-countCrossovers <- function(m=NULL)
-{
+# minimize the crossing lines
+countCrossovers <- function(m=NULL){
   count <- 0
   for(i in 1:(ncol(m)-1))
   {

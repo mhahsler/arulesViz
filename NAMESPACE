@@ -1,6 +1,7 @@
 import("arules")
 
 import("ggplot2")
+
 import("tibble")
 import("tidyr")
 # dplyr has many NAMESPACE conflicts with arules so we use ::

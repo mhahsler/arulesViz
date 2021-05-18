@@ -17,19 +17,28 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-grouped_matrix_arules <- function(rules, measure, shading, control=NULL, ...){
+grouped_matrix_plot <- function(rules, measure, shading, control = NULL, ...){
   
   ## measure controls circle size
   ## shading controls color
  
-  engines <- c("default", "interactive")
+  engines <- c("default", "grid", "interactive", "ggplot2", "htmlwidget")
   m <- pmatch(control$engine, engines, nomatch = 0)
   if(m == 0) stop("Unknown engine: ", sQuote(control$engine), 
     " Valid engines: ", paste(sQuote(engines), collapse = ", "))
   control$engine <- engines[m] 
- 
+  
+  if(pmatch(control$engine, c("grid", "interactive"), nomatch = 0) >0) { 
+    return(grouped_matrix_grid(rules, measure, shading, control, ...)) 
+  }
+  
+  ### default is ggplot2
+  return(grouped_matrix_ggplot2(rules, measure, shading, control, ...)) 
+  
+}
+  
+grouped_matrix_grid <- function(rules, measure, shading, control = NULL, ...){
   control <- c(control, list(...))
-
   control <- .get_parameters(control, list(
     main = paste("Grouped Matrix for", length(rules), "Rules"),
     k = 20,
@@ -48,8 +57,8 @@ grouped_matrix_arules <- function(rules, measure, shading, control=NULL, ...){
     gp_labels = gpar(cex=.8), 
     gp_labs   = gpar(cex=1.2, fontface="bold"),
     gp_lines  = gpar(col="gray", lty=3),
-    newpage=TRUE,
-    max.shading=NA,
+    newpage = TRUE,
+    max.shading = NA,
     engine = "default"
   ))
   
@@ -125,7 +134,7 @@ grouped_matrix_arules <- function(rules, measure, shading, control=NULL, ...){
       
       cat("Zooming in. This might take a while\n")
       
-      ret <- grouped_matrix_arules(rulesSelected, measure, 
+      ret <- grouped_matrix_plot(rulesSelected, measure, 
         shading, control)
       
       if(!identical(ret, "zoom out")) return(ret)
@@ -163,7 +172,7 @@ rowMaxs <- function(x, na.rm=FALSE) apply(x, MARGIN=1, max, na.rm=na.rm)
 }
 
 ## create an grouped_matrix
-grouped_matrix_int <- function(rules, measure, shading, control) {
+grouped_matrix_int <- function(rules, measure, shading, control, plot = TRUE) {
   k <- control$k
   aggr.fun <- control$aggr.fun
   max.shading <- control$max.shading
@@ -173,7 +182,7 @@ grouped_matrix_int <- function(rules, measure, shading, control) {
   if(length(unique(lhs(rules)))< k) k <- length(unique(lhs(rules)))
   
   ## cluster for shading
-  s <- rulesAsMatrix(rules, shading)
+  s <- rules2matrix(rules, shading)
   if(is.na(max.shading)) max.shading <- max(s, na.rm=TRUE)
   
   ## FIXME: this handling of na for clustering is not great!
@@ -184,7 +193,7 @@ grouped_matrix_int <- function(rules, measure, shading, control) {
   
   s_clust <- t(s_clust)
   
-  ## are there enought non-identical points for k-means?
+  ## are there enough non-identical points for k-means?
   ## if not then we group the identical ones using hclust
   if(sum(!duplicated(s_clust))>k) 
       km <- kmeans(s_clust, k, iter.max=50, nstart=10)$cl
@@ -206,7 +215,7 @@ grouped_matrix_int <- function(rules, measure, shading, control) {
   for(i in 1:ncol(enc)) cl[enc[,i]] <- km[i]
   
   ## use measure for size
-  mAggr <- .aggr(rulesAsMatrix(rules, measure[1]), km, aggr.fun)
+  mAggr <- .aggr(rules2matrix(rules, measure[1]), km, aggr.fun)
   
   ret <- list(rules=rules, measure=measure, shading=shading, 
     cl=cl, km= km, lhs_items = control$lhs_items, max.shading=max.shading, 
@@ -215,7 +224,7 @@ grouped_matrix_int <- function(rules, measure, shading, control) {
   class(ret) <- "grouped_matrix"
   
   ## call plotting work horse
-  plot(ret, control=control)
+  if(plot) plot(ret, control=control)
   
   ret
 }

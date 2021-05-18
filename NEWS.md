@@ -1,3 +1,10 @@
+
+# arulesViz 1.5-0 (xx/xx/2021)
+
+## New features
+* ggplot2 is now the default engine for most plots. 
+* grouped matrix visualization has now engine ggplot and htmlwidget.
+
 # arulesViz 1.4-0 (03/05/2021)
 
 ## New features
@@ -10,7 +17,7 @@
 
 ## Bug Fixes
 * fixed bug that prevented shading = NA in plotting method graph.
-* fixed some control parameter handling and added more example for plot method graph.
+* fixed some control parameter handling and added more examples for plot method graph.
 * fixed additional item shown in LHS for grouped matrix plot (reported by Tasos Fasoulis).
 
 # arulesViz 1.3-3 (05/20/2019)

@@ -20,7 +20,7 @@
 # FIXME: Implement max
 # FIXME: size and color...
 
-visNetwork_arules <- function(x, measure = "support", shading = "lift", 
+graph_visNetwork <- function(x, measure = "support", shading = "lift", 
   control=NULL, ...) {
   
   if(class(x) != "rules") stop("Only implemented for rules!")

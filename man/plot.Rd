@@ -194,124 +194,146 @@ data(Groceries)
 rules <- apriori(Groceries, parameter=list(support=0.001, confidence=0.8))
 rules
 
-## Scatterplot
-## -----------
+## Scatter plot
+#  Display a scatter plot using two quality measures
 plot(rules)
 
-## Scatterplot with custom colors
-library(colorspace) # for sequential_hcl
-plot(rules, control = list(col=sequential_hcl(100)))
-plot(rules, col=sequential_hcl(100))
-plot(rules, col=grey.colors(50, alpha =.8))
-
-## Scatterplot with custom measures
+# Scatter plot with custom measures
 plot(rules, measure = c("support", "lift"), shading = "confidence")
 
-## See all control options using verbose
-plot(rules, verbose = TRUE)
-
-## Use engine ggplot2
+# Custom color scale, theme and no title (ggplot2)
 library(ggplot2)
-plot(rules, engine = "ggplot2")
-plot(rules, engine = "ggplot2") + 
+plot(rules, engine = "ggplot2", main = NULL) + 
   scale_color_gradient2(low = "red", mid = "white", high = "blue", 
     midpoint = 1, limits = c(0,12)) +
-  ggtitle("Scatterplot") +
-  theme_linedraw()
+  theme_classic()
+
+# Scatter plot using other engines
+plot(rules, engine = "grid")
+library(colorspace) # for sequential_hcl
+plot(rules, engine = "grid", control = list(col=sequential_hcl(100)))
+
+plot(rules, engine = "base")
+
+# See all control options using verbose. The control options vary by method and engine.
+plot(rules, verbose = TRUE)
   
-## Interactive plot (selected rules are returned)
+# Interactive scatter plot using the grid engine (selected rules are returned)
 \dontrun{
 sel <- plot(rules, engine = "interactive")}
 
-## Create a html widget for interactive visualization
+# Create a html widget for interactive visualization (uses plotly)
 \dontrun{
 plot(rules, engine = "htmlwidget")}
 
-## Two-key plot (is a scatterplot with shading = "order")
+# Two-key plot (a scatterplot with shading = "order")
 plot(rules, method = "two-key plot")
 
   
 ## Matrix shading
-## --------------
+#  Display rules as a matrix with RHS itemsets as rows and LHS itemsets as columns
 
-## The following techniques work better with fewer rules
-subrules <- subset(rules, lift>5)
+# works better with small sets of rules
+subrules <- subset(rules, lift > 5)
 subrules
 
-## 2D matrix with shading
-plot(subrules, method="matrix")
+# 2D matrix with shading (ggplot2). The LHS and RHS are reordered so 
+# that rules with similar lift are displayed close to each other.
+plot(subrules, method = "matrix")
 
-## 3D matrix
-plot(subrules, method="matrix", engine = "3d")
+# Reorder rules differently
+plot(subrules, method = "matrix", control = list(reorder = "none"))
+plot(subrules, method = "matrix", control = list(reorder = "support/confidence"))
+plot(subrules, method = "matrix", control = list(reorder = "similarity"))
 
-## Matrix with two measures
-plot(subrules, method="matrix", shading=c("lift", "confidence"))
+# Use other engines
+plot(subrules, method = "matrix", engine = "grid")
+plot(subrules, method = "matrix", engine = "3d")
 
-## Reorder rules
-plot(subrules, method="matrix", control = list(reorder = "none"))
-plot(subrules, method="matrix", control = list(reorder = "support/confidence"))
-plot(subrules, method="matrix", control = list(reorder = "similarity"))
-
-
-## Interactive matrix plot (default interactive and as a html widget)
+# Interactive matrix plot 
+# * Engine interactive: identify rules by clicking on them (click outside to end) 
+# * Engine htmlwidget: hoover over rules to identify
 \dontrun{
-plot(subrules, method="matrix", engine="interactive")
-plot(subrules, method="matrix", engine="htmlwidget")}
+plot(subrules, method = "matrix", engine = "interactive")
+plot(subrules, method = "matrix", engine = "htmlwidget")}
 
-## ggplot2 matrix plot
-plot(subrules, method="matrix", engine = "ggplot2") +
-  theme_linedraw()
 
 ## Grouped matrix plot
-## -------------------
+# Default engine is ggplot2
 plot(rules, method="grouped matrix")
-plot(rules, method="grouped matrix", 
+plot(rules, method="grouped matrix", shading = "confidence", k = 5)
+
+# Create a htmlwidget
+\dontrun{
+plot(rules, method = "grouped matrix", engine = "htmlwidget")}
+
+# Engine grid
+plot(rules, method="grouped matrix", engine = "grid")
+plot(rules, method="grouped matrix", engine = "grid", 
   col = grey.colors(10), 
   gp_labels = grid::gpar(col = "blue", cex=1, fontface="italic"))
 
-## Interactive grouped matrix plot
+# Interactive grouped matrix plot
 \dontrun{
 sel <- plot(rules, method="grouped", engine = "interactive")}
 
-## Graphs
-## ------
+## Graph representation
 
-## Graphs only work well with very few rules
-subrules2 <- sample(subrules, 25)
+# Graphs only work well with very few rules (we sample a few of the high-lift rules)
+subrules2 <- sample(subset(rules, lift > 5), 25)
 
-plot(subrules2, method="graph")
+# Default engine is ggplot2 with ggnetwork
+plot(subrules2, method = "graph")
 
-## Custom colors
+# Specify layout (from igraph) and edge and node representation
+# Note: The measures for size and color shading have to be specified in
+# the control list in nodes!
 plot(subrules2, method="graph", 
+  control = list(
+    layout = igraph::with_graphopt(),
+    edges = ggnetwork::geom_edges(color = "grey80", 
+      arrow = arrow(length = unit(5, "pt"), type = "open"), alpha = .5),
+    nodes = ggnetwork::geom_nodes(aes(size = support, color = lift), 
+      na.rm = TRUE),
+    nodetext = ggnetwork::geom_nodetext(aes(label = label), alpha = .8)
+  )) + 
+  scale_color_gradient(low = "yellow", high = "red")
+
+# Engine igraph
+plot(subrules2, method = "graph", engine = "igraph")
+
+# Custom colors
+plot(subrules2, method = "graph", engine = "igraph",
   nodeCol = grey.colors(10), edgeCol = grey(.7), alpha = 1)
 
-## no shading for lift, set node color to grey and add 
-## labels for support
-plot(subrules2, method="graph", shading = NA, nodeCol = grey(.5), measureLabels = TRUE)
+# No shading for lift, set node color to gray and add 
+# labels for support
+plot(subrules2, method = "graph",  engine = "igraph", 
+  shading = NA, nodeCol = grey(.5), measureLabels = TRUE)
 
-## use plot_options to alter any aspect of the graph 
-## (see: https://igraph.org/r/doc/plot.common.html)
-plot(subrules2, method="graph", 
+# Use plot_options to alter any aspect of the graph 
+# (see: https://igraph.org/r/doc/plot.common.html)
+plot(subrules2, method = "graph", engine = "igraph",
   plot_options = list(
     edge.lty = 2, 
     vertex.label.cex = .6, 
     margin = c(.1,.1,.1,.1), 
     asp = .5))
 
-## igraph layout generators can be used (see ? igraph::layout_)
-plot(subrules2, method="graph", layout=igraph::in_circle())
-plot(subrules2, method="graph", 
+# igraph layout generators can be used (see ? igraph::layout_)
+plot(subrules2, method="graph", engine = "igraph", layout=igraph::in_circle())
+plot(subrules2, method="graph", engine = "igraph",
   layout=igraph::with_graphopt(spring.const=5, mass=50))
 
-## Graph rendering using Graphviz
+# Graph rendering using engine graphviz
 \dontrun{
 plot(subrules2, method="graph", engine="graphviz")}
 
-## Default interactive plot (using igraph's tkplot)
+# Default interactive plot (using igraph's tkplot)
 \dontrun{
 plot(subrules2, method="graph", engine = "interactive")}
 
-## Interactive graph as a html widget (using igraph layout)
+# Interactive graph as a html widget (using igraph layout)
 \dontrun{
 plot(subrules2, method="graph", engine="htmlwidget")
 plot(subrules2, method="graph", engine="htmlwidget", 
@@ -319,40 +341,42 @@ plot(subrules2, method="graph", engine="htmlwidget",
 }
 
 ## Parallel coordinates plot
-## -------------------------
-
 plot(subrules2, method="paracoord")
-plot(subrules2, method="paracoord", control = list(reorder=TRUE))
 
-## Doubledecker plot 
-## -----------------
-
-## Note: only works for a single rule
+## Doubledecker and mosaic plot
+# Uses functions in package vcd
+# Notes: doubledecker and mosaic plots only visualize a single rule 
+# and the transaction set is needed.
 oneRule <- sample(rules, 1)
 inspect(oneRule)
-plot(oneRule, method="doubledecker", data = Groceries)
+plot(oneRule, method = "doubledecker", data = Groceries)
+plot(oneRule, method = "mosaic", data = Groceries)
 
-## Itemsets
-## --------
+## Visualizing itemsets
+data(Groceries)
+itemsets <- eclat(Groceries, parameter = list(support = 0.02, minlen = 2))
 
-itemsets <- eclat(Groceries, parameter = list(support = 0.02, minlen=2))
+# default is a scatter plot with ggplot2
 plot(itemsets)
-plot(itemsets, method="graph")
-plot(itemsets, method="paracoord", alpha=.5, reorder=TRUE)
+plot(itemsets, engine = "grid")
+plot(itemsets, engine = "base")
 
-## Add more quality measures to use for the scatterplot
-## ----------------------------------------------------
+plot(itemsets, method = "graph")
+plot(itemsets, method = "graph", engine = "igraph")
 
-quality(itemsets) <- interestMeasure(itemsets, trans=Groceries)
+plot(itemsets, method = "paracoord", alpha = .5)
+
+## Add more quality measures to use for the scatter plot
+
+quality(itemsets) <- interestMeasure(itemsets, transactions = Groceries)
 head(quality(itemsets))
-plot(itemsets, measure=c("support", "allConfidence"), shading="lift")
+plot(itemsets, measure = c("support", "allConfidence"), shading = "lift")
 
 ## Save HTML widget as web page
-## ----------------------------
 \dontrun{
 p <- plot(rules, engine = "html")
 htmlwidgets::saveWidget(p, "arules.html", selfcontained = FALSE)
 browseURL("arules.html")}
-# Note: selfcontained seems to make the browser slow.
+# Note: self-contained seems to make the browser slow.
 }
 \keyword{ hplot }

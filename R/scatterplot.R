@@ -16,39 +16,95 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+.jitter_default <- 1
 
-scatterplot_arules <- function(rules, measure = c("support","confidence"), 
+scatterplot <- function(x, measure = c("support","confidence"), 
   shading = "lift", control = NULL, ...){
   
-  control <- c(control, list(...))  
-
-  engines <- c("default", "ggplot2", "interactive", "plotly", "htmlwidget")
+  engines <- c("default", "ggplot2", "base", "grid", "interactive", "plotly", "htmlwidget")
   m <- pmatch(control$engine, engines, nomatch = 0)
   if(m == 0) stop("Unknown engine: ", sQuote(control$engine), 
     " Valid engines: ", paste(sQuote(engines), collapse = ", "))
   control$engine <- engines[m] 
-    
-  if(pmatch(control$engine, c("plotly", "htmlwidget"), nomatch = 0) >0) { 
-    return(scatterplot_plotly(rules, measure = measure,
-      shading = shading, control = control)) ### control has max
-  }
-
-  if(pmatch(control$engine, c("ggplot2"), nomatch = 0) >0) { 
-    return(scatterplot_ggplot2(rules, measure = measure,
-      shading = shading, control = control)) ### control has max
+  
+  if(pmatch(control$engine, c("base"), nomatch = 0) >0) { 
+    return(scatterplot_base(x, measure = measure,
+      shading = shading, control = control, ...))
   }
   
-  return(scatterplot_grid(rules, measure = measure,
-    shading = shading, control = control))
+  if(pmatch(control$engine, c("grid", "interactive"), nomatch = 0) >0) { 
+    return(scatterplot_grid(x, measure = measure,
+      shading = shading, control = control, ...))
+  }
+    
+  if(pmatch(control$engine, c("plotly", "htmlwidget"), nomatch = 0) >0) { 
+    return(scatterplot_plotly(x, measure = measure,
+      shading = shading, control = control, ...)) ### control has max
+  }
+
+  ### default is ggplot2 
+  return(scatterplot_ggplot2(x, measure = measure,
+      shading = shading, control = control, ...)) ### control has max
+  
 }   
 
+### FIXME: specify colors for rules manually
+scatterplot_base <- function(x, measure = c("support","confidence"), 
+  shading = "lift", control = NULL, ...){
+  
+  addl <- list(...)
+  
+  control <- .get_parameters(control, list(
+    main = paste("Scatter plot for", length(x), class(x)),
+    engine = "base",
+    pch = 19,
+    col = default_colors(100),
+    jitter = NA,
+    verbose = addl$verb
+  ))
+  
+  ## take control parameters from ...
+  o <- pmatch(names(addl), names(control))
+  control[o[!is.na(o)]] <- addl[!is.na(o)]
+  addl[!is.na(o)] <- NULL
+  
+  q <- quality(x)
+  q$order <- size(x)
+  col <- rev(control$col)
+  
+  ## shading
+  if(!is.na(shading)) {
+    ## reduce overplotting
+    q <- q[order(q[[shading]]),]
+    
+    rank <- as.integer(cut(q[[shading]], length(col)))
+    col <- col[rank]
+  } else col <- 1
+  
+  ## jitter
+  qq <- q[measure]
+  
+  control$jitter <- control$jitter[1]
+  if(is.na(control$jitter) && any(duplicated(qq))) {
+    message("To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.")
+    control$jitter <- .jitter_default
+  }
+  
+  if(!is.na(control$jitter) && control$jitter>0) {
+    qq[,1] <- jitter(qq[,1], factor=control$jitter, amount = 0)
+    qq[,2] <- jitter(qq[,2], factor=control$jitter, amount = 0)
+  }
+  
+  do.call(plot, c(list(x = qq, pch = control$pch, col = col, main = control$main), addl))
+}
 
 
 scatterplot_grid <- function(rules, measure = c("support","confidence"), 
   shading = "lift", control = NULL, ...){
   
+  control <- c(control, list(...))  
   control <- .get_parameters(control, list(
-    main =paste("Scatter plot for", length(rules), class(rules)),
+    main = paste("Scatter plot for", length(rules), class(rules)),
     engine = "default",
     pch = 19,
     cex = .5,
@@ -143,7 +199,7 @@ scatterplot_grid <- function(rules, measure = c("support","confidence"),
           if(is.null(control$xlim)) control$xlim <- range(q[,1])
           if(is.null(control$ylim)) control$ylim <- range(q[,2])
           
-          ret <- scatterplot_arules(sel_r, measure, 
+          ret <- scatterplot_grid(sel_r, measure, 
             shading, control)
           if(!identical(ret, "zoom out")) return(ret)
           
@@ -188,7 +244,7 @@ scatterplot_grid <- function(rules, measure = c("support","confidence"),
       control$xlim <- NULL
       control$ylim <- NULL
       
-      ret <- scatterplot_arules(sel_r, measure, 
+      ret <- scatterplot_grid(sel_r, measure, 
         shading, control)
       if(!identical(ret, "zoom out")) return(ret)
       
@@ -319,7 +375,7 @@ scatterplot_int <- function(rules, measure, shading, control, ...){
   control$jitter <- control$jitter[1]
   if(is.na(control$jitter) && any(duplicated(x))) {
     message("To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.")
-    control$jitter <- .2
+    control$jitter <- .jitter_default
   }
   
   if(!is.na(control$jitter) && control$jitter>0) {

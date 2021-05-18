@@ -29,7 +29,7 @@ plot.rules <- function(x, method = NULL,
     "doubledecker",
     "graph",
     "paracoord",
-    "scatterplot",	## standard
+    "scatterplot",	## default
     "grouped matrix",
     "two-key plot",
     "matrix3D"
@@ -37,6 +37,7 @@ plot.rules <- function(x, method = NULL,
   
   if(length(x)<1) stop("x contains 0 rules!")
   
+  ### default is a scatter plot
   if(is.null(method)) methodNr <- 6
   else methodNr <- pmatch(tolower(method), tolower(methods))
   if(is.na(methodNr)) stop (paste("Unknown method:",sQuote(method), "\nAvailable methods:", paste(sQuote(methods), collapse = ", ")))
@@ -67,41 +68,46 @@ plot.rules <- function(x, method = NULL,
    
   if(is.null(control$engine)) control$engine <- engine
   
-  
-  
   ## work horses
-  if (methodNr == 1) matrix_arules(x, measure = shading, control,...)
-  else if (methodNr == 2) doubledecker_arules(x, measure = measure, 
+  if (methodNr == 1) matrixplot(x, measure = shading, control,...)
+  
+  else if (methodNr == 2) doubledeckerplot(x, measure = measure, 
     data = data, c(control, list(type="mosaic")), ...)
-  else if (methodNr == 3) doubledecker_arules(x, measure = measure, 
-    data = data, control, ...)
-  else if (methodNr == 4) graph_arules(x, measure = measure, 
+  
+  else if (methodNr == 3) doubledeckerplot(x, measure = measure, 
+    data = data, c(control, list(type="doubledecker")), ...)
+  
+  else if (methodNr == 4) graphplot(x, measure = measure, 
     shading = shading, control, ...)
-  else if (methodNr == 5) paracoord_arules(x, measure = measure, 
-    shading = shading, control = control,...)
+  
+  else if (methodNr == 5) paracoord_rules(x, measure = measure, 
+    shading = shading, control = control, ...)
+  
   else if (methodNr == 6) {
     if(length(measure)<2) measure[2] <- "confidence"
-    scatterplot_arules(x, measure = measure, 
-      shading = shading, control, ...)
+    scatterplot(x, measure = measure, shading = shading, control, ...)
   }
-  else if (methodNr == 7) grouped_matrix_arules(x, measure= measure, 
+  
+  else if (methodNr == 7) grouped_matrix_plot(x, measure= measure, 
     shading = shading, control=control, ...)
+  
   else if (methodNr == 8) { 
     if(is.null(control$col)) control$col <- rainbow(max(size(x))-1L)
-    scatterplot_arules(x, 
+    scatterplot(x, 
     measure = c("support", "confidence"), shading = "order", 
     control, ...)
   }
+  
   else if (methodNr == 9) {
     warning("method 'matrix3D' is deprecated use method 'matrix' with engine '3d'")
     control$engine <- "3d"
-    matrix_arules(x, measure = shading, control = control, ...)
+    matrixplot(x, measure = shading, control = control, ...)
   }
 }
 
 plot.itemsets <- function(x, method = NULL, 
   measure = "support", shading = NA, 
-  interactive=NULL, engine = "default",
+  interactive = NULL, engine = "default",
   data = NULL, control = NULL, ...) {
   
   ## methods
@@ -131,14 +137,15 @@ plot.itemsets <- function(x, method = NULL,
   
   
   ## work horses
-  if (methodNr == 1) graph_arules(x, measure = measure,
+  if (methodNr == 1) graphplot(x, measure = measure, shading = shading,
     control= control, ...)
-  else if (methodNr == 2) paracoord_items(x, measure = measure,
+  
+  else if (methodNr == 2) paracoord_items(x, measure = measure, shading = shading,
     control= control, ...)
+  
   else if (methodNr == 3) {
     if(length(measure)<2) measure[2] <- "order"
-    scatterplot_arules(x, measure = measure, 
-      shading = shading, control, ...)
+    scatterplot(x, measure = measure, shading = shading, control, ...)
   }
   
 }

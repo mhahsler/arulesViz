@@ -16,25 +16,51 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-matrix_arules <- function(rules, measure = "lift", control = NULL, ...){
+rules2matrix <- function(rules, measure = "support", ...) {
+  df <- DATAFRAME(rules, ...)
+  
+  m <- matrix(NA,
+    nrow = length(levels(df$RHS)),
+    ncol = length(levels(df$LHS)),
+    dimnames = list(levels(df$RHS), levels(df$LHS)))
+  
+  # attribute encoding contains the rule ids
+  enc <- m
+  
+  for (i in seq_len(nrow(df))) {
+    m[df$RHS[i], df$LHS[i]] <- df[[measure]][i]
+    enc[df$RHS[i], df$LHS[i]] <- i
+  }
+  
+  attr(m, "encoding") <- enc
+  m
+}
+
+matrixplot <- function(rules, measure = "lift", control = NULL, ...){
  
-  engines <- c("default", "interactive", "base", "3d", "ggplot2", "plotly", "htmlwidget")
+  engines <- c("default", "ggplot2", "grid", "interactive", "3d", "plotly", "htmlwidget")
   m <- pmatch(control$engine, engines, nomatch = 0)
   if(m == 0) stop("Unknown engine: ", sQuote(control$engine), 
     " Valid engines: ", paste(sQuote(engines), collapse = ", "))
   control$engine <- engines[m] 
   
-  control <- c(control, list(...))
-  
   ### FIXME: fix max and control & reorder!
   if(pmatch(control$engine, c("plotly", "htmlwidget"), nomatch = 0) >0) { 
-    return(matrix_plotly(rules, measure = measure, control = control)) 
-  } else if(pmatch(control$engine, c("ggplot2"), nomatch = 0) >0) {
-    return(matrix_ggplot2(rules, measure = measure, control = control)) 
+    return(matrix_plotly(rules, measure = measure, control = control, ...)) 
+    
+  } else if(pmatch(control$engine, c("grid", "interactive", "3d"), nomatch = 0) >0) {
+    return(matrix_grid(rules, measure = measure, control = control, ...)) 
   }
   
+  ### ggplot is default  
+  return(matrix_ggplot2(rules, measure = measure, control = control)) 
+}
+
+matrix_grid <- function(rules, measure = "lift", control = NULL, ...) {
+
+  control <- c(control, list(...))
   control <- .get_parameters(control, list(
-    main = paste("Matrix with", length(rules), "rules"),
+    main = paste("Matrix for", length(rules), "rules"),
     #col = gray.colors(100, 0.3, .8),
     engine = "default",
     col = default_colors(100),
@@ -85,9 +111,9 @@ matrix_arules <- function(rules, measure = "lift", control = NULL, ...){
 
 
 matrix_int <- function(rules, measure, control){
-  m <- rulesAsMatrix(rules, measure)
-  m_s <- rulesAsMatrix(rules, "support")
-  m_c <- rulesAsMatrix(rules, "confidence")
+  m <- rules2matrix(rules, measure)
+  m_s <- rules2matrix(rules, "support")
+  m_c <- rules2matrix(rules, "confidence")
 
   reorderTypes <- c("none", "measure", "support/confidence", "similarity")
   reorderType <- pmatch(control$reorder , reorderTypes, nomatch = 0)
@@ -104,7 +130,7 @@ matrix_int <- function(rules, measure, control){
     rm <- rowMeans(m_c, na.rm = TRUE)
     m <- m[order(rm, decreasing = FALSE), order(cm, decreasing = TRUE)]
   } else if(reorderType == 4){
-    ### Note: I hope unique is stable and gives the same order as rulesAsMatrix!
+    ### Note: I hope unique is stable and gives the same order as rules2matrix!
     d <- dissimilarity(unique(lhs(rules)), method = "jaccard")
     cm <- get_order(seriate(d))
     rm <- rowMeans(m, na.rm = TRUE)
@@ -189,8 +215,8 @@ matrix_int <- function(rules, measure, control){
 ## 2 measures
 matrix_int2 <- function(rules, measure, control){
   
-  m1 <- rulesAsMatrix(rules, measure[1])
-  m2 <- rulesAsMatrix(rules, measure[2])
+  m1 <- rules2matrix(rules, measure[1])
+  m2 <- rules2matrix(rules, measure[2])
  
   ### FIXME: This does not work anymore!!!
   if(control$reorder == TRUE)
@@ -198,7 +224,7 @@ matrix_int2 <- function(rules, measure, control){
     if(is.null(control$reorderBy)) m_reorder <- m1
     else if(control$reorderBy == measure[1]) m_reorder <- m1
     else if(control$reorderBy == measure[2]) m_reorder <- m2
-    else m_reorder <- rulesAsMatrix(rules, control$reorderBy)
+    else m_reorder <- rules2matrix(rules, control$reorderBy)
     
     order <- .reorder(m_reorder, rules, method=control$reorderMethod, 
       control=control$reorderControl)
@@ -314,8 +340,8 @@ matrix_int2 <- function(rules, measure, control){
     
     if(method == "ConfSupp")
     {
-      ms <- rulesAsMatrix(rules,"support")
-      mc <- rulesAsMatrix(rules,"confidence")
+      ms <- rules2matrix(rules,"support")
+      mc <- rules2matrix(rules,"confidence")
       o1 <- order(colMeans(ms, na.rm=TRUE))
       o2 <- order(rowMeans(mc, na.rm=TRUE))
       o <- ser_permutation(o2,o1)

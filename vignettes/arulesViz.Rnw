@@ -596,14 +596,11 @@ Itemsets in Consequent (rhs)
 
 
 An alternative representation is to use
-3D bars (method ``matrix3D'') instead of colored rectangles.
+3D bars (method ``matrix'' with engine ``3d'') instead of colored rectangles.
 
 <<matrix3D1, fig=TRUE, results=hide, include=FALSE>>=
-plot(subrules, method = "matrix3D", measure = "lift")
+plot(subrules, method = "matrix", engine = "3d", measure = "lift")
 @
-%<<matrix3D2, fig=TRUE, results=hide, include=FALSE>>=
-%plot(subrules, method="matrix3D", measure="lift", control=list(reorder=TRUE))
-%@
 
 \begin{figure}
 %\begin{minipage}{.48\linewidth}
@@ -990,7 +987,7 @@ Scatterplot& \tt "scatterplot" & large & 3 & \checkmark &  & ++ \\
 Two-Key plot & \tt "scatterplot" & large & 2 + order & \checkmark &  & ++ \\
 Matrix-based  & \tt "matrix" & medium & 1 & & \checkmark & 0\\
 Matrix-b. (2 measures) & \tt "matrix" & medium & 2 & &  \checkmark & -- --\\
-Matrix-b. (3D bar) & \tt "matrix3D" &  small & 1 & &  \checkmark & +\\
+Matrix-b. (3D bar) & \tt "matrix (engine 3d)" &  small & 1 & &  \checkmark & +\\
 Grouped matrix & \tt "grouped" &  large & 2 & \checkmark &  \checkmark & 0\\
 Graph-based &  \tt "graph" & small & 2 & & & ++\\
 Graph-b. (external) &  \tt "graph" & large & 2 &  \checkmark &  \checkmark & +\\

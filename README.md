@@ -21,8 +21,8 @@ devtools::install_github("mhahsler/arulesViz")
 This might also require the development version of [arules](https://github.com/mhahsler/arules).
 
 ## Features
-* Visualizations using `base`, `grid`, `ggplot2`, `plotly`, and `viznetwork`. 
-* Interactive visualizations using `grid` and `plotly`.
+* Visualizations using engines `ggplot2`, `grid`, `base` (R base plots), `htmlwidget` (powered by `plotly` and `visNetwork`). 
+* Interactive visualizations using `grid`, `plotly` and `visNetwork`.
 * Interactive rule inspection with `datatable`.
 * Integrated interactive rule exploration using `ruleExplorer`. 
 
@@ -41,7 +41,7 @@ Mine some rules.
 ```R
 library(arulesViz)
 data(Groceries)
-rules <- apriori(Groceries, parameter=list(support=0.005, confidence=0.5))
+rules <- apriori(Groceries, parameter = list(support = 0.005, confidence = 0.5))
 ```
 
 ### Standard visualization

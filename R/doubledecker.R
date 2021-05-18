@@ -17,7 +17,20 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-doubledecker_arules <- function(rules, measure ="support", data, 
+rules2table <- function(rules, data) {
+  antecedent <- unlist(LIST(lhs(rules), decode = FALSE))
+  consequent <- unlist(LIST(rhs(rules), decode = FALSE))
+  transactions <- data[, c(antecedent, consequent)]
+  ruleAsDataFrame <- as.data.frame(as(transactions, "matrix"))
+  for (i in 1:ncol(ruleAsDataFrame)) {
+    ruleAsDataFrame[[i]] <- factor(ruleAsDataFrame[[i]],
+      levels = c(FALSE, TRUE), labels = c("no", "yes"))
+  }
+  table(ruleAsDataFrame)
+}
+
+
+doubledeckerplot <- function(rules, measure ="support", data, 
 	control=list(), ...) {
 
   if(pmatch(control$engine, c("default"), nomatch = 0) != 1) 
@@ -28,7 +41,6 @@ doubledecker_arules <- function(rules, measure ="support", data,
   if(is.null(data)) stop("data has to be specified, but is missing.")
 
   control <- c(control, list(...))
-
   control <- .get_parameters(control, list(
     main = "Doubledecker plot for 1 rule",
     type = "doubledecker",
@@ -39,7 +51,7 @@ doubledecker_arules <- function(rules, measure ="support", data,
 
   if(control$interactive) stop("No interactive visualization available for doubledecker/mosaic plot.")
     
-  table <- getTable(rules, data)
+  table <- rules2table(rules, data)
   
   if(control$type=="doubledecker")
     do.call(vcd::doubledecker, c(list(table, margins=c(2,8,length(dim(table) + 2), 2), 

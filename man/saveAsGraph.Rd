@@ -8,13 +8,11 @@ saves a rule sat as a graph description in different formats
 (e.g., GraphML, dimacs, dot).
 }
 \usage{
-saveAsGraph(x, file, type="items", format="graphml")
+saveAsGraph(x, file, format="graphml")
 }
 \arguments{
   \item{x}{ an object of class "rules" or "itemsets".}
-  \item{file}{ file name}
-  \item{type}{ see type in plot with method "graph" 
-  (e.g., "itemsets", "items").}
+  \item{file}{ file name.}
   \item{format}{ file format (e.g., "edgelist", 
   "graphml", "dimacs", "gml", "dot"). See \code{write.graph} in package 
   \pkg{igraph}.}
@@ -36,4 +34,3 @@ saveAsGraph(rules, "rules.graphml")
 unlink("rules.graphml")
 }
 \keyword{ file }
-%\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
