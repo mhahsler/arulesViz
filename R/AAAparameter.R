@@ -25,6 +25,17 @@
 }
 
 .get_parameters <- function(parameter, defaults) {
+  if(!is.null(parameter[["help"]])){
+    cat("Available control parameters (with default values):\n")
+    cat(rbind(names(defaults)," = ", gsub("\n"," ",as.character(defaults))), 
+      sep=c("\t"," ","\n"))
+    
+    # stop quietly
+    opt <- options(show.error.messages = F)
+    on.exit(options(opt))
+    stop()
+  }
+  
   defaults <- as.list(defaults)
   parameter <- as.list(parameter)
   

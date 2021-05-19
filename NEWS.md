@@ -4,6 +4,13 @@
 ## New features
 * ggplot2 is now the default engine for most plots. 
 * grouped matrix visualization has now engine ggplot and htmlwidget.
+* conversion from associations to igraph are now exposed.
+* "help" can now be specified for plot for method, engine, and control. 
+
+## Bug Fixes
+* Fixed rounding bug in inspectDT.
+* Fixed jitter for scatter plot using engine plotly.
+* Fixed reordering for grouped matrix (engine plotly).
 
 # arulesViz 1.4-0 (03/05/2021)
 

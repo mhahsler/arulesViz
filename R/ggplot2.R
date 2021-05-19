@@ -61,7 +61,7 @@ scatterplot_ggplot2 <- function(x,
   
   if(!is.na(jitter) && jitter>0) 
     for(m in measure) 
-      if(is.numeric(q[[m]])) q[[m]] <- jitter(q[[m]], factor = jitter)
+      if(is.numeric(q[[m]])) q[[m]] <- jitter(q[[m]], factor = jitter, amount = 0)
 
   if(is.na(shading)) shading <- NULL
   p <- ggplot(q, aes_string(measure[1], y = measure[2], color = shading)) +
@@ -92,68 +92,9 @@ matrix_ggplot2 <- function(x,
   
   colors <- rev(control$colors)
   
-  q <- quality(x)
-  q[["order"]] <- size(x) 
-  qnames <- names(q)
-  measure <- qnames[pmatch(measure, qnames, duplicates.ok = TRUE)]
-  shading <- qnames[pmatch(shading, qnames)]
-
-  if(length(x) > control$max) {
-    warning("plot: Too many rules supplied. Only plotting the best ", 
-      control$max, " rules using ", measure, " (change parameter max if needed)", 
-      call. = FALSE)
-    x <- tail(x, n = control$max, by = measure, decreasing = FALSE)
-  }
- 
-  measure <- measure[1]
-  cat(measure) 
-  
-  
-  m <- rules2matrix(x, measure = measure)
-  m_s <- rules2matrix(x, "support")
-  m_c <- rules2matrix(x, "confidence")
-  
-  reorderTypes <- c("none", "measure", "support/confidence", "similarity")
-  reorderType <- pmatch(control$reorder , reorderTypes, nomatch = 0)
-  if(reorderType == 0) stop("Unknown reorder method: ", sQuote(control$reorder), 
-    " Valid reorder methods are: ", paste(sQuote(reorderTypes), 
-      collapse = ", "))
-  if(reorderType == 2){
-    cm <- order(colMeans(m, na.rm = TRUE), decreasing = FALSE)
-    rm <- order(rowMeans(m, na.rm = TRUE), decreasing = FALSE)
-    m <- m[rm, cm]
-    m_s <- m_s[rm, cm]
-    m_c <- m_c[rm, cm]
-  } else if(reorderType == 3){
-    cm <- order(colMeans(m_s, na.rm = TRUE), decreasing = FALSE)
-    rm <- order(rowMeans(m_c, na.rm = TRUE), decreasing = FALSE)
-    m <- m[rm, cm]
-    m_s <- m_s[rm, cm]
-    m_c <- m_c[rm, cm]
-  } else if(reorderType == 4){
-    d <- dissimilarity(lhs(x), method = "jaccard")
-    cm <- get_order(seriate(d))
-    rm <- order(rowMeans(m, na.rm = TRUE), decreasing = FALSE)
-    m <- m[rm, cm]
-    m_s <- m_s[rm, cm]
-    m_c <- m_c[rm, cm]
-  } 
-
-  writeLines("Itemsets in Antecedent (LHS)")
-  print(colnames(m))
-  writeLines("Itemsets in Consequent (RHS)")
-  print(rownames(m))
-  
-  # txt <- t(outer(colnames(m), rownames(m), paste, sep = '<BR>&nbsp;&nbsp; => '))
-  # txt[] <- paste('<B>', txt, '</B>', 
-  #   '<BR>',measure, ': ', signif(m, precision), 
-  #   '<BR>','support', ': ', signif(m_s, precision), 
-  #   '<BR>','confidence', ': ', signif(m_c, precision), 
-  #   sep = '')
-  # txt[is.na(m)] <- NA
- 
+  m <- .reordered_matrix(x, measure, control$reorder)
   dimnames(m) <- list(seq_len(nrow(m)), seq_len(ncol(m)))
-   
+  
   # NOTE: nullify variables used for non-standard evaluation for tidyverse/ggplot2 below
   RHS <- LHS  <- NULL
   

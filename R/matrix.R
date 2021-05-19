@@ -38,7 +38,12 @@ rules2matrix <- function(rules, measure = "support", ...) {
 
 matrixplot <- function(rules, measure = "lift", control = NULL, ...){
  
-  engines <- c("default", "ggplot2", "grid", "interactive", "3d", "plotly", "htmlwidget")
+  engines <- c("default", "ggplot2", "grid", "interactive", "base", "3d", "plotly", "htmlwidget")
+  if(control$engine == "help") {
+    message("Available engines for this plotting method are:\n", paste0(engines, collapse = ", "))
+    return(invisible(engines))  
+  }
+  
   m <- pmatch(control$engine, engines, nomatch = 0)
   if(m == 0) stop("Unknown engine: ", sQuote(control$engine), 
     " Valid engines: ", paste(sQuote(engines), collapse = ", "))
@@ -48,7 +53,7 @@ matrixplot <- function(rules, measure = "lift", control = NULL, ...){
   if(pmatch(control$engine, c("plotly", "htmlwidget"), nomatch = 0) >0) { 
     return(matrix_plotly(rules, measure = measure, control = control, ...)) 
     
-  } else if(pmatch(control$engine, c("grid", "interactive", "3d"), nomatch = 0) >0) {
+  } else if(pmatch(control$engine, c("grid", "interactive", "3d", "base"), nomatch = 0) >0) {
     return(matrix_grid(rules, measure = measure, control = control, ...)) 
   }
   
@@ -108,17 +113,13 @@ matrix_grid <- function(rules, measure = "lift", control = NULL, ...) {
   
 }
 
-
-
-matrix_int <- function(rules, measure, control){
+.reordered_matrix <- function(rules, measure = "lift", reorder = "measure", print_labels = TRUE) {
   m <- rules2matrix(rules, measure)
-  m_s <- rules2matrix(rules, "support")
-  m_c <- rules2matrix(rules, "confidence")
 
   reorderTypes <- c("none", "measure", "support/confidence", "similarity")
-  reorderType <- pmatch(control$reorder , reorderTypes, nomatch = 0)
+  reorderType <- pmatch(reorder , reorderTypes, nomatch = 0)
   if(reorderType == 0) stop("Unknown reorder method: ", 
-    sQuote(control$reorder), 
+    sQuote(reorder), 
     " Valid reorder methods are: ", paste(sQuote(reorderTypes), 
       collapse = ", "))
   if(reorderType == 2){
@@ -126,8 +127,8 @@ matrix_int <- function(rules, measure, control){
     rm <- rowMeans(m, na.rm = TRUE)
     m <- m[order(rm, decreasing = FALSE), order(cm, decreasing = TRUE)]
   } else if(reorderType == 3){
-    cm <- colMeans(m_s, na.rm = TRUE)
-    rm <- rowMeans(m_c, na.rm = TRUE)
+    cm <- colMeans(rules2matrix(rules, "support"), na.rm = TRUE)
+    rm <- rowMeans(rules2matrix(rules, "confidence"), na.rm = TRUE)
     m <- m[order(rm, decreasing = FALSE), order(cm, decreasing = TRUE)]
   } else if(reorderType == 4){
     ### Note: I hope unique is stable and gives the same order as rules2matrix!
@@ -137,19 +138,26 @@ matrix_int <- function(rules, measure, control){
     m <- m[order(rm, decreasing = FALSE), cm]
   } 
   
-  writeLines("Itemsets in Antecedent (LHS)")
-  print(colnames(m))
-  writeLines("Itemsets in Consequent (RHS)")
-  print(rownames(m))
-  
-  
+  if(print_labels) {
+    writeLines("Itemsets in Antecedent (LHS)")
+    print(colnames(m))
+    writeLines("Itemsets in Consequent (RHS)")
+    print(rownames(m))
+  }
+
+  m
+}
+
+matrix_int <- function(rules, measure, control, ...){
+  m <- .reordered_matrix(rules, measure, reorder = control$reorder)
+
   if (control$engine == "base") {
     do.call(image, c(list(t(m), col = control$col, xlab = "Antecedent (LHS)", 
       ylab = "Consequent (RHS)", main = control$main, 
-      sub=paste("Measure:", measure), axes=FALSE)), control$plot_options)
+      sub=paste("Measure:", measure), axes = FALSE), control$plot_options))
     if(control$axes) {
-      axis(1, labels=1:ncol(m), at=(0:(ncol(m)-1))/(ncol(m)-1))
-      axis(2, labels=1:nrow(m), at=(0:(nrow(m)-1))/(nrow(m)-1))
+      axis(1, labels = 1:ncol(m), at=(0:(ncol(m)-1))/(ncol(m)-1))
+      axis(2, labels = 1:nrow(m), at=(0:(nrow(m)-1))/(nrow(m)-1))
     }
     box()
   }
@@ -159,7 +167,7 @@ matrix_int <- function(rules, measure, control){
       ylab= "Antecedent (LHS)", main = control$main,
       type="h", pch=""), control$plot_options))
   }
-  else {
+  else { ### this is grid
     #dimnames(m) <- NULL
     #plot(levelplot(t(m), xlab = "Antecedent (LHS)", 
     #		ylab = "Consequent (RHS)", 

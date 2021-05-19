@@ -23,11 +23,11 @@
 ruleExplorer <- function(x, parameter = NULL) {
   
   if (!requireNamespace("shiny", quietly = TRUE)) {
-    stop("Package shiny is required to run this method.", call. = FALSE)
+    stop("Package shiny is required to run ruleExplorer.", call. = FALSE)
   }
   
   if (!requireNamespace("shinythemes", quietly = TRUE)) {
-    stop("Package shinythemes is required to run this method.", call. = FALSE)
+    stop("Package shinythemes is required to run ruleExplorer.", call. = FALSE)
   }
   
   ### rounding helpers
@@ -41,10 +41,7 @@ ruleExplorer <- function(x, parameter = NULL) {
   conf <- aparameter@confidence
   
   ### make sure we have transactions or rules
-  if(is(dataset, "data.frame")) {
-    dataset <- discretizeDF(dataset)
-    dataset <- as(dataset, "transactions")
-  }
+  if(is(dataset, "data.frame")) dataset <- transactions(dataset)
   
   ### default measures to use
   xIndexCached <- "support"
@@ -78,7 +75,6 @@ ruleExplorer <- function(x, parameter = NULL) {
     minLift <- 0
     maxLift <- 25
     lift <- 0
-    
   }
   
   ## create Shiny UI and server code
@@ -127,13 +123,16 @@ ruleExplorer <- function(x, parameter = NULL) {
             shiny::tabPanel('Scatter', value='scatter', 
               shiny::wellPanel(
                 shiny::fluidRow(
-                  shiny::column(3, shiny::uiOutput("xAxisSelectInput")),
-                  shiny::column(3, shiny::uiOutput("yAxisSelectInput")),
+                  shiny::column(3, shiny::uiOutput("xAxisSelectInput"), #),
+                  #shiny::column(3, 
+                    shiny::uiOutput("yAxisSelectInput")),
                   shiny::column(3, shiny::uiOutput("cAxisSelectInput")),
+                  shiny::column(3, shiny::sliderInput("jitter_scatter", "Jitter",
+                    min = 0, max = 1, value = 0, step = 1/100, sep = "")),
                   shiny::column(3, shiny::sliderInput("max_scatter", "Top rules shown (keep below 500):", 
                     min = 1, max = length(x), value = min(100, length(x)), step = 1, sep = ""))
                 )),
-              plotly::plotlyOutput("scatterPlot", width='100%', height='100%')
+              plotly::plotlyOutput("scatterPlot", width='100%', height='500px')
             ),
             
             shiny::tabPanel('Matrix', value='matrix', 
@@ -143,19 +142,17 @@ ruleExplorer <- function(x, parameter = NULL) {
                   shiny::column(6, shiny::sliderInput("max_matrix", "Top rules shown (keep below 500):", 
                     min = 1, max = length(x), value = min(100, length(x)), step = 1, sep = ""))
                 )),
-              
-              plotly::plotlyOutput("matrixPlot", width='100%', height='100%')
+              plotly::plotlyOutput("matrixPlot", width='100%', height='500px')
             ),
             
-          shiny::tabPanel('Grouped', value='grouped', 
-            shiny::wellPanel(
-              shiny::fluidRow(
-                shiny::column(6, shiny::uiOutput("kSelectInput")),
-                shiny::column(6, shiny::uiOutput("cAxisSelectInput_grouped"))
-              )),
-            shiny::plotOutput("groupedPlot")
-            # size is specified in renderPlot
-            #, width='80%', height='50%')
+            shiny::tabPanel('Grouped', value='grouped', 
+              shiny::wellPanel(
+                shiny::fluidRow(
+                  shiny::column(6, shiny::uiOutput("kSelectInput")),
+                  shiny::column(6, shiny::uiOutput("cAxisSelectInput_grouped"))
+                )),
+              #plotly::plotlyOutput("groupedPlot", width='100%', height='100%')
+              shiny::plotOutput("groupedPlot", width='100%', height='600px')
             ),
             
             shiny::tabPanel('Graph', value='graph', 
@@ -176,28 +173,28 @@ ruleExplorer <- function(x, parameter = NULL) {
         )
       ) 
     )),
-   
-     
     server = function(input, output, session) {
       
       output$numRulesOutput <- shiny::renderUI({
-        shiny::em(shiny::HTML(paste('Selected rules: ', length(rules()))))
+        if(is(dataset, "rules")) shiny::em(shiny::HTML(paste('Selected rules: ', length(rules()), 
+          ' of ', length(dataset))))
+        else shiny::em(shiny::HTML(paste('Rules: ', length(rules()))))
       })
       
       output$kSelectInput <- shiny::renderUI({
-          shiny::sliderInput('k', label='Choose # of rule clusters', min=1, max=50, step=1, value=15)
+        shiny::sliderInput('k', label='Choose # of rule clusters', min=1, max=50, step=1, value=15)
       })
       
       output$xAxisSelectInput <- shiny::renderUI({
-          shiny::selectInput("xAxis","X Axis:", colnames(quality(rules())), selected=xIndexCached)
+        shiny::selectInput("xAxis","X Axis:", colnames(quality(rules())), selected=xIndexCached)
       })
       
       output$yAxisSelectInput <- shiny::renderUI({
-          shiny::selectInput("yAxis","Y Axis:", colnames(quality(rules())), selected=yIndexCached)
+        shiny::selectInput("yAxis","Y Axis:", colnames(quality(rules())), selected=yIndexCached)
       })
       
       output$cAxisSelectInput <- shiny::renderUI({
-          shiny::selectInput("cAxis","Shading:", colnames(quality(rules())), selected=zIndexCached)
+        shiny::selectInput("cAxis","Shading:", colnames(quality(rules())), selected=zIndexCached)
       })
       
       output$cAxisSelectInput_matrix <- shiny::renderUI({
@@ -305,7 +302,7 @@ ruleExplorer <- function(x, parameter = NULL) {
         }
         
         ar <- cachedRules
-       
+        
         ### filter rules 
         if(input$supp > cachedSupp) {
           ar <- subset(ar, subset = support > input$supp)
@@ -372,23 +369,60 @@ ruleExplorer <- function(x, parameter = NULL) {
         )
       })
       
+      ## Data Table ##########################
+      output$rulesDataTable <- DT::renderDT({
+        handleErrors()
+        inspectDT(rules())
+      })
       
-      ## Grouped Plot #########################
+      ## Scatter Plot ##########################
+      output$scatterPlot <- plotly::renderPlotly({
+        shiny::req(input$xAxis, input$yAxis, input$cAxis, input$max_scatter)
+        handleErrors()
+        suppressWarnings(plot(rules(), method = 'scatterplot',
+          measure=c(input$xAxis, input$yAxis), shading = input$cAxis, engine = 'htmlwidget',
+          control = list(max=input$max_scatter, jitter = input$jitter_scatter)))
+      })
+      
+      ## Matrix Plot ###################
+      output$matrixPlot <- plotly::renderPlotly({
+        shiny::req(input$cAxis_matrix, input$max_matrix)
+        handleErrors()
+        suppressWarnings(plot(rules(), method = 'matrix', 
+          shading = input$cAxis_matrix, engine = 'htmlwidget',
+          control = list(max=input$max_matrix)))
+      })
+      
+      ## Grouped Matrix Plot ##########
+      
+      ### FIXME: htmlWidget does not render
+      
+      # output$groupedPlot <- plotly::renderPlotly({
+      #   shiny::req(input$cAxis_grouped, input$k)
+      #   handleErrors()
+      #   
+      #   plot(rules(), method='grouped', shading = input$cAxis_grouped, engine = 'htmlwidget',
+      #     control=list(k=input$k))
+      # })
+      
       output$groupedPlot <- shiny::renderPlot({
         shiny::req(input$cAxis_grouped, input$k)
         handleErrors()
         
-        plot(rules(), method='grouped', shading = input$cAxis_grouped, control=list(k=input$k))
-      }, height=600, width='auto')
-      
+        plot(rules(), method='grouped', shading = input$cAxis_grouped, engine = 'ggplot2',
+          control=list(k=input$k)) + theme(text = element_text(size=14))
+      })
+                    
+                    
       
       ## Graph Plot ##########################
       output$graphPlot <- visNetwork::renderVisNetwork({
         shiny::req(input$cAxis_graph, input$max_graph)
         handleErrors()
         
-        plt <- plot(rules(), method='graph', shading = input$cAxis_graph, engine='htmlwidget',
-          control = list(max=input$max_graph))
+        suppressWarnings(plt <- plot(rules(), method='graph', 
+          shading = input$cAxis_graph, engine='htmlwidget',
+          control = list(max=input$max_graph)))
         plt$sizingPolicy <- htmlwidgets::sizingPolicy(
           viewer.paneHeight=1000,
           browser.defaultHeight=1000,
@@ -401,37 +435,11 @@ ruleExplorer <- function(x, parameter = NULL) {
         plt
       })
       
-      
-      ## Scatter Plot ##########################
-      output$scatterPlot <- plotly::renderPlotly({
-        shiny::req(input$xAxis, input$yAxis, input$cAxis, input$max_scatter)
-        handleErrors()
-        plot(rules(), method = 'scatterplot',
-          measure=c(input$xAxis, input$yAxis), shading = input$cAxis, engine = 'htmlwidget',
-          control = list(max=input$max_scatter))
-      })
-      
-      
-      ## Matrix Plot ###################
-      output$matrixPlot <- plotly::renderPlotly({
-        shiny::req(input$cAxis_matrix, input$max_matrix)
-        handleErrors()
-        plot(rules(), method = 'matrix', shading = input$cAxis_matrix, engine = 'htmlwidget',
-          control = list(max=input$max_matrix))
-      })
-      
-      ## Data Table ##########################
-      output$rulesDataTable <- DT::renderDataTable({
-        handleErrors()
-        inspectDT(rules())
-      }
-      )
-      
       ## Export ########################
       output$rules.csv <- shiny::downloadHandler(
         filename = 'rules.csv',
         content = function(file) { 
-	    utils::write.csv(as(rules(), "data.frame"), file) 
+          utils::write.csv(as(rules(), "data.frame"), file) 
         }
       )
       

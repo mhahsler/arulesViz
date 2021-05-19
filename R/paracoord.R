@@ -38,7 +38,13 @@ paracoord_rules <- function(x, measure= "support", shading = "lift",
     verbose = FALSE
   ))
   
-  if(pmatch(control$engine, c("default"), nomatch = 0) == 0)  
+  engines <- "default"
+  if(control$engine == "help") {
+    message("Available engines for this plotting method are:\n", paste0(engines, collapse = ", "))
+    return(invisible(engines))  
+  }
+  
+  if(pmatch(control$engine, engines, nomatch = 0) == 0)  
     stop("Unknown engine for parallel coordinates plot '", control$engine, 
       "' - Valid engine: 'default'.")
     

@@ -34,6 +34,8 @@ S3method(plot, grouped_matrix)
 export("inspectDT")
 S3method(inspectDT, rules)
 S3method(inspectDT, itemsets)
+S3method(inspectDT, data.frame)
 
 export("ruleExplorer")
 export("saveAsGraph")
+export("associations2igraph")

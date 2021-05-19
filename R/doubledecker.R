@@ -33,7 +33,14 @@ rules2table <- function(rules, data) {
 doubledeckerplot <- function(rules, measure ="support", data, 
 	control=list(), ...) {
 
-  if(pmatch(control$engine, c("default"), nomatch = 0) != 1) 
+  engines <- c("default")
+  
+  if(control$engine == "help") {
+    message("Available engines for this plotting method are:\n", paste0(engines, collapse = ", "))
+    return(invisible(engines))  
+  }
+  
+  if(pmatch(control$engine, engines, nomatch = 0) != 1) 
     stop("Unknown engine for scatterplot: '", control$engine, 
       "' Valid engines: 'default'.")
   

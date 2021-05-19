@@ -34,7 +34,12 @@ plot.rules <- function(x, method = NULL,
     "two-key plot",
     "matrix3D"
   )
-  
+ 
+  if(!is.null(method) && method == "help") {
+    message("Available methods for plotting rules are:\n", paste0(methods, collapse = ", "))
+    return(invisible(methods))  
+  }
+   
   if(length(x)<1) stop("x contains 0 rules!")
   
   ### default is a scatter plot
@@ -54,7 +59,8 @@ plot.rules <- function(x, method = NULL,
   ## NA means no shading
   if(!all(is.na(shading))) {
     sid <- pmatch(shading, colnames(quality(x)))
-    if(any(is.na(sid))) stop("Shading measure not available in rule set: ",       paste(sQuote(shading[is.na(sid)]), collapse = ", "))
+    if(any(is.na(sid))) stop("Shading measure not available in rule set: ",       
+      paste(sQuote(shading[is.na(sid)]), collapse = ", "))
     shading <- colnames(quality(x))[sid]
   }
    
@@ -66,6 +72,8 @@ plot.rules <- function(x, method = NULL,
     interactive <- FALSE
   }
    
+  ### if control is character then I think it is "help"
+  if(is.character(control)) control <- list(help = TRUE)
   if(is.null(control$engine)) control$engine <- engine
   
   ## work horses
@@ -116,6 +124,11 @@ plot.itemsets <- function(x, method = NULL,
     "paracoord",
     "scatterplot"
   )
+  
+  if(!is.null(method) && method == "help") {
+    message("Available methods for plotting itemsets are:\n", paste0(methods, collapse = ", "))
+    return(invisible(methods))  
+  }
   
   ## add interactive and engine
   if(is.null(control$engine)) control$engine <- engine

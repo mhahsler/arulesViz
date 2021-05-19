@@ -98,7 +98,7 @@ scatterplot_plotly <- function(x,
   }
   
   if(!is.na(jitter) && jitter>0) 
-    for(m in measure) q[[m]] <- jitter(q[[m]], factor = jitter)
+    for(m in measure) q[[m]] <- jitter(q[[m]], factor = jitter, amount = 0)
 
   if(is.na(shading)) 
     p <- plotly::plot_ly(q, type = "scatter", x = q[,measure[1]], y = q[,measure[2]], 
@@ -158,38 +158,10 @@ matrix_plotly <- function(x, measure, shading, control, ...) {
     x <- tail(x, n = max, by = measure, decreasing = FALSE)
   }
   
-  m <- rules2matrix(x, measure = measure, itemSep= ',<BR>&nbsp;&nbsp;', 
-    setStart = '<B>{', setEnd = '}</B>')
-  m_s <- rules2matrix(x, "support")
-  m_c <- rules2matrix(x, "confidence")
-  
-  reorderTypes <- c("none", "measure", "support/confidence", "similarity")
-  reorderType <- pmatch(reorder , reorderTypes, nomatch = 0)
-  if(reorderType == 0) stop("Unknown reorder method: ", sQuote(reorder), 
-    " Valid reorder methods are: ", paste(sQuote(reorderTypes), 
-      collapse = ", "))
-  if(reorderType == 2){
-    cm <- order(colMeans(m, na.rm = TRUE), decreasing = FALSE)
-    rm <- order(rowMeans(m, na.rm = TRUE), decreasing = FALSE)
-    m <- m[rm, cm]
-    m_s <- m_s[rm, cm]
-    m_c <- m_c[rm, cm]
-  } else if(reorderType == 3){
-    cm <- order(colMeans(m_s, na.rm = TRUE), decreasing = FALSE)
-    rm <- order(rowMeans(m_c, na.rm = TRUE), decreasing = FALSE)
-    m <- m[rm, cm]
-    m_s <- m_s[rm, cm]
-    m_c <- m_c[rm, cm]
-  } else if(reorderType == 4){
-    d <- dissimilarity(lhs(x), method = "jaccard")
-    cm <- get_order(seriate(d))
-    rm <- order(rowMeans(m, na.rm = TRUE), decreasing = FALSE)
-    m <- m[rm, cm]
-    m_s <- m_s[rm, cm]
-    m_c <- m_c[rm, cm]
-  } 
-
-  
+  m <- .reordered_matrix(x, measure, reorder, print_labels = FALSE)
+  m_s <- rules2matrix(x, measure = "support")[rownames(m), colnames(m)]
+  m_c <- rules2matrix(x, measure = "confidence")[rownames(m), colnames(m)]
+   
   txt <- t(outer(colnames(m), rownames(m), paste, sep = '<BR>&nbsp;&nbsp; => '))
   txt[] <- paste('<B>', txt, '</B>', 
     '<BR>',measure, ': ', signif(m, precision), 

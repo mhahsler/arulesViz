@@ -22,6 +22,11 @@ scatterplot <- function(x, measure = c("support","confidence"),
   shading = "lift", control = NULL, ...){
   
   engines <- c("default", "ggplot2", "base", "grid", "interactive", "plotly", "htmlwidget")
+  if(control$engine == "help") {
+    message("Available engines for this plotting method are:\n", paste0(engines, collapse = ", "))
+    return(invisible(engines))  
+  }
+  
   m <- pmatch(control$engine, engines, nomatch = 0)
   if(m == 0) stop("Unknown engine: ", sQuote(control$engine), 
     " Valid engines: ", paste(sQuote(engines), collapse = ", "))

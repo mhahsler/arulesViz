@@ -13,7 +13,7 @@ including scatter plots with shading (two-key plots),
 graph based visualizations, doubledecker plots, etc.
 
 Many plots can use different rendering engines including
-static standard plots (mostly using \pkg{grid}), 
+static standard plots (using base plots, \pkg{ggplot2}, \pkg{grid}), 
 standard plots with interactive manipulation 
 and interactive HTML widget-based visualizations.
 }
@@ -25,57 +25,44 @@ and interactive HTML widget-based visualizations.
 }
 \arguments{
   \item{x}{ an object of class "rules" or "itemsets". }
-  \item{method}{ a string with value "scatterplot", "two-key plot", "matrix", 
-  "matrix3D",  "mosaic", 
-  "doubledecker", "graph", "paracoord" or "grouped" selecting the 
-  visualization method (see Details). Note that some methods may only be  available for rules or itemsets.}
-  
+  \item{method}{ a string indicating the visualization method. Methods for rules  
+    include "scatterplot", "two-key plot", "matrix", "grouped matrix",  "graph", "paracoord", etc. 
+    Specify "help" to get a complete list of available methods. Note that some methods may 
+    only be available for rules or itemsets.}
   \item{measure}{ measure(s) of interestingness 
-  (e.g., "support", "confidence", "lift", "order") used in the visualization. Some 
-  visualization methods need one measure, others take a vector with two 
-  measures (e.g., scatterplot). In some plots (e.g., graphs) \code{NA} 
-  can be used to suppress using a measure. See Details Section.}
-  
+    (e.g., "support", "confidence", "lift", "order") used in the visualization. Some 
+    visualization methods need one measure, others take a vector with two 
+    measures (e.g., scatterplot). In some plots (e.g., graphs) \code{NA} 
+    can be used to suppress using a measure.}
   \item{shading}{ measure of interestingness used
-  for the color of the points/arrows/nodes
-  (e.g., "support", "confidence", "lift"). The default is "lift".
-  \code{NA} can be often used to suppress shading.}
-  
+    for the color of the points/arrows/nodes
+    (e.g., "support", "confidence", "lift"). The default is "lift".
+    \code{NA} can be often used to suppress shading.}
   \item{interactive}{ deprecated. See parameter \code{engine} below. }
-  
-  \item{control}{ a list of control parameters for the plot. The available
-  control parameters depend on the used visualization method (see Details).}
-  
-  \item{data}{  the dataset (class "transactions") 
-  used to generate the rules/itemsets. Only 
-  "mosaic" and "doubledecker" require the original data.}
-  
   \item{engine}{ a string indicating the plotting engine used to 
     render the plot. 
-    The "default" engine uses (mostly) \pkg{grid}.
+    The "default" engine uses (mostly) \pkg{ggplot2}.
     Other engines include "base" (base R plots), 
-    "ggplot2", "interactive", "plotly", "viznetwork", "igraph", "graphviz".
+    "grid", "interactive", "plotly", "visnetwork", "igraph", "graphviz", and "htmlwidget".
     Note that not all engines are available for all methods.
-    The engine "htmlwidget" uses an appropriate engine to create a 
-    widget that can be included in markdown documents and web pages (see Examples). 
-    Note that HTML widgets tend to get very slow or unresponsive for 
-    too many rules. To prevent this situation, the control parameter 
-    \code{max} sets a limit, and the user is warned if the limit is reached. 
+    Specify "help" to get 
+    a complete list of available engines for the selected visualization method.
   }
-  
+  \item{data}{  the dataset (class "transactions") 
+    used to generate the rules/itemsets. Only 
+    "mosaic" and "doubledecker" require the original data.}
+  \item{control}{ a list of control parameters for the plot. The available
+    control parameters depend on the used visualization method and engine. Specify "help" to get 
+    a complete list of available control parameters and their default values.}
   \item{\dots}{ Further arguments are added for convenience to the \code{control} list.}
 }
 \details{
 Most visualization techniques are described by Bruzzese and Davino (2008),
 however, we added more color shading, reordering and interactive features
 (see Hahsler, 2017).
-Many visualization methods take extra parameters as the \code{control} parameter list. Although, we have tried to keep control parameters consistent, the available control parameters vary (slightly) from visualization method to visualization method. A complete list of parameters with default
-values can be obtained using verbose mode. For example, 
+Many visualization methods take extra parameters as the \code{control} parameter list. Although, we have tried to keep control parameters consistent, the available control parameters vary from visualization method to visualization method. You can specift \code{"help"} for \code{method}, \code{engine}, or \code{control} to get a list of available settings.
 
-\code{plot(rules, method = "graph", control = list(verbose = TRUE))} 
-
-prints a complete list of control parameters for method "graph" 
-(default engine).
+Note on HTML widgets: HTML widgets tend to get very slow or unresponsive for too many rules. To prevent this situation, the control parameter \code{max} sets a limit, and the user is warned if the limit is reached.
 
 The following visualization method are available:
 
@@ -87,10 +74,6 @@ measure (parameter "shading") is represented by the color of the points.
 There is a special value for shading called "order" which produces a
 two-key plot where the color of the points represents the length (order) 
 of the rule.
-
-Interactive manipulations are available. 
-Engine "htmlwidget" is available to produce an interactive web-based
-visualization (uses \pkg{plotly}).
 }
 
 \item{"matrix"}{ 
@@ -102,9 +85,6 @@ The control parameter \code{reorder} takes the values
 \code{"none"}, \code{"measure"}, \code{"support/confidence"}, or \code{"similarity"} and 
 can be used to reorder LHS and RHS of the rules differntly. The default reordering average measure 
 (typically lift) pushing the rules with the highest lift value to the top-left corner of the plot.   
-Interactive
-visualizations using engine "interactive" or "htmlwidget" (via \pkg{plotly})
-are available.
 }
 
 \item{"grouped matrix"}{
@@ -130,8 +110,6 @@ can be any function computing a scalar from a vector
 (e.g., min, mean (default), median, sum, max). It is also used
 to reorder the balloons in the plot.}
 \item{"col"}{color palette (default is 100 heat colors.)}
-\item{"gp_labels", "gp_main", "gp_labs", "gp_lines"}{\code{gpar()} objects used to specify color, font and font size for
-    different elements. Note: You need load \pkg{grid} to use \code{gpar()}.}
 }
 }
 
@@ -139,13 +117,6 @@ to reorder the balloons in the plot.}
 Represents the rules (or itemsets) as a graph with items as labeled vertices, and rules (or itemsets) represented as vertices connected to items using arrows. For rules, the LHS items are connected with arrows 
 pointing to the vertex representing the rule and the RHS has an
 arrow pointing to the item.
-
-Several engines are available. The default engine uses \pkg{igraph} (\code{plot.igraph} and \code{tkplot} for the interactive visualization). 
-\code{...} arguments are passed on to the respective plotting function (use for color, etc.).
-
-Alternatively, the engines "graphviz" (\pkg{Rgraphviz}) and "htmlwidget" (\pkg{visNetwork}) are available.
-Note that Rgraphviz has to be installed separately from 
-\url{http://www.bioconductor.org/}.
 }
 
 \item{"doubledecker", "mosaic"}{
@@ -191,8 +162,21 @@ Hahsler, M. (2016), Grouping association rules using lift. In C. Iyigun, R. Mogh
 }
 \examples{
 data(Groceries)
-rules <- apriori(Groceries, parameter=list(support=0.001, confidence=0.8))
+rules <- apriori(Groceries, parameter=list(support = 0.001, confidence = 0.8))
 rules
+
+## Getting help
+# There are many method, plotting engines and all of them have different control parameters. Use
+# "help" to get help. List available methods for the object rules:
+plot(rules, method = "help")
+
+# List the available engines for method "scatterplot"
+plot(rules, method = "scatterplot", engine = "help")
+
+# List control parameters for scatterplot with engine "ggplot2"
+\donttest{ % don't run test since help terminates with stop()
+plot(rules, method = "scatterplot", engine = "ggplot2", control = "help")}
+
 
 ## Scatter plot
 #  Display a scatter plot using two quality measures
@@ -201,11 +185,12 @@ plot(rules)
 # Scatter plot with custom measures
 plot(rules, measure = c("support", "lift"), shading = "confidence")
 
-# Custom color scale, theme and no title (ggplot2)
+# Custom color scale, , labels, theme and no title (ggplot2)
 library(ggplot2)
 plot(rules, engine = "ggplot2", main = NULL) + 
-  scale_color_gradient2(low = "red", mid = "white", high = "blue", 
+  scale_color_gradient2(low = "red", mid = "gray90", high = "blue", 
     midpoint = 1, limits = c(0,12)) +
+  labs(x = "Supp.", y = "Conf.", color = "Lift") + 
   theme_classic()
 
 # Scatter plot using other engines
@@ -214,17 +199,12 @@ library(colorspace) # for sequential_hcl
 plot(rules, engine = "grid", control = list(col=sequential_hcl(100)))
 
 plot(rules, engine = "base")
-
-# See all control options using verbose. The control options vary by method and engine.
-plot(rules, verbose = TRUE)
   
 # Interactive scatter plot using the grid engine (selected rules are returned)
-\dontrun{
-sel <- plot(rules, engine = "interactive")}
+\dontrun{sel <- plot(rules, engine = "interactive")}
 
 # Create a html widget for interactive visualization (uses plotly)
-\dontrun{
-plot(rules, engine = "htmlwidget")}
+\donttest{plot(rules, engine = "htmlwidget")}
 
 # Two-key plot (a scatterplot with shading = "order")
 plot(rules, method = "two-key plot")
@@ -248,14 +228,14 @@ plot(subrules, method = "matrix", control = list(reorder = "similarity"))
 
 # Use other engines
 plot(subrules, method = "matrix", engine = "grid")
+plot(subrules, method = "matrix", engine = "base")
 plot(subrules, method = "matrix", engine = "3d")
 
 # Interactive matrix plot 
 # * Engine interactive: identify rules by clicking on them (click outside to end) 
 # * Engine htmlwidget: hoover over rules to identify
-\dontrun{
-plot(subrules, method = "matrix", engine = "interactive")
-plot(subrules, method = "matrix", engine = "htmlwidget")}
+\dontrun{plot(subrules, method = "matrix", engine = "interactive")}
+\donttest{plot(subrules, method = "matrix", engine = "htmlwidget")}
 
 
 ## Grouped matrix plot
@@ -264,8 +244,7 @@ plot(rules, method="grouped matrix")
 plot(rules, method="grouped matrix", shading = "confidence", k = 5)
 
 # Create a htmlwidget
-\dontrun{
-plot(rules, method = "grouped matrix", engine = "htmlwidget")}
+\donttest{plot(rules, method = "grouped matrix", engine = "htmlwidget")}
 
 # Engine grid
 plot(rules, method="grouped matrix", engine = "grid")
@@ -274,8 +253,7 @@ plot(rules, method="grouped matrix", engine = "grid",
   gp_labels = grid::gpar(col = "blue", cex=1, fontface="italic"))
 
 # Interactive grouped matrix plot
-\dontrun{
-sel <- plot(rules, method="grouped", engine = "interactive")}
+\dontrun{sel <- plot(rules, method="grouped", engine = "interactive")}
 
 ## Graph representation
 
@@ -326,15 +304,13 @@ plot(subrules2, method="graph", engine = "igraph",
   layout=igraph::with_graphopt(spring.const=5, mass=50))
 
 # Graph rendering using engine graphviz
-\dontrun{
-plot(subrules2, method="graph", engine="graphviz")}
+\dontrun{plot(subrules2, method="graph", engine="graphviz")}
 
 # Default interactive plot (using igraph's tkplot)
-\dontrun{
-plot(subrules2, method="graph", engine = "interactive")}
+\donttest{plot(subrules2, method="graph", engine = "interactive")}
 
 # Interactive graph as a html widget (using igraph layout)
-\dontrun{
+\donttest{
 plot(subrules2, method="graph", engine="htmlwidget")
 plot(subrules2, method="graph", engine="htmlwidget", 
   igraphLayout = "layout_in_circle")
