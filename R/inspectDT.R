@@ -25,16 +25,19 @@ inspectDT.default <- function(x, ...)
   stop("inspect 2 not implemented for class ", class(x))
 
 inspectDT.rules <- function(x, precision = 3, ...) {
-    DT::datatable(
-    data.frame(LHS = labels(lhs(x)), RHS = labels(rhs(x)), quality(x)), 
-    filter = "top", rownames = paste0('[', 1:length(x), ']'), ...) %>% 
-    DT::formatRound(3:(3+ncol(quality(x))), max(precision))
+  df <-  DATAFRAME(x)
+  DT::datatable(df, filter = "top", rownames = paste0('[', rownames(df), ']'), ...) %>%
+    DT::formatRound(columns =  which(sapply(df, is.numeric)), digits = max(precision))
 }
 
 inspectDT.itemsets <- function(x, precision = 3, ...) {
-    DT::datatable(
-    data.frame(items = labels(x), quality(x)), 
-    filter = "top", rownames = paste0('[', 1:length(x), ']'), 
-    ...) %>% DT::formatRound(2:(2+ncol(quality(x))), 
-      precision)
+  df <-  DATAFRAME(x)
+  DT::datatable(df, filter = "top", rownames = paste0('[', rownames(df), ']'), ...) %>%
+    DT::formatRound(columns =  which(sapply(df, is.numeric)), digits = max(precision))  
+}
+
+inspectDT.data.frame <- function(x, precision = 3, ...) {
+  df <-  x
+  DT::datatable(df, filter = "top", rownames = paste0('[', rownames(df), ']'), ...) %>%
+    DT::formatRound(columns =  which(sapply(df, is.numeric)), digits = max(precision))  
 }

@@ -15,7 +15,7 @@ inspectDT(x, ...)
   \item{x}{ an object of class "rules" or "itemsets". }
   \item{...}{ additional arguments. \code{precision} controls the precision
   used to print the quality measures (defaults to 2). All other arguments 
-  are passed on to \code{datatable}.}
+  are passed on to \code{datatable} in package \pkg{DT}.}
 }
 %\details{}
 \value{
@@ -39,7 +39,13 @@ rules
 
 inspectDT(rules)
 
-### save table as a html page.
+# for more control on the data table, you can used DATAFRAME() to convert the rules.
+rules_df <- DATAFRAME(rules, setStart = '', setEnd = '', itemSep = ' + ')
+rules_df$count <- NULL
+head(rules_df)
+inspectDT(rules_df)
+
+# save a datatable as a html page.
 p <- inspectDT(rules)
 htmlwidgets::saveWidget(p, "arules.html", selfcontained = FALSE)
 browseURL("arules.html")}
