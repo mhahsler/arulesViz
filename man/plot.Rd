@@ -174,8 +174,7 @@ plot(rules, method = "help")
 plot(rules, method = "scatterplot", engine = "help")
 
 # List control parameters for scatterplot with engine "ggplot2"
-\donttest{ % don't run test since help terminates with stop()
-plot(rules, method = "scatterplot", engine = "ggplot2", control = "help")}
+\dontrun{plot(rules, method = "scatterplot", engine = "ggplot2", control = "help")}
 
 
 ## Scatter plot
@@ -307,7 +306,7 @@ plot(subrules2, method="graph", engine = "igraph",
 \dontrun{plot(subrules2, method="graph", engine="graphviz")}
 
 # Default interactive plot (using igraph's tkplot)
-\donttest{plot(subrules2, method="graph", engine = "interactive")}
+\dontrun{plot(subrules2, method="graph", engine = "interactive")}
 
 # Interactive graph as a html widget (using igraph layout)
 \donttest{
