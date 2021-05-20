@@ -118,9 +118,6 @@ scatterplot_grid <- function(rules, measure = c("support","confidence"),
     zlim = NULL,
     alpha = NULL,
     col = default_colors(100),
-    #col = hcl(c=0, l=seq(10,80, length.out=100)),
-    #col = heat_hcl(100),
-    #gray_range = c(.1,.8),
     newpage = TRUE,
     jitter = NA
   ))

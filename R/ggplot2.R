@@ -155,68 +155,45 @@ grouped_matrix_ggplot2 <- function(x,
   control <- c(control, list(...))  
   control <- .get_parameters(control, list(
     k = 20,
+    aggr.fun = mean, 
     rhs_max = 10,
-    lhs_items = 2,
-    aggr.fun=mean, 
+    lhs_label_items = 2,
     col = default_colors(2),
-    max.shading = NA,
-    reverse = TRUE,
+    #max.shading = NA,
     engine = "ggplot2"
   ))
   
-  ### get the clustering
-  p <- grouped_matrix_int(x, measure, shading, control, plot = FALSE)  
+  # get the clustering
+  gm <- rules2groupedMatrix(x, shading, measure, 
+    k = control$k, aggr.fun = control$aggr.fun, lhs_label_items = control$lhs_label_items)  
 
-  ## get most important item in the lhs
-  f <- lapply(split(p$rules, p$cl), FUN = function(r) itemFrequency(lhs(r), 
-    type = "absolute"))
+  m <- gm$m
+  m2 <- gm$m2
   
-  ## divide by sum to find most important item...
-  f <- lapply(f, "/", itemFrequency(lhs(p$rules), type = "absolute")+1L)
-  
-  most_imp_item <- lapply(f, FUN = 
-      function(x) {
-        items <- sum(x>0)
-        if(items==0) { "" }
-        else if(control$lhs_items<1){ 
-          paste(items, "items") 
-        } else if(items>control$lhs_items){
-          paste(paste(names(x[head(order(x, decreasing = TRUE), n = control$lhs_items)]), 
-            collapse = ", "), ", +", items-control$lhs_items, " items", sep="")
-        }else{
-          paste(names(x[head(order(x, decreasing = TRUE), n = items)]), 
-            collapse = ", ")
-        }
-      })
-  
-  s <- p$sAggr
-  m <- p$mAggr
-  colnames(s) <- paste(
-    paste(format(table(p$cl)), " rules: ", '{',most_imp_item, '}', sep=''))
-  
-  if(control$reverse) p$order[[1]] <- rev(p$order[[1]])
-  s <- permute(s, p$order)
-  m <- permute(m, p$order)
-  
+  if(nrow(m) > control$rhs_max) {
+    m <- m[seq_len(control$rhs_max), ]
+    m2 <- m2[seq_len(control$rhs_max), ]
+  }
+    
+  # convert to data.frame  
   df <- data.frame(
-    LHS = rep(ordered(colnames(s), levels = colnames(s)), times = nrow(s)), 
-    RHS = rep(ordered(rownames(s), levels = rownames(s)), each = ncol(s)), 
-    support = as.vector(t(m)), 
-    measure = as.vector(t(s))
+    LHS = rep(ordered(colnames(m), levels = colnames(m)), times = nrow(m)), 
+    RHS = rep(ordered(rownames(m), levels = rev(rownames(m))), each = ncol(m)), 
+    measure = as.vector(t(m)), 
+    support = as.vector(t(m2))
   )
 
-  
-  ### NULLify for CRAN
+  # NULLify for CRAN
   LHS <- RHS <- NULL
   
   p <- ggplot(df, aes(x = LHS, y = RHS, size = support, color = measure)) +
     geom_point(na.rm = TRUE) + 
     scale_color_gradient(low = control$col[2], high = control$col[1]) + 
-    labs(color = p$shading) +
+    labs(color = shading) +
     theme_linedraw() +
-    theme(axis.text.x=element_text(angle=90, hjust=0, vjust = .5)) +
-    scale_x_discrete(position = "top") 
-
+    scale_x_discrete(position = "top") +
+    theme(axis.text.x=element_text(angle=90, hjust = 0, vjust = .5))
+        
   if(control$engine == "htmlwidget") p <- plotly::ggplotly(p)
   p
 }

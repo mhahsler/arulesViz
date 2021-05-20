@@ -16,6 +16,79 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+### TODO: make grid plot use rules2groupedMatrix!
+
+## create matrix with grouped LHS (columns) using measure
+rules2groupedMatrix <- function(rules, measure = "lift", measure2 = "support", 
+  k = 10,  aggr.fun = mean, lhs_label_items = 2) {
+  
+  m <- rules2matrix(rules, measure)
+  m_enc <- attr(m, "encoding")  ### encoding contains the rule index for each cell in matrix m
+  m2 <- rules2matrix(rules, measure2)
+  
+  ## check k
+  k <- min(ncol(m), k)
+  
+  ## FIXME: this handling of NA for clustering is not great!
+  m_clust <- t(m)
+  naVal <- if(measure == "lift") 1 else 0
+  m_clust[is.na(m_clust)] <- naVal
+  
+  ## are there enough non-identical points for k-means?
+  ## if not then we group the identical ones using hclust
+  if(sum(!duplicated(m_clust)) > k) 
+      clustering_lhs <- stats::kmeans(m_clust, k, iter.max = 100, nstart = 20)$cluster
+  else 
+      clustering_lhs <- stats::cutree(stats::hclust(stats::dist(m_clust)), h = 0)
+  
+  # aggregate the data
+  m_aggr <- .aggr(m, clustering_lhs, aggr.fun)
+  m2_aggr <- .aggr(m2, clustering_lhs, aggr.fun)
+  
+  ### calculate cluster membership for rules
+  clustering_rules <- vector(mode = "integer", length = ncol(m_enc))
+  for(i in seq_len(ncol(m_enc))) clustering_rules[m_enc[, i]] <- clustering_lhs[i]
+  
+  ## get most important item for each lhs cluster
+  f <- lapply(split(rules, clustering_rules), FUN = function(r) itemFrequency(lhs(r), 
+    type = "absolute"))
+  ## divide by sum to find most important item...
+  f <- lapply(f, "/", itemFrequency(lhs(rules), type = "absolute")+1L)
+  
+  most_imp_item <- lapply(f, FUN = 
+      function(x) {
+        items <- sum(x > 0)
+        if(items == 0) { "" }
+        else if(lhs_label_items < 1){ 
+          paste(items, "items") 
+        } else if(items > lhs_label_items){
+          paste(paste(names(x[head(order(x, decreasing = TRUE), n = lhs_label_items)]), 
+            collapse = ", "), ", +", items - lhs_label_items, " items", sep = "")
+        }else{
+          paste(names(x[head(order(x, decreasing = TRUE), n = items)]), 
+            collapse = ", ")
+        }
+      })
+  
+  lhs_cluster_labels <- paste(
+    paste(format(table(clustering_rules)), " rules: ", '{', most_imp_item, '}', sep = ''))
+  
+  colnames(m_aggr) <- lhs_cluster_labels
+  colnames(m2_aggr) <- lhs_cluster_labels
+  
+  # order decreasing starting in the top-left corner
+  o <- seriation::ser_permutation(
+    order(apply(m_aggr, MARGIN = 1, FUN = aggr.fun, na.rm = TRUE), decreasing = TRUE),
+    order(apply(m_aggr, MARGIN = 2, FUN = aggr.fun, na.rm = TRUE), decreasing = TRUE)
+  )
+  
+  m_aggr <- seriation::permute(m_aggr, o)
+  m2_aggr <- seriation::permute(m2_aggr, o)
+  clustering_rules <- seriation::get_rank(o[[2]])[clustering_rules]
+  
+  list(m = m_aggr, m2 = m2_aggr, clustering_rules = clustering_rules)
+}  
+
 
 grouped_matrix_plot <- function(rules, measure, shading, control = NULL, ...){
   
@@ -123,7 +196,7 @@ grouped_matrix_grid <- function(rules, measure, shading, control = NULL, ...){
     select <- round(select) 
     
     if(select>0 && select <= control$k) {
-      select <- get_order(x$order[2])[select]
+      select <- seriation::get_order(x$order[2])[select]
       rulesSelected <- rules[x$cl==select]
     }else{
       cat("Illegal selection! Choose a LHS.\n")
@@ -176,8 +249,6 @@ rowMaxs <- function(x, na.rm=FALSE) apply(x, MARGIN=1, max, na.rm=na.rm)
   ma
 }
 
-
-## create an grouped_matrix
 grouped_matrix_int <- function(rules, measure, shading, control, plot = TRUE) {
   k <- control$k
   aggr.fun <- control$aggr.fun
@@ -202,14 +273,14 @@ grouped_matrix_int <- function(rules, measure, shading, control, plot = TRUE) {
   ## are there enough non-identical points for k-means?
   ## if not then we group the identical ones using hclust
   if(sum(!duplicated(s_clust))>k) 
-      km <- kmeans(s_clust, k, iter.max=50, nstart=10)$cl
+      km <- stats::kmeans(s_clust, k, iter.max=50, nstart=10)$cl
   else 
-      km <- cutree(hclust(dist(s_clust)), h=0)
+      km <- stats::cutree(stats::hclust(stats::dist(s_clust)), h=0)
   
   sAggr <- .aggr(s, km, aggr.fun)
   
   ## reorder for shading
-  order <- ser_permutation(
+  order <- seriation::ser_permutation(
     order(apply(sAggr, MARGIN=1, FUN=aggr.fun, na.rm=TRUE), 
       decreasing=TRUE),
     order(apply(sAggr, MARGIN=2, FUN=aggr.fun, na.rm=TRUE), 
@@ -296,8 +367,8 @@ grouped_matrix_plot_int <- function(x, y, order = NULL, options = NULL) {
   if (!is.null(options$ylab)) colnames(x) <- options$ylab
   
   if (!is.null(order)) {
-    x <- permute(x, order)
-    y <- permute(y, order)
+    x <- seriation::permute(x, order)
+    y <- seriation::permute(y, order)
   }
   
   ### only show the top RHS

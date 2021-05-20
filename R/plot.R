@@ -100,7 +100,7 @@ plot.rules <- function(x, method = NULL,
     shading = shading, control=control, ...)
   
   else if (methodNr == 8) { 
-    if(is.null(control$col)) control$col <- rainbow(max(size(x))-1L)
+    if(is.null(control$col)) control$col <- grDevices::rainbow(max(size(x))-1L)
     scatterplot(x, 
     measure = c("support", "confidence"), shading = "order", 
     control, ...)

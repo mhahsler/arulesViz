@@ -66,7 +66,6 @@ matrix_grid <- function(rules, measure = "lift", control = NULL, ...) {
   control <- c(control, list(...))
   control <- .get_parameters(control, list(
     main = paste("Matrix for", length(rules), "rules"),
-    #col = gray.colors(100, 0.3, .8),
     engine = "default",
     col = default_colors(100),
     zlim = NULL,
@@ -133,7 +132,7 @@ matrix_grid <- function(rules, measure = "lift", control = NULL, ...) {
   } else if(reorderType == 4){
     ### Note: I hope unique is stable and gives the same order as rules2matrix!
     d <- dissimilarity(unique(lhs(rules)), method = "jaccard")
-    cm <- get_order(seriate(d))
+    cm <- seriation::get_order(seriation::seriate(d))
     rm <- rowMeans(m, na.rm = TRUE)
     m <- m[order(rm, decreasing = FALSE), cm]
   } 
@@ -159,7 +158,6 @@ matrix_int <- function(rules, measure, control, ...){
       axis(1, labels = 1:ncol(m), at=(0:(ncol(m)-1))/(ncol(m)-1))
       axis(2, labels = 1:nrow(m), at=(0:(nrow(m)-1))/(nrow(m)-1))
     }
-    box()
   }
   else if (control$engine == "3d") {
     df <- cbind(which(!is.na(m), arr.ind=TRUE), as.vector(m[!is.na(m)]))
@@ -237,8 +235,8 @@ matrix_int2 <- function(rules, measure, control){
     order <- .reorder(m_reorder, rules, method=control$reorderMethod, 
       control=control$reorderControl)
     
-    m1 <- permute(m1, order)
-    m2 <- permute(m2, order)
+    m1 <- seriation::permute(m1, order)
+    m2 <- seriation::permute(m2, order)
     
   }
   
@@ -269,11 +267,11 @@ matrix_int2 <- function(rules, measure, control){
   ## l = 0..100 but we use 10..90
   ## all colors are reversed
   
-  cols <- matrix(hcl(
-    h=floor(map(m1, c(260, 0))), 
-    l=floor(map(m2, c(100, 30))), 
-    c=floor(map(m2, c(30, 100)))), 
-    ncol=ncol(m1))
+  cols <- matrix(grDevices::hcl(
+    h = floor(map(m1, c(260, 0))), 
+    l = floor(map(m2, c(100, 30))), 
+    c = floor(map(m2, c(30, 100)))), 
+    ncol = ncol(m1))
   cols[is.na(m1) | is.na(m2)] <- NA
   
   gImage(cols, xlab="Antecedent (LHS)", ylab="Consequent (RHS)",
@@ -295,7 +293,7 @@ matrix_int2 <- function(rules, measure, control){
   
   steps <- 10
   mm <- outer(seq(260, 0, length.out=steps), seq(100, 30, length.out=steps), 
-    FUN=function(x, y) hcl(h=x, l=y, c=130-y))
+    FUN=function(x, y) grDevices::hcl(h=x, l=y, c=130-y))
   
   gImage(mm, 
     xScale = range(m2, na.rm=TRUE), yScale = range(m1, na.rm=TRUE),
@@ -341,8 +339,8 @@ matrix_int2 <- function(rules, measure, control){
     #l[is.na(l)] <- max(l, na.rm=TRUE) * 2
     #r[is.na(r)] <- max(r, na.rm=TRUE) * 2
     
-    ls <- seriate(l, method = method, control=control)
-    rs <- seriate(r, method = method, control=control)
+    ls <- seriation::seriate(l, method = method, control=control)
+    rs <- seriation::seriate(r, method = method, control=control)
     return(c(ls,rs))
   }else{
     
@@ -352,11 +350,11 @@ matrix_int2 <- function(rules, measure, control){
       mc <- rules2matrix(rules,"confidence")
       o1 <- order(colMeans(ms, na.rm=TRUE))
       o2 <- order(rowMeans(mc, na.rm=TRUE))
-      o <- ser_permutation(o2,o1)
+      o <- seriation::ser_permutation(o2,o1)
       return(o)
       
     }else{   
-      l <- seriate(m, method = method, control=control)
+      l <- seriation::seriate(m, method = method, control=control)
       return(l)
     }
   }
@@ -364,29 +362,29 @@ matrix_int2 <- function(rules, measure, control){
 }
 
 seriation_method_avgMeasure <- function(x, control){
-  ser_permutation(
+  seriation::ser_permutation(
     order(rowMeans(x, na.rm=TRUE)),
     order(colMeans(x, na.rm=TRUE)))
 }
 
 seriation_method_maxMeasure <- function(x, control){
-  ser_permutation(
+  seriation::ser_permutation(
     order(apply(x, MARGIN=1, max, na.rm=TRUE)),
     order(apply(x, MARGIN=2, max, na.rm=TRUE)))
 }
 
 seriation_method_medMeasure <- function(x, control){
-  ser_permutation(
+  seriation::ser_permutation(
     order(apply(x, MARGIN=1, median, na.rm=TRUE)),
     order(apply(x, MARGIN=2, median, na.rm=TRUE)))
 }
 
 
-set_seriation_method("matrix", "avg", seriation_method_avgMeasure, 
+seriation::set_seriation_method("matrix", "avg", seriation_method_avgMeasure, 
   "Order by average")
-set_seriation_method("matrix", "max", seriation_method_maxMeasure, 
+seriation::set_seriation_method("matrix", "max", seriation_method_maxMeasure, 
   "Order by maximum")
-set_seriation_method("matrix", "median", seriation_method_maxMeasure, 
+seriation::set_seriation_method("matrix", "median", seriation_method_maxMeasure, 
   "Order by median")
 
 

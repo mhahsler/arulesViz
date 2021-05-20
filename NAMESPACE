@@ -1,7 +1,6 @@
 import("arules")
 
 import("ggplot2")
-
 import("tibble")
 import("tidyr")
 # dplyr has many NAMESPACE conflicts with arules so we use ::
@@ -9,15 +8,15 @@ import("tidyr")
 
 import("grid") 
 
-importFrom("graphics", "par", "plot", "mtext", "text", "axis", "box")
-importFrom("stats", "median", "kmeans", "cutree", "dist", "hclust", "na.omit", "quantile")
-importFrom("grDevices", "hcl", "rgb", "gray.colors", "gray", "col2rgb",
-  "colorRampPalette", "rainbow")
+importFrom("graphics", "par", "plot", "mtext", "text", "axis")
+importFrom("stats", "median", "na.omit")
+importFrom("grDevices", "gray")
 importFrom("methods", "is", "as", "new")
-importFrom("seriation", "seriate", "ser_permutation", "set_seriation_method",
-  "permute", "get_order")
 
 # we use :: for the following
+#importFrom("grDevices", many more)
+#importFrom("seriation", "seriate", "ser_permutation", "set_seriation_method",
+#  "permute", "get_order")
 #importFrom("utils", "installed.packages", "write.csv")
 #import(igraph)
 #importFrom("scatterplot3d", "scatterplot3d")
@@ -36,6 +35,10 @@ S3method(inspectDT, rules)
 S3method(inspectDT, itemsets)
 S3method(inspectDT, data.frame)
 
-export("ruleExplorer")
-export("saveAsGraph")
-export("associations2igraph")
+export(
+  "ruleExplorer", 
+  "saveAsGraph",
+  "associations2igraph", 
+  "rules2matrix", 
+  "rules2groupedMatrix"
+)

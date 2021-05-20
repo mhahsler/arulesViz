@@ -20,7 +20,7 @@
 ### default with alpha
 .nodeColors <- function(alpha=NULL) {
   if(is.null(alpha)) alpha <- 1
-  c(rgb(.4,.8,.4, alpha), rgb(.6,.6,.8, alpha))
+  c(grDevices::rgb(.4,.8,.4, alpha), grDevices::rgb(.6,.6,.8, alpha))
 }
 
 associations2igraph <- function(x) {
@@ -116,8 +116,8 @@ graph_igraph <- function(x, measure = "support", shading = "lift",
     
     nodeCol = default_colors(100),
     itemnodeCol = .nodeColors()[1],
-    edgeCol = hcl(l = 70, c = 0, alpha = 1),
-    labelCol = hcl(l = 0, c =0, alpha = .7),
+    edgeCol = grDevices::hcl(l = 70, c = 0, alpha = 1),
+    labelCol = grDevices::hcl(l = 0, c =0, alpha = .7),
     
    # itemLabels = TRUE,
     measureLabels = FALSE,
