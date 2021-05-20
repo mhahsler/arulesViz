@@ -252,7 +252,7 @@ plot(rules, method="grouped matrix", engine = "grid",
   gp_labels = grid::gpar(col = "blue", cex=1, fontface="italic"))
 
 # Interactive grouped matrix plot
-\dontrun{sel <- plot(rules, method="grouped", engine = "interactive")}
+\dontrun{sel <- plot(rules, method="grouped matrix", engine = "interactive")}
 
 ## Graph representation
 

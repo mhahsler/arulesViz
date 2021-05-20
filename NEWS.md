@@ -5,6 +5,7 @@
 * ggplot2 is now the default engine for most plots. 
 * grouped matrix visualization has now engine ggplot and htmlwidget.
 * conversion from associations to igraph are now exposed.
+* conversion from rules to matrix and groupedMatrix are now exposed.
 * "help" can now be specified for plot for method, engine, and control. 
 
 ## Bug Fixes
