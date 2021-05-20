@@ -118,6 +118,61 @@ matrix_ggplot2 <- function(x,
     theme_linedraw()
 }
 
+grouped_matrix_ggplot2 <- function(x, 
+  measure = c("support"), shading = "lift", control = NULL, ...) {
+  
+  control <- c(control, list(...))  
+  control <- .get_parameters(control, list(
+    k = 20,
+    aggr.fun = mean, 
+    rhs_max = 10,
+    lhs_label_items = 2,
+    col = default_colors(2),
+    #max.shading = NA,
+    engine = "ggplot2"
+  ))
+  
+  # get the clustering
+  gm <- rules2groupedMatrix(x, shading, measure, 
+    k = control$k, aggr.fun = control$aggr.fun, lhs_label_items = control$lhs_label_items)  
+
+  m <- gm$m
+  m2 <- gm$m2
+  
+  not_shown_rhs <- 0
+  if(nrow(m) > control$rhs_max) {
+    not_shown_rhs <- nrow(m) - control$rhs_max
+    m <- m[seq_len(control$rhs_max), , drop = FALSE]
+    m2 <- m2[seq_len(control$rhs_max), , drop = FALSE]
+  }
+    
+  # convert to data.frame  
+  df <- data.frame(
+    LHS = rep(ordered(colnames(m), levels = colnames(m)), times = nrow(m)), 
+    RHS = rep(ordered(rownames(m), levels = rev(rownames(m))), each = ncol(m)), 
+    measure = as.vector(t(m)), 
+    support = as.vector(t(m2))
+  )
+
+  # NULLify for CRAN
+  LHS <- RHS <- NULL
+  
+  p <- ggplot(df, aes(x = LHS, y = RHS, size = support, color = measure)) +
+    geom_point(na.rm = TRUE) + 
+    scale_color_gradient(low = control$col[2], high = control$col[1]) + 
+    labs(color = shading) + 
+    xlab("LHS Groups") + 
+    ylab(paste("RHS", if(not_shown_rhs > 0) paste('(+', not_shown_rhs, ' not shown)', sep = '') else '')) +
+    theme_linedraw() +
+    scale_x_discrete(position = "top") +
+    scale_y_discrete(position = "right") +
+    theme(axis.text.x=element_text(angle=90, hjust = 0, vjust = .5), 
+      legend.position="bottom") +
+    scale_size(range = c(2,8))
+        
+  if(control$engine == "htmlwidget") p <- plotly::ggplotly(p)
+  p
+}
 
 graph_ggplot2 <- function(x, measure = "support", shading = "lift", 
   control = NULL, ...) {
@@ -157,62 +212,6 @@ graph_ggplot2 <- function(x, measure = "support", shading = "lift",
     control$nodetext + 
     scale_color_gradient(low = control$colors[2], high = control$colors[1], na.value = 0) +
     ggnetwork::theme_blank()
-}
-
-grouped_matrix_ggplot2 <- function(x, 
-  measure = c("support"), shading = "lift", control = NULL, ...) {
-  
-  control <- c(control, list(...))  
-  control <- .get_parameters(control, list(
-    k = 20,
-    aggr.fun = mean, 
-    rhs_max = 10,
-    lhs_label_items = 2,
-    col = default_colors(2),
-    #max.shading = NA,
-    engine = "ggplot2"
-  ))
-  
-  # get the clustering
-  gm <- rules2groupedMatrix(x, shading, measure, 
-    k = control$k, aggr.fun = control$aggr.fun, lhs_label_items = control$lhs_label_items)  
-
-  m <- gm$m
-  m2 <- gm$m2
-  
-  not_shown_rhs <- 0
-  if(nrow(m) > control$rhs_max) {
-    not_shown_rhs <- nrow(m) - control$rhs_max
-    m <- m[seq_len(control$rhs_max), ]
-    m2 <- m2[seq_len(control$rhs_max), ]
-  }
-    
-  # convert to data.frame  
-  df <- data.frame(
-    LHS = rep(ordered(colnames(m), levels = colnames(m)), times = nrow(m)), 
-    RHS = rep(ordered(rownames(m), levels = rev(rownames(m))), each = ncol(m)), 
-    measure = as.vector(t(m)), 
-    support = as.vector(t(m2))
-  )
-
-  # NULLify for CRAN
-  LHS <- RHS <- NULL
-  
-  p <- ggplot(df, aes(x = LHS, y = RHS, size = support, color = measure)) +
-    geom_point(na.rm = TRUE) + 
-    scale_color_gradient(low = control$col[2], high = control$col[1]) + 
-    labs(color = shading) + 
-    xlab("LHS Groups") + 
-    ylab(paste("RHS", if(not_shown_rhs > 0) paste('(+', not_shown_rhs, ' not shown)', sep = '') else '')) +
-    theme_linedraw() +
-    scale_x_discrete(position = "top") +
-    scale_y_discrete(position = "right") +
-    theme(axis.text.x=element_text(angle=90, hjust = 0, vjust = .5), 
-      legend.position="bottom") +
-    scale_size(range = c(2,8))
-        
-  if(control$engine == "htmlwidget") p <- plotly::ggplotly(p)
-  p
 }
 
 
