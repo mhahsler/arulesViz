@@ -174,7 +174,6 @@ paracoord_items <- function(x, measure= "support", shading = NULL,
   ## sort to minimize occlusion
   x <- sort(x, by=measure,  decreasing = FALSE)
   lwd <- map(quality(x)[[measure]], c(1,5))
-  #col <- gray(map(quality(x)[[shading]], c(0.8,0.1)))
   col <- NULL 
   
   i <- LIST(items(x))

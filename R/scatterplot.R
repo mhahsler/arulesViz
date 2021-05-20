@@ -291,7 +291,7 @@ scatterplot_int <- function(rules, measure, shading, control, ...){
   ## reverse colors
   colors <- rev(control$col)
   
-  q <- quality(rules)[, na.omit(c(measure, shading))]
+  q <- quality(rules)[, stats::na.omit(c(measure, shading))]
   
   ## handle Inf
   for(i in 1:ncol(q)) {
@@ -333,7 +333,6 @@ scatterplot_int <- function(rules, measure, shading, control, ...){
       min_size <- min(q$order)
       steps <- (max_size-min_size)+1
       ypos <- rev((1:steps -.5)/steps)
-      #col <- gray(map(min_size:max_size, control$gray_range))
       col <- colors[map_int(min_size:max_size, c(1,length(colors)))]
       grid.points(x=rep(0,steps), 
         y=ypos, pch=control$pch,
@@ -348,7 +347,6 @@ scatterplot_int <- function(rules, measure, shading, control, ...){
         
         gColorkey(range_shading,
           colors,
-          #gray(1-map(1:20, control$gray_range)),
           name="colorkey", label=shading)
       }else{
         grid.text(paste(shading, "=", 
@@ -388,14 +386,8 @@ scatterplot_int <- function(rules, measure, shading, control, ...){
   
   ## get colors for shading
   if(!is.na(shading)) {
-    #col <- 1-map(q[[shading]], 
-    #	control$gray_range, from.range=range_shading)
     col <- colors[map_int(q[[shading]], 
       c(1,length(colors)), from.range=range_shading)]
-    ## not in range!
-    #x[is.na(col),] <- c(NA,NA) 
-    #col[is.na(col)] <- 1
-    #col <- gray(col)
     
   }else col <- 1
   

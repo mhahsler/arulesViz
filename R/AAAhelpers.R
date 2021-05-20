@@ -31,7 +31,7 @@
   col
 }
 
-grey_hcl <- function(n, alpha = 1) colorspace::sequential_hcl(n, c.=0, alpha = alpha)
+gray_hcl <- function(n, alpha = 1) colorspace::sequential_hcl(n, c.=0, alpha = alpha)
 
 ### default are gray - > red
 default_colors <- function(n , alpha = 1) 

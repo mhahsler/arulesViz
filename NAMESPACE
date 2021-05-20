@@ -1,31 +1,16 @@
 import("arules")
-
+import("grid") 
 import("ggplot2")
 import("tibble")
 import("tidyr")
-# dplyr has many NAMESPACE conflicts with arules so we use ::
+# NOTE: dplyr has many NAMESPACE conflicts with arules so we use ::
 #import("dplyr")
 
-import("grid") 
-
-importFrom("graphics", "par", "plot", "mtext", "text", "axis", "box")
-importFrom("stats", "median", "na.omit")
-importFrom("grDevices", "gray")
+importFrom("graphics", "par", "mtext", "text", "axis", "box")
+importFrom("stats", "median")
 importFrom("methods", "is", "as", "new")
 
-# we use :: for the following
-#importFrom("grDevices", many more)
-#importFrom("seriation", "seriate", "ser_permutation", "set_seriation_method",
-#  "permute", "get_order")
-#importFrom("utils", "installed.packages", "write.csv")
-#import(igraph)
-#importFrom("scatterplot3d", "scatterplot3d")
-#importFrom("vcd", "mosaic", "doubledecker")
-#importFrom("colorspace", "heat_hcl", "sequential_hcl")
-#importFrom("plotly","plot_ly","layout")
-#importFrom("DT", "datatable", "formatRound")
-#importFrom("visNetwork", "visNetwork", "visIgraphLayout", "visOptions", "visNodes")
-
+importFrom("graphics", "plot")
 S3method(plot, rules)
 S3method(plot, itemsets)
 S3method(plot, grouped_matrix)
