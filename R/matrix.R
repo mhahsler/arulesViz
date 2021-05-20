@@ -16,7 +16,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-rules2matrix <- function(rules, measure = "support", ...) {
+rules2matrix <- function(rules, measure = "support", reorder = "measure", ...) {
   df <- DATAFRAME(rules, ...)
   
   m <- matrix(NA,
@@ -32,7 +32,38 @@ rules2matrix <- function(rules, measure = "support", ...) {
     enc[df$RHS[i], df$LHS[i]] <- i
   }
   
+
+  # reorder 
+  reorderTypes <- c("none", "measure", "support/confidence", "similarity")
+  reorderType <- pmatch(reorder , reorderTypes, nomatch = 0)
+  if(reorderType == 0) stop("Unknown reorder method: ", 
+    sQuote(reorder), 
+    " Valid reorder methods are: ", paste(sQuote(reorderTypes), 
+      collapse = ", "))
+  
+  if(reorderType == 2){
+    cm <- colMeans(m, na.rm = TRUE)
+    rm <- rowMeans(m, na.rm = TRUE)
+    m <- m[order(rm, decreasing = TRUE), order(cm, decreasing = TRUE)]
+    enc <- enc[order(rm, decreasing = TRUE), order(cm, decreasing = TRUE)]
+  
+    } else if(reorderType == 3){
+    cm <- colMeans(rules2matrix(rules, "support"), na.rm = TRUE)
+    rm <- rowMeans(rules2matrix(rules, "confidence"), na.rm = TRUE)
+    m <- m[order(rm, decreasing = TRUE), order(cm, decreasing = TRUE)]
+    enc <- enc[order(rm, decreasing = TRUE), order(cm, decreasing = TRUE)]
+  
+    } else if(reorderType == 4){
+    ### Note: I hope unique is stable and gives the same order as rules2matrix!
+    d <- dissimilarity(unique(lhs(rules)), method = "jaccard")
+    cm <- seriation::get_order(seriation::seriate(d))
+    rm <- rowMeans(m, na.rm = TRUE)
+    m <- m[order(rm, decreasing = FALSE), cm]
+    enc <- enc[order(rm, decreasing = FALSE), cm]
+  } 
+  
   attr(m, "encoding") <- enc
+  
   m
 }
 
@@ -61,6 +92,7 @@ matrixplot <- function(rules, measure = "lift", control = NULL, ...){
   return(matrix_ggplot2(rules, measure = measure, control = control)) 
 }
 
+### this also does 3d and base
 matrix_grid <- function(rules, measure = "lift", control = NULL, ...) {
 
   control <- c(control, list(...))
@@ -112,52 +144,28 @@ matrix_grid <- function(rules, measure = "lift", control = NULL, ...) {
   
 }
 
-.reordered_matrix <- function(rules, measure = "lift", reorder = "measure", print_labels = TRUE) {
-  m <- rules2matrix(rules, measure)
-
-  reorderTypes <- c("none", "measure", "support/confidence", "similarity")
-  reorderType <- pmatch(reorder , reorderTypes, nomatch = 0)
-  if(reorderType == 0) stop("Unknown reorder method: ", 
-    sQuote(reorder), 
-    " Valid reorder methods are: ", paste(sQuote(reorderTypes), 
-      collapse = ", "))
-  if(reorderType == 2){
-    cm <- colMeans(m, na.rm = TRUE)
-    rm <- rowMeans(m, na.rm = TRUE)
-    m <- m[order(rm, decreasing = FALSE), order(cm, decreasing = TRUE)]
-  } else if(reorderType == 3){
-    cm <- colMeans(rules2matrix(rules, "support"), na.rm = TRUE)
-    rm <- rowMeans(rules2matrix(rules, "confidence"), na.rm = TRUE)
-    m <- m[order(rm, decreasing = FALSE), order(cm, decreasing = TRUE)]
-  } else if(reorderType == 4){
-    ### Note: I hope unique is stable and gives the same order as rules2matrix!
-    d <- dissimilarity(unique(lhs(rules)), method = "jaccard")
-    cm <- seriation::get_order(seriation::seriate(d))
-    rm <- rowMeans(m, na.rm = TRUE)
-    m <- m[order(rm, decreasing = FALSE), cm]
-  } 
-  
-  if(print_labels) {
-    writeLines("Itemsets in Antecedent (LHS)")
-    print(colnames(m))
-    writeLines("Itemsets in Consequent (RHS)")
-    print(rownames(m))
-  }
-
-  m
-}
-
 matrix_int <- function(rules, measure, control, ...){
-  m <- .reordered_matrix(rules, measure, reorder = control$reorder)
+  m <- rules2matrix(rules, measure, reorder = control$reorder)
 
+  # reverse rows so highest value is in the top-left hand corner
+  m <- m[nrow(m):1, ]
+  
+  ## print labels
+  writeLines("Itemsets in Antecedent (LHS)")
+  print(colnames(m))
+  writeLines("Itemsets in Consequent (RHS)")
+  print(rownames(m))
+  
+  
   if (control$engine == "base") {
     do.call(image, c(list(t(m), col = control$col, xlab = "Antecedent (LHS)", 
       ylab = "Consequent (RHS)", main = control$main, 
-      sub=paste("Measure:", measure), axes = FALSE), control$plot_options))
+      sub = paste("Measure:", measure), axes = FALSE), control$plot_options))
     if(control$axes) {
       axis(1, labels = 1:ncol(m), at=(0:(ncol(m)-1))/(ncol(m)-1))
       axis(2, labels = 1:nrow(m), at=(0:(nrow(m)-1))/(nrow(m)-1))
     }
+    box()
   }
   else if (control$engine == "3d") {
     df <- cbind(which(!is.na(m), arr.ind=TRUE), as.vector(m[!is.na(m)]))

@@ -22,9 +22,9 @@
 rules2groupedMatrix <- function(rules, measure = "lift", measure2 = "support", 
   k = 10,  aggr.fun = mean, lhs_label_items = 2) {
   
-  m <- rules2matrix(rules, measure)
+  m <- rules2matrix(rules, measure, reorder = "none")
   m_enc <- attr(m, "encoding")  ### encoding contains the rule index for each cell in matrix m
-  m2 <- rules2matrix(rules, measure2)
+  m2 <- rules2matrix(rules, measure2, reorder = "none")
   
   ## check k
   k <- min(ncol(m), k)
@@ -112,7 +112,6 @@ grouped_matrix_plot <- function(rules, measure, shading, control = NULL, ...){
   
   ### default is ggplot2
   return(grouped_matrix_ggplot2(rules, measure, shading, control, ...)) 
-  
 }
   
 grouped_matrix_grid <- function(rules, measure, shading, control = NULL, ...){

@@ -92,7 +92,17 @@ matrix_ggplot2 <- function(x,
   
   colors <- rev(control$colors)
   
-  m <- .reordered_matrix(x, measure, control$reorder)
+  m <- rules2matrix(x, measure, control$reorder)
+  
+  # reverse rows so highest value is in the top-left hand corner
+  m <- m[nrow(m):1, ]
+  
+  ## print labels
+  writeLines("Itemsets in Antecedent (LHS)")
+  print(colnames(m))
+  writeLines("Itemsets in Consequent (RHS)")
+  print(rownames(m))
+  
   dimnames(m) <- list(seq_len(nrow(m)), seq_len(ncol(m)))
   
   # NOTE: nullify variables used for non-standard evaluation for tidyverse/ggplot2 below
@@ -170,7 +180,9 @@ grouped_matrix_ggplot2 <- function(x,
   m <- gm$m
   m2 <- gm$m2
   
+  not_shown_rhs <- 0
   if(nrow(m) > control$rhs_max) {
+    not_shown_rhs <- nrow(m) - control$rhs_max
     m <- m[seq_len(control$rhs_max), ]
     m2 <- m2[seq_len(control$rhs_max), ]
   }
@@ -189,10 +201,15 @@ grouped_matrix_ggplot2 <- function(x,
   p <- ggplot(df, aes(x = LHS, y = RHS, size = support, color = measure)) +
     geom_point(na.rm = TRUE) + 
     scale_color_gradient(low = control$col[2], high = control$col[1]) + 
-    labs(color = shading) +
+    labs(color = shading) + 
+    xlab("LHS Groups") + 
+    ylab(paste("RHS", if(not_shown_rhs > 0) paste('(+', not_shown_rhs, ' not shown)', sep = '') else '')) +
     theme_linedraw() +
     scale_x_discrete(position = "top") +
-    theme(axis.text.x=element_text(angle=90, hjust = 0, vjust = .5))
+    scale_y_discrete(position = "right") +
+    theme(axis.text.x=element_text(angle=90, hjust = 0, vjust = .5), 
+      legend.position="bottom") +
+    scale_size(range = c(2,8))
         
   if(control$engine == "htmlwidget") p <- plotly::ggplotly(p)
   p

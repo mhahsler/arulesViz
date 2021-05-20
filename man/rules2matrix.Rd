@@ -6,14 +6,15 @@
 Converts a set of association rules into a matrix with unique LHS itemsets as columns and unique RHS itemsets as rows. The matrix cells contain a quality measure. The LHS itemsets can be grouped.
 }
 \usage{
-rules2matrix(rules, measure = "support", ...)
+rules2matrix(rules, measure = "support", reorder = "measure", ...)
 rules2groupedMatrix(rules, measure = "lift", measure2 = "support", k = 10, 
   aggr.fun = mean, lhs_label_items = 2)
 }
 \arguments{
   \item{rules}{ a rules object. }
   \item{measure}{ quality measure put in the matrix }
-  \item{measure2}{ second quality measure. }
+  \item{reorder}{ reorder rows and columns? Possible methods are: "none", "measure" (default), "support/confidence", "similarity". }
+  \item{measure2}{ second quality measure (organized in the same way as measure). }
   \item{k}{ number of LHS itemset groups. }
   \item{aggr.fun}{ function to aggregate the quality measure for groups. }
   \item{lhs_label_items}{ number of top items used to name LHS itemset groups (columns). }

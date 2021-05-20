@@ -8,7 +8,7 @@ import("tidyr")
 
 import("grid") 
 
-importFrom("graphics", "par", "plot", "mtext", "text", "axis")
+importFrom("graphics", "par", "plot", "mtext", "text", "axis", "box")
 importFrom("stats", "median", "na.omit")
 importFrom("grDevices", "gray")
 importFrom("methods", "is", "as", "new")

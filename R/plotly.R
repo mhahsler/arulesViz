@@ -146,7 +146,6 @@ matrix_plotly <- function(x, measure, shading, control, ...) {
     colors = control$colors, precision = control$precision, max = control$max) }
 
 .plotly_matrix <- function(x, measure = "lift", reorder = "none", 
-  #colors = colorRamp(c("grey", "red"))) {
   colors = default_colors(2), precision = 3, max = 1000) {
   
   colors <- rev(colors)
@@ -158,9 +157,9 @@ matrix_plotly <- function(x, measure, shading, control, ...) {
     x <- tail(x, n = max, by = measure, decreasing = FALSE)
   }
   
-  m <- .reordered_matrix(x, measure, reorder, print_labels = FALSE)
-  m_s <- rules2matrix(x, measure = "support")[rownames(m), colnames(m)]
-  m_c <- rules2matrix(x, measure = "confidence")[rownames(m), colnames(m)]
+  m <- rules2matrix(x, measure, reorder)
+  m_s <- rules2matrix(x, measure = "support", reorder = "none")[rownames(m), colnames(m)]
+  m_c <- rules2matrix(x, measure = "confidence", reorder = "none")[rownames(m), colnames(m)]
    
   txt <- t(outer(colnames(m), rownames(m), paste, sep = '<BR>&nbsp;&nbsp; => '))
   txt[] <- paste('<B>', txt, '</B>', 
