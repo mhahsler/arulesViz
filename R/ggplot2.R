@@ -115,7 +115,9 @@ matrix_ggplot2 <- function(x,
   ggplot(d, aes_string(x = 'LHS', y = 'RHS', fill = measure)) + geom_raster() +
     scale_fill_gradient(low=colors[1], high=colors[2], na.value = 0) +
     ggtitle(control$main) + 
-    theme_linedraw()
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+    theme_bw()
 }
 
 grouped_matrix_ggplot2 <- function(x, 
@@ -161,14 +163,14 @@ grouped_matrix_ggplot2 <- function(x,
     geom_point(na.rm = TRUE) + 
     scale_color_gradient(low = control$col[2], high = control$col[1]) + 
     labs(color = shading) + 
-    xlab("LHS Groups") + 
+    xlab("Items in LHS Groups") + 
     ylab(paste("RHS", if(not_shown_rhs > 0) paste('(+', not_shown_rhs, ' not shown)', sep = '') else '')) +
     theme_linedraw() +
     scale_x_discrete(position = "top") +
     scale_y_discrete(position = "right") +
-    theme(axis.text.x=element_text(angle=90, hjust = 0, vjust = .5), 
+    theme(axis.text.x=element_text(angle = 90, hjust = 0, vjust = .5), 
       legend.position="bottom") +
-    scale_size(range = c(2,8))
+    scale_size(range = c(2, 8))
         
   if(control$engine == "htmlwidget") p <- plotly::ggplotly(p)
   p
