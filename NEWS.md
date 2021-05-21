@@ -1,5 +1,4 @@
-
-# arulesViz 1.5-0 (xx/xx/2021)
+# arulesViz 1.5-0 (05/21/2021)
 
 ## New features
 * ggplot2 is now the default engine for most plots. 
@@ -7,6 +6,7 @@
 * conversion from associations to igraph are now exposed.
 * conversion from rules to matrix and groupedMatrix are now exposed.
 * "help" can now be specified for plot for method, engine, and control. 
+* ruleExplorer lost parameter and gained sidebarWidth and chartHeight.
 
 ## Bug Fixes
 * Fixed rounding bug in inspectDT.

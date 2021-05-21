@@ -1,13 +1,13 @@
 Package: arulesViz
 Version: 1.5-0
-Date: 2021-xx-xx
+Date: 2021-5-21
 Title: Visualizing Association Rules and Frequent Itemsets
 Authors@R: c(person("Michael", "Hahsler", role = c("aut", "cre", "cph"),
                 email = "mhahsler@lyle.smu.edu"),
             person("Giallanza", "Tyler", role = c("ctb")),
             person("Sudheer", "Chelluboina", role = c("ctb"))
             )
-Depends: arules (>= 1.4.1) 
+Depends: arules (>= 1.6.0) 
 Imports: graphics, 
   methods, 
   utils, 
@@ -17,7 +17,7 @@ Imports: graphics,
   colorspace, 
   grid,
   vcd, 
-  igraph (>= 1.0.0), 
+  igraph, 
   scatterplot3d, 
   ggplot2,
   ggnetwork,
@@ -28,6 +28,7 @@ Imports: graphics,
   plotly, 
   visNetwork
 Suggests: graph, 
+  datasets,
   Rgraphviz, 
   shiny, 
   shinythemes, 
