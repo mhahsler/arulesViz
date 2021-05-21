@@ -205,7 +205,7 @@ plot(rules, engine = "base")
 # Create a html widget for interactive visualization (uses plotly)
 \donttest{plot(rules, engine = "htmlwidget")}
 
-# Two-key plot (a scatterplot with shading = "order")
+# Two-key plot (a scatter plot with shading = "order")
 plot(rules, method = "two-key plot")
 
   
@@ -270,11 +270,11 @@ plot(subrules2, method="graph",
     layout = igraph::with_graphopt(),
     edges = ggnetwork::geom_edges(color = "grey80", 
       arrow = arrow(length = unit(5, "pt"), type = "open"), alpha = .5),
-    nodes = ggnetwork::geom_nodes(aes(size = support, color = lift), 
-      na.rm = TRUE),
-    nodetext = ggnetwork::geom_nodetext(aes(label = label), alpha = .8)
+    nodes = ggnetwork::geom_nodes(aes(size = support, color = lift),  na.rm = TRUE),
+    nodetext = ggnetwork::geom_nodetext(aes(label = label), alpha = .6)
   )) + 
-  scale_color_gradient(low = "yellow", high = "red")
+  scale_color_gradient(low = "yellow", high = "red") + 
+  scale_size(range = c(2, 15)) 
 
 # Engine igraph
 plot(subrules2, method = "graph", engine = "igraph")
@@ -300,23 +300,23 @@ plot(subrules2, method = "graph", engine = "igraph",
 # igraph layout generators can be used (see ? igraph::layout_)
 plot(subrules2, method="graph", engine = "igraph", layout=igraph::in_circle())
 plot(subrules2, method="graph", engine = "igraph",
-  layout=igraph::with_graphopt(spring.const=5, mass=50))
+  layout = igraph::with_graphopt(spring.const = 5, mass = 50))
 
 # Graph rendering using engine graphviz
-\dontrun{plot(subrules2, method="graph", engine="graphviz")}
+\dontrun{plot(subrules2, method = "graph", engine = "graphviz")}
 
 # Default interactive plot (using igraph's tkplot)
-\dontrun{plot(subrules2, method="graph", engine = "interactive")}
+\dontrun{plot(subrules2, method = "graph", engine = "interactive")}
 
 # Interactive graph as a html widget (using igraph layout)
 \donttest{
-plot(subrules2, method="graph", engine="htmlwidget")
-plot(subrules2, method="graph", engine="htmlwidget", 
+plot(subrules2, method = "graph", engine = "htmlwidget")
+plot(subrules2, method = "graph", engine = "htmlwidget", 
   igraphLayout = "layout_in_circle")
 }
 
 ## Parallel coordinates plot
-plot(subrules2, method="paracoord")
+plot(subrules2, method = "paracoord")
 
 ## Doubledecker and mosaic plot
 # Uses functions in package vcd
