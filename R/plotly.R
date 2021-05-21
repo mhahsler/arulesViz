@@ -143,7 +143,8 @@ matrix_plotly <- function(x, measure, shading, control, ...) {
   measure <- qnames[pmatch(measure, qnames, duplicates.ok = TRUE)]
   
   .plotly_matrix(x, measure[1], reorder = control$reorder, 
-    colors = control$colors, precision = control$precision, max = control$max) }
+    colors = control$colors, precision = control$precision, max = control$max) 
+}
 
 .plotly_matrix <- function(x, measure = "lift", reorder = "none", 
   colors = default_colors(2), precision = 3, max = 1000) {
@@ -158,11 +159,13 @@ matrix_plotly <- function(x, measure, shading, control, ...) {
   }
   
   m <- rules2matrix(x, measure, reorder)
+  m <- m[nrow(m):1, , drop = FALSE] # reverse rows
   m_s <- rules2matrix(x, measure = "support", reorder = "none")[rownames(m), colnames(m)]
   m_c <- rules2matrix(x, measure = "confidence", reorder = "none")[rownames(m), colnames(m)]
    
   txt <- t(outer(colnames(m), rownames(m), paste, sep = '<BR>&nbsp;&nbsp; => '))
-  txt[] <- paste('<B>', txt, '</B>', 
+  txt[] <- paste(
+    '<B>', txt, '</B>', 
     '<BR>',measure, ': ', signif(m, precision), 
     '<BR>','support', ': ', signif(m_s, precision), 
     '<BR>','confidence', ': ', signif(m_c, precision), 
@@ -177,11 +180,7 @@ matrix_plotly <- function(x, measure, shading, control, ...) {
     hoverinfo = 'text',
     text = txt
   ) %>% 
-    plotly::layout(xaxis=list(title="LHS", showticklabels = FALSE, 
-      showgrid = TRUE, ticks = ""), 
-      yaxis=list(title="RHS", showticklabels = FALSE, 
-        showgrid = TRUE, ticks = "")
-      #,margin=list(l=200, autoexpand=TRUE)
-      #yaxis=list(title="RHS", showticklabels = FALSE, showgrid = FALSE)
+    plotly::layout(xaxis=list(title="LHS", showticklabels = FALSE, showgrid = TRUE, ticks = ""), 
+      yaxis=list(title="RHS", showticklabels = FALSE, showgrid = TRUE, ticks = "")
     )
 }
