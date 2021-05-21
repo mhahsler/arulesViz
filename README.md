@@ -21,7 +21,7 @@ devtools::install_github("mhahsler/arulesViz")
 This might also require the development version of [arules](https://github.com/mhahsler/arules).
 
 ## Features
-* Visualizations using engines `ggplot2`, `grid`, `base` (R base plots), `htmlwidget` (powered by `plotly` and `visNetwork`). 
+* Visualizations using engines `ggplot2` (default engine for most methods), `grid`, `base` (R base plots), `htmlwidget` (powered by `plotly` and `visNetwork`). 
 * Interactive visualizations using `grid`, `plotly` and `visNetwork`.
 * Interactive rule inspection with `datatable`.
 * Integrated interactive rule exploration using `ruleExplorer`. 
@@ -51,20 +51,31 @@ plot(rules)
 
 ![Scatter plot](https://raw.githubusercontent.com/mhahsler/arulesViz/master/README/plot.png)
 
-### Interactive visualization with plotly
-```R
-plot(rules, engine = "plotly")
-```
-
-[Open example output.](https://mhahsler.github.io/arulesViz/README/plotly_arules.html)
-
-
-### Interactive inspect with datatable
+### Inspect rules with an interactive datatable
 ```R
 inspectDT(rules)
 ```
 
-[Open example output.](https://mhahsler.github.io/arulesViz/README/inspectDT.html)
+[Open datatable.](https://mhahsler.github.io/arulesViz/README/inspectDT.html)
+
+### Interactive visualization with plotly
+```R
+plot(rules, engine = "plotly")
+```
+[Open interactive plot.](https://mhahsler.github.io/arulesViz/README/plotly_arules.html)
+
+### Interactive visualizations and ruleExplorer
+
+Explore rules or a dataset using the web-based ruleExplorer.
+
+```R
+library(shiny)
+data(iris)
+
+ruleExplorer(iris)
+```
+
+See resulting [ruleExplorer app](https://mhahsler-apps.shinyapps.io/ruleExplorer_demo/) (hosted on [shinyapps.io](https://www.shinyapps.io/)) 
 
 ## References
 
