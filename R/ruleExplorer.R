@@ -25,12 +25,13 @@ ruleExplorer <- function(x, sidebarWidth = 2, graphHeight = '600px') {
   if (!requireNamespace("shiny", quietly = TRUE)) {
     stop("Package shiny is required to run ruleExplorer.", call. = FALSE)
   }
+        
+  # Shiny theme fall back to default if shinythemes is not available 
+  shinyTheme <- if(requireNamespace("shinythemes", quietly = TRUE)) 
+    shinythemes::shinytheme("yeti")
+  else
+    NULL
   
-  if (!requireNamespace("shinythemes", quietly = TRUE)) {
-    stop("Package shinythemes is required to run ruleExplorer.",
-      call. = FALSE)
-  }
-    
   message("ruleExplorer started.")
   
   # show warnings immediately
@@ -95,7 +96,7 @@ ruleExplorer <- function(x, sidebarWidth = 2, graphHeight = '600px') {
   shiny::shinyApp(
     ui = shiny::shinyUI(
       shiny::fluidPage(
-        theme = shinythemes::shinytheme("yeti"),
+        theme = shinyTheme,
         
         shiny::titlePanel("Association Rule Explorer"),
         
