@@ -143,21 +143,38 @@ grouped_matrix_grid <- function(rules, measure, shading, control = NULL, ...){
     gp_lines  = gpar(col = "gray", lty = 3),
     newpage = TRUE,
     max.shading = NA,
+    groups = NULL,
     engine = "default"
   ))
   
-  x <- grouped_matrix_int(rules, measure, shading, 
-    k = control$k, aggr.fun = control$aggr.fun, lhs_label_items = control$lhs_label_items,
-    max.shading = control$max.shading) 
+  if(is.null(control$groups))
+    gm <- rules2groupedMatrix(rules, shading, measure, k = control$k, 
+      aggr.fun = control$aggr.fun, lhs_label_items = control$lhs_label_items)
+  else gm <- control$groups
+  control$groupes <- NULL ### for interactive plot
+  
+  if(is.na(control$max.shading)) control$max.shading <- max(gm$m, na.rm=TRUE)
+  
+  x <- structure(list(
+    rules = rules, 
+    measure = measure, 
+    shading = shading, 
+    lhs_label_items = control$lhs_label_items, 
+    max.shading = control$max.shading, 
+    aggr.fun = control$aggr.fun, 
+    k = control$k, 
+    sAggr = gm$m, 
+    mAggr = gm$m2,
+    clustering = gm$clustering_rules
+  ),
+    class = "grouped_matrix")  
+  
   plot(x, control = control)
   
-  if(control$engine !="interactive") return(invisible(x))
-  
+  if(control$engine != "interactive") return(invisible(x))
+
   ## interactive mode
   cat("Interactive mode.\n")
-  
-  ## fix max.shading
-  control$max.shading <- x$max.shading
   
   seekViewport("grouped_matrix")
   
@@ -169,8 +186,7 @@ grouped_matrix_grid <- function(rules, measure, shading, control = NULL, ...){
     y = I(rep(unit(0, "lines"), 4)),
     w = I(rep(unit(3.5, "lines"), 4)),
     h = I(rep(unit(1, "lines"), 4))
-  )
-  )
+  ))
   
   drawButtons(gI)
   
@@ -218,13 +234,13 @@ grouped_matrix_grid <- function(rules, measure, shading, control = NULL, ...){
       
       cat("Zooming in. This might take a while\n")
       
-      ret <- grouped_matrix_plot(rulesSelected, measure, 
-        shading, control)
+      ret <- grouped_matrix_plot(rulesSelected, x$measure, 
+        x$shading, control)
       
       if(!identical(ret, "zoom out")) return(ret)
       
       ## we come back up so replot
-      plot(x, control=control)
+      plot(x, control = control)
       seekViewport("grouped_matrix")
       gI <- resetButtons(gI)
     }
@@ -240,29 +256,6 @@ grouped_matrix_grid <- function(rules, measure, shading, control = NULL, ...){
     ## nothing else to do
     next
   }
-}
-
-grouped_matrix_int <- function(rules, measure = "support", shading = "lift",
-  k = 20, aggr.fun = mean, lhs_label_items = 2, max.shading = NA) {
-  
-  gm <- rules2groupedMatrix(rules, shading, measure, k = k, 
-    aggr.fun = aggr.fun, lhs_label_items = lhs_label_items)
- 
-  if(is.na(max.shading)) max.shading <- max(gm$m, na.rm=TRUE)
-  
-  structure(list(
-    rules = rules, 
-    measure = measure, 
-    shading = shading, 
-    lhs_label_items = lhs_label_items, 
-    max.shading = max.shading, 
-    aggr.fun = aggr.fun, 
-    k = k, 
-    sAggr = gm$m, 
-    mAggr = gm$m2,
-    clustering = gm$clustering_rules
-  ),
-    class = "grouped_matrix")
 }
 
 ## inspect rules inside an grouped_matrix

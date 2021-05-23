@@ -131,12 +131,17 @@ grouped_matrix_ggplot2 <- function(x,
     lhs_label_items = 2,
     col = default_colors(2),
     #max.shading = NA,
+    groups = NULL,
     engine = "ggplot2"
   ))
   
   # get the clustering
-  gm <- rules2groupedMatrix(x, shading, measure, 
-    k = control$k, aggr.fun = control$aggr.fun, lhs_label_items = control$lhs_label_items)  
+  if(is.null(control$groups))
+    gm <- rules2groupedMatrix(rules, shading, measure, k = control$k, 
+      aggr.fun = control$aggr.fun, lhs_label_items = control$lhs_label_items)
+  else gm <- control$groups
+  control$groupes <- NULL ### for interactive plot
+  
 
   m <- gm$m
   m2 <- gm$m2

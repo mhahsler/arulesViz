@@ -51,15 +51,15 @@ plot(rules[1:10], method = "matrix")
 
 ## Grouped matrix
 # create a matrix with LHSs grouped in k = 10 groups
-m <- rules2groupedMatrix(rules, k = 10)
-m$m
+gm <- rules2groupedMatrix(rules, k = 10)
+gm$m
 
 # number of rules per group 
-table(m$clustering_rules)
+table(gm$clustering_rules)
 
 # get rules for group 1
-inspect(rules[m$clustering_rules == 1])
+inspect(rules[gm$clustering_rules == 1])
 
-# the corresponding plot
-plot(rules, method = "grouped matrix", k = 10)
+# create the corresponding grouped matrix plot by passing the grouped matrix as the groups parameter
+plot(rules, method = "grouped matrix", groups = gm)
 }

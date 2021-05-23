@@ -1,3 +1,8 @@
+# arulesViz 1.5-1 (xx/x/2021)
+
+## New features
+* plot method "grouped matrix" gained parameter grouped to pass on a grouped matrix.
+
 # arulesViz 1.5-0 (05/21/2021)
 
 ## New features
