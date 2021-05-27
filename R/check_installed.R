@@ -1,8 +1,9 @@
 ## this is a modified version from package rlang that only uses base R functionality.
 
-check_installed <- function (pkg, repo = "cran")
+
+## manual can be either TRUE or a string with installation instructions.
+check_installed <- function (pkg, manual = FALSE)
 {
-  
   if (!is.character(pkg)) {
     stop("`pkg` must be a package name or a vector of package names.")
   }
@@ -24,20 +25,27 @@ check_installed <- function (pkg, repo = "cran")
       stop(info)
     }
     
-    if (tolower(repo) != "cran") {
-      cat(info, "\n", "Packages need to be installed manually from ", repo, sep = '')
+    if (is.logical(manual) && !manual) {
+      question <-
+        "Would you like to install the package(s)?"
+      cat(info, "\n", question, sep = '')
+      if (utils::menu(c("Yes", "No")) != 1) {
+        invokeRestart("abort")
+      }
+      
+      utils::install.packages(missing_pkgs)
+    }else{
+      cat(info,
+        "\n",
+        "The Package(s) need to be installed manually.",
+        "\n",
+        sep = '')
+      if (is.character(manual))
+        cat(manual)
+      
       invokeRestart("abort")
     }
-    
-    question <-
-      "Would you like to install the package(s)?"
-    cat(info, "\n", question, sep = '')
-    if (utils::menu(c("Yes", "No")) != 1) {
-      invokeRestart("abort")
-    }
-    
-    utils::install.packages(missing_pkgs)
   }
-  
+     
   invisible(TRUE)
 }
