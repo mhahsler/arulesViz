@@ -184,7 +184,7 @@ plot(rules)
 # Scatter plot with custom measures
 plot(rules, measure = c("support", "lift"), shading = "confidence")
 
-# Custom color scale, , labels, theme and no title (ggplot2)
+# Custom color scale, labels, theme and no title (ggplot2)
 library(ggplot2)
 plot(rules, engine = "ggplot2", main = NULL) + 
   scale_color_gradient2(low = "red", mid = "gray90", high = "blue", 
@@ -194,8 +194,7 @@ plot(rules, engine = "ggplot2", main = NULL) +
 
 # Scatter plot using other engines
 plot(rules, engine = "grid")
-library(colorspace) # for sequential_hcl
-plot(rules, engine = "grid", control = list(col=sequential_hcl(100)))
+plot(rules, engine = "grid", control = list(col = gray.colors(100)))
 
 plot(rules, engine = "base")
   
