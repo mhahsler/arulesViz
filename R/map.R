@@ -1,6 +1,6 @@
 #######################################################################
 # arulesViz - Visualizing Association Rules and Frequent Itemsets
-# Copyrigth (C) 2021 Michael Hahsler
+# Copyright (C) 2021 Michael Hahsler
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,38 +18,46 @@
 
 ## mapping helper
 
-map <- function(x, range = c(0,1), from.range=NA) {
-    if(is.null(from.range) || any(is.na(from.range))) 
-      from.range <- range(x, na.rm=TRUE)
+map <- function(x,
+  range = c(0, 1),
+  from.range = NA) {
+  if (is.null(from.range) || any(is.na(from.range)))
+    from.range <- range(x, na.rm = TRUE)
+  
+  ## check if all values are the same
+  if (!diff(from.range)) {
+    if (is.matrix(x))
+      return(matrix(
+        mean(range),
+        ncol = ncol(x),
+        nrow = nrow(x),
+        dimnames = dimnames(x)
+      ))
+    else
+      return(structure(rep(mean(range), length(x)), names = names(x)))
     
-    ## check if all values are the same
-    if(!diff(from.range)) { 
-	if(is.matrix(x))
-	    return(
-		matrix(mean(range), ncol=ncol(x), nrow=nrow(x), 
-			dimnames = dimnames(x)))
-	else return(
-		    structure(rep(mean(range), length(x)), names=names(x))
-		)
-
-	}
-
-    ## map to [0,1]
-    x <- (x-from.range[1])
-    x <- x/diff(from.range)
-    ## handle single values
-    if(diff(from.range) == 0) x <- 0 
-    
-    ## map from [0,1] to [range]
-    if (range[1]>range[2]) x <- 1-x
-    x <- x*(abs(diff(range))) + min(range)
-    
-    x[x<min(range) | x>max(range)] <- NA
-    
-    x
+  }
+  
+  ## map to [0,1]
+  x <- (x - from.range[1])
+  x <- x / diff(from.range)
+  ## handle single values
+  if (diff(from.range) == 0)
+    x <- 0
+  
+  ## map from [0,1] to [range]
+  if (range[1] > range[2])
+    x <- 1 - x
+  x <- x * (abs(diff(range))) + min(range)
+  
+  x[x < min(range) | x > max(range)] <- NA
+  
+  x
 }
 
 
-map_int <- function(x, range = c(1,100), from.range=NA) {
-    floor(map(x, c(range[1], range[2]+.9), from.range))
+map_int <- function(x,
+  range = c(1, 100),
+  from.range = NA) {
+  floor(map(x, c(range[1], range[2] + .9), from.range))
 }

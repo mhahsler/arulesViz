@@ -1,6 +1,6 @@
 #######################################################################
 # arulesViz - Visualizing Association Rules and Frequent Itemsets
-# Copyrigth (C) 2021 Michael Hahsler
+# Copyright (C) 2021 Michael Hahsler
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,12 +17,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-## save rules/itemsets as a graph for external programs 
+## save rules/itemsets as a graph for external programs
 
-saveAsGraph <- function(x, file, format = "graphml") 
-  igraph::write.graph(associations2igraph(x), file, format=format)
-
-
-
-
-
+saveAsGraph <- function(x, file, format = "graphml")
+  igraph::write.graph(associations2igraph(x), file, format = format)

@@ -23,51 +23,74 @@ rules2table <- function(rules, data) {
   transactions <- data[, c(antecedent, consequent)]
   ruleAsDataFrame <- as.data.frame(as(transactions, "matrix"))
   for (i in 1:ncol(ruleAsDataFrame)) {
-    ruleAsDataFrame[[i]] <- factor(ruleAsDataFrame[[i]],
-      levels = c(FALSE, TRUE), labels = c("no", "yes"))
+    ruleAsDataFrame[[i]] <- factor(
+      ruleAsDataFrame[[i]],
+      levels = c(FALSE, TRUE),
+      labels = c("no", "yes")
+    )
   }
   table(ruleAsDataFrame)
 }
 
 
-doubledeckerplot <- function(rules, measure ="support", data, 
-	control=list(), ...) {
-
+doubledeckerplot <- function(rules,
+  measure = "support",
+  data,
+  control = list(),
+  ...) {
   engines <- c("default")
   
-  if(control$engine == "help") {
-    message("Available engines for this plotting method are:\n", paste0(engines, collapse = ", "))
-    return(invisible(engines))  
+  if (control$engine == "help") {
+    message("Available engines for this plotting method are:\n",
+      paste0(engines, collapse = ", "))
+    return(invisible(engines))
   }
   
-  if(pmatch(control$engine, engines, nomatch = 0) != 1) 
-    stop("Unknown engine for scatterplot: '", control$engine, 
+  if (pmatch(control$engine, engines, nomatch = 0) != 1)
+    stop("Unknown engine for scatterplot: '",
+      control$engine,
       "' Valid engines: 'default'.")
   
-  if(length(rules) != 1) stop("only can visualize one rule.")
-  if(is.null(data)) stop("data has to be specified, but is missing.")
-
+  if (length(rules) != 1)
+    stop("only can visualize one rule.")
+  if (is.null(data))
+    stop("data has to be specified, but is missing.")
+  
   control <- c(control, list(...))
-  control <- .get_parameters(control, list(
-    main = "Doubledecker plot for 1 rule",
-    type = "doubledecker",
-    engine = "default",
-    interactive = FALSE,
-    plot_options = list()
-  ))
-
-  if(control$interactive) stop("No interactive visualization available for doubledecker/mosaic plot.")
-    
+  control <- .get_parameters(
+    control,
+    list(
+      main = "Doubledecker plot for 1 rule",
+      type = "doubledecker",
+      engine = "default",
+      interactive = FALSE,
+      plot_options = list()
+    )
+  )
+  
+  if (control$interactive)
+    stop("No interactive visualization available for doubledecker/mosaic plot.")
+  
   table <- rules2table(rules, data)
   
-  if(control$type=="doubledecker")
-    do.call(vcd::doubledecker, c(list(table, margins=c(2,8,length(dim(table) + 2), 2), 
-      main = control$main), control$plot_options)) 
+  if (control$type == "doubledecker")
+    do.call(vcd::doubledecker, c(
+      list(
+        table,
+        margins = c(2, 8, length(dim(table) + 2), 2),
+        main = control$main
+      ),
+      control$plot_options
+    ))
   else {
     control$main <- "Mosaic plot for 1 rule"
-    do.call(vcd::mosaic, c(list(table, highlighting = length(dim(table)),
-      main = control$main), control$plot_options))
+    do.call(vcd::mosaic, c(
+      list(
+        table,
+        highlighting = length(dim(table)),
+        main = control$main
+      ),
+      control$plot_options
+    ))
   }
 }
-
-

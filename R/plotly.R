@@ -1,6 +1,6 @@
 #######################################################################
 # arulesViz - Visualizing Association Rules and Frequent Itemsets
-# Copyrigth (C) 2021 Michael Hahsler
+# Copyright (C) 2021 Michael Hahsler
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,167 +20,285 @@
 
 ## Interface used by plot
 scatterplot_plotly <- function(x,
-  measure = measure, shading = shading, control = control, ...) {
-  
+  measure = measure,
+  shading = shading,
+  control = control,
+  ...) {
   control <- c(control, list(...))
-  control <- .get_parameters(control, list(
-    interactive = TRUE,
-    engine = "htmlwidget",
-    max = 1000,
-    colors = default_colors(2), 
-    jitter = NA, 
-    precision = 3,
-    main = "Unused",
-    marker = list()
-  ))
+  control <- .get_parameters(
+    control,
+    list(
+      interactive = TRUE,
+      engine = "htmlwidget",
+      max = 1000,
+      colors = default_colors(2),
+      jitter = NA,
+      precision = 3,
+      main = "Unused",
+      marker = list()
+    )
+  )
   
-  quality(x)[["order"]] <- size(x) 
+  quality(x)[["order"]] <- size(x)
   qnames <- names(quality(x))
   measure <- qnames[pmatch(measure, qnames, duplicates.ok = TRUE)]
   shading <- qnames[pmatch(shading, qnames)]
- 
-  .plotly_scatter(x, measure, shading, control$colors, control$jitter, control$precision, control$max, control$marker)
+  
+  .plotly_scatter(
+    x,
+    measure,
+    shading,
+    control$colors,
+    control$jitter,
+    control$precision,
+    control$max,
+    control$marker
+  )
 }
 
-.plotly_scatter <- function(x, 
-  measure = c("support", "confidence"), shading = "lift", 
-  colors = default_colors(2), jitter = NA, precision = 3, 
-  max = 1000, marker = list(), ...) {
-
-  colors <- rev(colors) 
- 
-  ### order (overplotting) and check for max 
-  if(!is.na(shading)) o <- order(quality(x)[[shading]], decreasing = FALSE)
-  else o <- 1:length(x)
+.plotly_scatter <- function(x,
+  measure = c("support", "confidence"),
+  shading = "lift",
+  colors = default_colors(2),
+  jitter = NA,
+  precision = 3,
+  max = 1000,
+  marker = list(),
+  ...) {
+  colors <- rev(colors)
   
-  if(length(o) > max) {
-    warning("plot: Too many rules supplied. Only plotting the best ", 
-      max, " rules using measure ", shading, 
-      " (change parameter max if needed)", call. = FALSE)
+  ### order (overplotting) and check for max
+  if (!is.na(shading))
+    o <- order(quality(x)[[shading]], decreasing = FALSE)
+  else
+    o <- 1:length(x)
+  
+  if (length(o) > max) {
+    warning(
+      "plot: Too many rules supplied. Only plotting the best ",
+      max,
+      " rules using measure ",
+      shading,
+      " (change parameter max if needed)",
+      call. = FALSE
+    )
     o <- tail(o, n = max)
   }
   
   x <- x[o]
-  if(!is.na(shading)) q <- quality(x)[, c(measure, shading)]
-  else q <- quality(x)[, measure]
+  if (!is.na(shading))
+    q <- quality(x)[, c(measure, shading)]
+  else
+    q <- quality(x)[, measure]
   
-  for(i in 1:ncol(q)) {
+  for (i in 1:ncol(q)) {
     infin <- is.infinite(q[[i]])
-    if(any(infin)) {
+    if (any(infin)) {
       replinfin <- signif(2 * max(q[[i]][!infin], na.rm = TRUE), 3)
-      warning("plot: ", colnames(q)[i], " contains infinite values! Replaced by twice the max (", replinfin, ")!", call. = FALSE)
+      warning(
+        "plot: ",
+        colnames(q)[i],
+        " contains infinite values! Replaced by twice the max (",
+        replinfin,
+        ")!",
+        call. = FALSE
+      )
       q[[i]][infin] <- replinfin
     }
-  } 
-    
-  if(is(x, "rules")) l <- labels(x, itemSep= ',<BR>&nbsp;&nbsp;', 
-    ruleSep = '<BR>&nbsp;&nbsp; => ', 
-    setStart = '<B>{', setEnd = '}</B>')
-  else l <- labels(x, itemSep= ',<BR>&nbsp;&nbsp;', 
-    setStart = '<B>{', setEnd = '}</B>')
+  }
+  
+  if (is(x, "rules"))
+    l <- labels(
+      x,
+      itemSep = ',<BR>&nbsp;&nbsp;',
+      ruleSep = '<BR>&nbsp;&nbsp; => ',
+      setStart = '<B>{',
+      setEnd = '}</B>'
+    )
+  else
+    l <- labels(x,
+      itemSep = ',<BR>&nbsp;&nbsp;',
+      setStart = '<B>{',
+      setEnd = '}</B>')
   
   
-  txt <- paste(paste0('[', o,']<BR>'), l, 
+  txt <- paste(
+    paste0('[', o, ']<BR>'),
+    l,
     paste('<BR><BR>', measure[1], ": ", signif(q[, measure[1]], precision), sep = ""),
-    paste('<BR>', measure[2], ": ", signif(q[, measure[2]], precision), sep =""),
-    if(!is.na(shading)){ 
-      paste('<BR>', shading, ": ", 
-        if(is.numeric(q[, shading])) signif(q[, shading], precision) 
-        else q[, shading], sep="")
-      } else "" 
+    paste('<BR>', measure[2], ": ", signif(q[, measure[2]], precision), sep =
+        ""),
+    if (!is.na(shading)) {
+      paste('<BR>', shading, ": ",
+        if (is.numeric(q[, shading]))
+          signif(q[, shading], precision)
+        else
+          q[, shading], sep = "")
+    } else
+      ""
   )
   
   ### add x/y-jitter
   jitter <- jitter[1]
-  if(is.na(jitter) && any(duplicated(q[,measure]))) {
-    message("To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.")   
+  if (is.na(jitter) && any(duplicated(q[, measure]))) {
+    message("To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.")
     jitter <- .jitter_default
   }
   
-  if(!is.na(jitter) && jitter>0) 
-    for(m in measure) q[[m]] <- jitter(q[[m]], factor = jitter, amount = 0)
-
-  if(is.na(shading)) 
-    p <- plotly::plot_ly(q, type = "scatter", x = q[,measure[1]], y = q[,measure[2]], 
-      hoverinfo = 'text', text = txt,
-      mode = 'markers', marker = marker 
-    ) 
-  else if(shading == "order")
-    p <- plotly::plot_ly(q, type = "scatter", x = q[,measure[1]], y = q[,measure[2]], 
-      hoverinfo = 'text', text = txt, 
-      color = as.ordered(q[,shading]),
-      mode = 'markers', marker = marker 
+  if (!is.na(jitter) && jitter > 0)
+    for (m in measure)
+      q[[m]] <- jitter(q[[m]], factor = jitter, amount = 0)
+  
+  if (is.na(shading))
+    p <-
+    plotly::plot_ly(
+      q,
+      type = "scatter",
+      x = q[, measure[1]],
+      y = q[, measure[2]],
+      hoverinfo = 'text',
+      text = txt,
+      mode = 'markers',
+      marker = marker
+    )
+  else if (shading == "order")
+    p <-
+    plotly::plot_ly(
+      q,
+      type = "scatter",
+      x = q[, measure[1]],
+      y = q[, measure[2]],
+      hoverinfo = 'text',
+      text = txt,
+      color = as.ordered(q[, shading]),
+      mode = 'markers',
+      marker = marker
     )
   else
-    p <- plotly::plot_ly(q, type = "scatter", x = q[,measure[1]], y = q[,measure[2]], 
-      hoverinfo = 'text', text = txt, 
-      color = q[,shading], colors = colors,
-      mode = 'markers', 
+    p <-
+    plotly::plot_ly(
+      q,
+      type = "scatter",
+      x = q[, measure[1]],
+      y = q[, measure[2]],
+      hoverinfo = 'text',
+      text = txt,
+      color = q[, shading],
+      colors = colors,
+      mode = 'markers',
       marker = marker
-    )  %>% plotly::colorbar(title = shading) 
+    )  %>% plotly::colorbar(title = shading)
   
   
   p %>%
-    plotly::layout(hovermode = "closest", 
+    plotly::layout(
+      hovermode = "closest",
       xaxis = list(title = measure[1]),
       yaxis = list(title = measure[2])
     )
 }
 
 matrix_plotly <- function(x, measure, shading, control, ...) {
-  
-  control <- c(control, list(...))  
-  control <- .get_parameters(control, list(
-    interactive = TRUE,
-    engine = "htmlwidget",
-    max = 1000,
-    colors = default_colors(2), 
-    reorder = "measure",
-    precision = 3
-  ))
+  control <- c(control, list(...))
+  control <- .get_parameters(
+    control,
+    list(
+      interactive = TRUE,
+      engine = "htmlwidget",
+      max = 1000,
+      colors = default_colors(2),
+      reorder = "measure",
+      precision = 3
+    )
+  )
   
   qnames <- names(quality(x))
   measure <- qnames[pmatch(measure, qnames, duplicates.ok = TRUE)]
   
-  .plotly_matrix(x, measure[1], reorder = control$reorder, 
-    colors = control$colors, precision = control$precision, max = control$max) 
+  .plotly_matrix(
+    x,
+    measure[1],
+    reorder = control$reorder,
+    colors = control$colors,
+    precision = control$precision,
+    max = control$max
+  )
 }
 
-.plotly_matrix <- function(x, measure = "lift", reorder = "none", 
-  colors = default_colors(2), precision = 3, max = 1000) {
-  
+.plotly_matrix <- function(x,
+  measure = "lift",
+  reorder = "none",
+  colors = default_colors(2),
+  precision = 3,
+  max = 1000) {
   colors <- rev(colors)
   
-  if(length(x) > max) {
-    warning("plot: Too many rules supplied. Only plotting the best ", 
-      max, " rules using ", measure, " (change parameter max if needed)", 
-      call. = FALSE)
-    x <- tail(x, n = max, by = measure, decreasing = FALSE)
+  if (length(x) > max) {
+    warning(
+      "plot: Too many rules supplied. Only plotting the best ",
+      max,
+      " rules using ",
+      measure,
+      " (change parameter max if needed)",
+      call. = FALSE
+    )
+    x <- tail(x,
+      n = max,
+      by = measure,
+      decreasing = FALSE)
   }
   
   m <- rules2matrix(x, measure, reorder)
   m <- m[nrow(m):1, , drop = FALSE] # reverse rows
-  m_s <- rules2matrix(x, measure = "support", reorder = "none")[rownames(m), colnames(m)]
-  m_c <- rules2matrix(x, measure = "confidence", reorder = "none")[rownames(m), colnames(m)]
-   
-  txt <- t(outer(colnames(m), rownames(m), paste, sep = '<BR>&nbsp;&nbsp; => '))
+  m_s <-
+    rules2matrix(x, measure = "support", reorder = "none")[rownames(m), colnames(m)]
+  m_c <-
+    rules2matrix(x, measure = "confidence", reorder = "none")[rownames(m), colnames(m)]
+  
+  txt <-
+    t(outer(colnames(m), rownames(m), paste, sep = '<BR>&nbsp;&nbsp; => '))
   txt[] <- paste(
-    '<B>', txt, '</B>', 
-    '<BR>',measure, ': ', signif(m, precision), 
-    '<BR>','support', ': ', signif(m_s, precision), 
-    '<BR>','confidence', ': ', signif(m_c, precision), 
-    sep = '')
+    '<B>',
+    txt,
+    '</B>',
+    '<BR>',
+    measure,
+    ': ',
+    signif(m, precision),
+    '<BR>',
+    'support',
+    ': ',
+    signif(m_s, precision),
+    '<BR>',
+    'confidence',
+    ': ',
+    signif(m_c, precision),
+    sep = ''
+  )
   txt[is.na(m)] <- NA
   
-  plotly::plot_ly(z = m,
-    x = colnames(m), y = rownames(m),
+  plotly::plot_ly(
+    z = m,
+    x = colnames(m),
+    y = rownames(m),
     type = "heatmap",
     colors = colors,
     colorbar = list(title = measure),
     hoverinfo = 'text',
     text = txt
-  ) %>% 
-    plotly::layout(xaxis=list(title="LHS", showticklabels = FALSE, showgrid = TRUE, ticks = ""), 
-      yaxis=list(title="RHS", showticklabels = FALSE, showgrid = TRUE, ticks = "")
+  ) %>%
+    plotly::layout(
+      xaxis = list(
+        title = "LHS",
+        showticklabels = FALSE,
+        showgrid = TRUE,
+        ticks = ""
+      ),
+      yaxis = list(
+        title = "RHS",
+        showticklabels = FALSE,
+        showgrid = TRUE,
+        ticks = ""
+      )
     )
 }

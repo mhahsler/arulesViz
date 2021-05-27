@@ -1,6 +1,6 @@
 #######################################################################
 # arulesViz - Visualizing Association Rules and Frequent Itemsets
-# Copyrigth (C) 2021 Michael Hahsler
+# Copyright (C) 2021 Michael Hahsler
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,25 +19,35 @@
 
 # use library DT
 
-inspectDT <- function(x, ...) UseMethod("inspectDT", x)
+inspectDT <- function(x, ...)
+  UseMethod("inspectDT", x)
 
-inspectDT.default <- function(x, ...) 
+inspectDT.default <- function(x, ...)
   stop("inspect 2 not implemented for class ", class(x))
 
 inspectDT.rules <- function(x, precision = 3, ...) {
   df <-  DATAFRAME(x)
-  DT::datatable(df, filter = "top", rownames = paste0('[', rownames(df), ']'), ...) %>%
+  DT::datatable(df,
+    filter = "top",
+    rownames = paste0('[', rownames(df), ']'),
+    ...) %>%
     DT::formatRound(columns =  which(sapply(df, is.numeric)), digits = max(precision))
 }
 
 inspectDT.itemsets <- function(x, precision = 3, ...) {
   df <-  DATAFRAME(x)
-  DT::datatable(df, filter = "top", rownames = paste0('[', rownames(df), ']'), ...) %>%
-    DT::formatRound(columns =  which(sapply(df, is.numeric)), digits = max(precision))  
+  DT::datatable(df,
+    filter = "top",
+    rownames = paste0('[', rownames(df), ']'),
+    ...) %>%
+    DT::formatRound(columns =  which(sapply(df, is.numeric)), digits = max(precision))
 }
 
 inspectDT.data.frame <- function(x, precision = 3, ...) {
   df <-  x
-  DT::datatable(df, filter = "top", rownames = paste0('[', rownames(df), ']'), ...) %>%
-    DT::formatRound(columns =  which(sapply(df, is.numeric)), digits = max(precision))  
+  DT::datatable(df,
+    filter = "top",
+    rownames = paste0('[', rownames(df), ']'),
+    ...) %>%
+    DT::formatRound(columns =  which(sapply(df, is.numeric)), digits = max(precision))
 }
