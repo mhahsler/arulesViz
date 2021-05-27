@@ -159,7 +159,7 @@ grouped_matrix_ggplot2 <- function(x,
   if (is.null(control$groups))
     gm <-
     rules2groupedMatrix(
-      rules,
+      x,
       shading,
       measure,
       k = control$k,
