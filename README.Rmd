@@ -1,12 +1,12 @@
 ---
 title: "arulesViz - Visualizing Association Rules and Frequent Itemsets with R"
-output: html_document
+output: github_document
 ---
 
 [![CRAN version](https://www.r-pkg.org/badges/version/arulesViz)](https://cran.r-project.org/package=arulesViz)
 [![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/arulesViz)](https://cran.r-project.org/package=arulesViz)
 [![R build status](https://github.com/mhahsler/arulesViz/workflows/R-CMD-check/badge.svg)](https://github.com/mhahsler/arulesViz/actions)
-
+  
 This R package 
 extends package [arules](https://github.com/mhahsler/arules) with various visualization techniques for association rules and itemsets. The package also includes several interactive visualizations for rule exploration.
 
@@ -57,28 +57,13 @@ rules <- apriori(Groceries, parameter = list(support = 0.005, confidence = 0.5))
 plot(rules)
 ```
 
-### Inspect rules with an interactive datatable
 ```{r }
-inspectDT(rules)
+plot(head(rules, n = 50, by = "lift"), method = "graph")
 ```
 
-### Interactive visualization with plotly
-```{r }
-plot(rules, engine = "plotly")
-```
+### Interactive visualization
 
-### Interactive visualizations and ruleExplorer
-
-Explore rules or a dataset using the web-based ruleExplorer.
-
-```{r eval = FALSE}
-library("shiny")
-data("iris")
-
-ruleExplorer(iris)
-```
-
-See resulting [ruleExplorer app](https://mhahsler-apps.shinyapps.io/ruleExplorer_demo/) (hosted on [shinyapps.io](https://www.shinyapps.io/)) 
+Live examples for interactive visualizations can be seen in [Chapter 5 of An R Companion for Introduction to Data Mining](https://mhahsler.github.io/Introduction_to_Data_Mining_R_Examples/book/association-analysis-basic-concepts-and-algorithms.html#interactive-visualizations)
 
 ## References
 
