@@ -17,7 +17,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-## color paletts
+## color palettes
 .col_picker <- function(level, palette, alpha = NULL) {
   col <- palette[floor(level * (length(palette) - 1)) + 1]
   if (!is.null(alpha)) {
