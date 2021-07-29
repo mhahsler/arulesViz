@@ -25,14 +25,19 @@
     grDevices::rgb(.6, .6, .8, alpha))
 }
 
-associations2igraph <- function(x) {
+associations2igraph <- function(x, associationsAsNodes = TRUE) {
+  if (associationsAsNodes) associations2igraph_nodes(x)
+  else associations2igraph_edges(x)
+}
+
+associations2igraph_nodes <- function(x) {
   # only used items
   itemNodes <- which(itemFrequency(items(x),
     type = "absolute") > 0)
   assocNodes <- paste("assoc", 1:length(x), sep = '')
   
   ## add rhs for rules
-  if (class(x) == "rules") {
+  if (is(x, "rules")) {
     lhs <- LIST(lhs(x), decode = FALSE)
     from_lhs <- unlist(lhs)
     to_lhs <- assocNodes[rep(1:length(x), sapply(lhs, length))]
@@ -48,25 +53,60 @@ associations2igraph <- function(x) {
     to_rhs <- integer(0)
   }
   
-  type <- c(rep(1, length(itemNodes)), rep(2, length(assocNodes)))
-  nodeLabels <-
-    c(itemLabels(x)[itemNodes], rep("", length(assocNodes)))
-  
   e.list <- cbind(c(from_lhs, from_rhs), c(to_lhs, to_rhs))
   v.labels <- data.frame(
     name = c(as.character(itemNodes), assocNodes),
-    label = nodeLabels,
-    type = type,
+    label = c(itemLabels(x)[itemNodes], rep("", length(assocNodes))),
+    index = c(itemNodes, seq_along(assocNodes)),
+    type = c(rep(1, length(itemNodes)), rep(2, length(assocNodes))),
     stringsAsFactors = FALSE
   )
   
   g <-
-    igraph::graph.data.frame(e.list, directed = TRUE, vertices = v.labels)
+    igraph::graph.data.frame(e.list, directed = is(x, "rules"), vertices = v.labels)
   
   ## add quality measures
   for (m in names(quality(x))) {
-    g <- igraph::set.vertex.attribute(g, m, which(type == 2),
+    g <- igraph::set.vertex.attribute(g, m, which(v.labels$type == 2),
       quality(x)[[m]])
+  }
+  g
+}
+
+associations2igraph_edges <- function(x) {
+  # only used items
+  itemNodes <- which(itemFrequency(items(x),
+    type = "absolute") > 0)
+  
+  ## add rhs for rules
+  if (is(x, "rules")) {
+    lhs <- LIST(lhs(x), decode = FALSE)
+    edges_per_assoc <- sapply(lhs, length) 
+    lhs <- unlist(lhs)
+    rhs <- unlist(LIST(rhs(x), decode = FALSE))
+    rhs <- rep(rhs, times = edges_per_assoc)
+    edges <- cbind(lhs, rhs) 
+  } else {
+    items <- LIST(items(x), decode = FALSE)
+    edges_per_assoc <- sapply(items, length) 
+    edges <- t(matrix(unlist(lapply(items, combn, 2)), nrow = 2))
+  }
+  
+  e.list <- cbind(edges, index = rep(seq_along(x), times = edges_per_assoc))
+  v.labels <- data.frame(
+    name = as.character(itemNodes),
+    label = itemLabels(x)[itemNodes],
+    index = itemNodes,
+    stringsAsFactors = FALSE
+  )
+  
+  g <-
+    igraph::graph.data.frame(e.list, directed = is(x, "rules"), vertices = v.labels)
+  
+  ## add quality measures
+  for (m in names(quality(x))) {
+    g <- igraph::set.edge.attribute(g, m,
+      value = rep(quality(x)[[m]], times = edges_per_assoc))
   }
   g
 }

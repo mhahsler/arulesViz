@@ -19,5 +19,5 @@
 
 ## save rules/itemsets as a graph for external programs
 
-saveAsGraph <- function(x, file, format = "graphml")
-  igraph::write.graph(associations2igraph(x), file, format = format)
+saveAsGraph <- function(x, file, format = "graphml", ...)
+  igraph::write.graph(associations2igraph(x, ...), file, format = format)

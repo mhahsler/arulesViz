@@ -8,15 +8,24 @@ Function to convert associations (rules, itemsets) into a igraph object and
 saves the graph in different formats (e.g., GraphML, dimacs, dot).
 }
 \usage{
-associations2igraph(x)
-saveAsGraph(x, file, format="graphml")
+associations2igraph(x, associationsAsNodes = TRUE)
+saveAsGraph(x, file, format="graphml", ...)
 }
 \arguments{
   \item{x}{ an object of class "rules" or "itemsets".}
+  \item{associationsAsNodes}{ should associations be translated into nodes or represented by edges? } 
   \item{file}{ file name.}
   \item{format}{ file format (e.g., "edgelist", 
   "graphml", "dimacs", "gml", "dot"). See \code{write.graph} in package 
   \pkg{igraph}.}
+  \item{...}{ further arguments are passed on to \code{associations2igraph()}. }
+}
+\details{
+Associations are represented as nodes: All items in the 
+associations are connected to the association node. For itemsets, the wdges are undirected, for rules, the edges are directed towards the rhs
+
+When associations are represented as edges: For rules, each item in the LHS is connected with a 
+directed edge to the item in the RHS. For itemsets, undirected edges for each pair of item in the itemset are created. 
 }
 \value{
 \code{associations2igraph} returns an igraph object.
@@ -26,14 +35,26 @@ saveAsGraph(x, file, format="graphml")
 }
 \author{Michael Hahsler}
 \examples{
+library("igraph")
 data("Groceries")
+
 rules <- apriori(Groceries, parameter=list(support = 0.01, confidence = 0.5))
 
-# convert rules into a graph
+# convert rules into a graph with rules as nodes
 g <- associations2igraph(rules)
 g
 
 plot(g)
+
+# convert the generating itemsets of the rules into a graph with itemsets as edges
+itemsets <- generatingItemsets(rules)
+itemsets 
+g <- associations2igraph(itemsets, associationsAsNodes = FALSE)
+g
+
+plot(g, layout = layout_in_circle)
+
+
 
 # save rules as a graph so they can be visualized using external tools
 saveAsGraph(rules, "rules.graphml")

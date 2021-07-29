@@ -2,6 +2,7 @@
 
 ## New features
 * plot method "grouped matrix" gained parameter grouped to pass on a grouped matrix.
+* associations2igraph gained parameter associationsAsNodes.
 
 ## Changes
 * we use now a better check for installed suggested packages.
