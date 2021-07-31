@@ -3,6 +3,7 @@
 ## New features
 * plot method "grouped matrix" gained parameter grouped to pass on a grouped matrix.
 * associations2igraph gained parameter associationsAsNodes.
+* plot method graph with engine vizNetwork can now display itemsets.
 
 ## Changes
 * we use now a better check for installed suggested packages.

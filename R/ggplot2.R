@@ -37,10 +37,9 @@ scatterplot_ggplot2 <- function(x,
   q[["order"]] <- as.factor(size(x))
   qnames <- names(q)
   measure <- qnames[pmatch(measure, qnames, duplicates.ok = TRUE)]
-  shading <- qnames[pmatch(shading, qnames)]
-  
-  ### order to reduce overplotting
-  if (!is.na(shading)) {
+  if (!is.null(shading)) {
+    shading <- qnames[pmatch(shading, qnames)]
+    ### order to reduce overplotting
     o <- order(q[[shading]], decreasing = FALSE)
     q <- q[o, , drop = FALSE]
   }
@@ -66,7 +65,7 @@ scatterplot_ggplot2 <- function(x,
       if (is.numeric(q[[m]]))
         q[[m]] <- jitter(q[[m]], factor = jitter, amount = 0)
   
-  if (is.na(shading))
+  if (is.null(shading))
     shading <- NULL
   p <-
     ggplot(q, aes_string(measure[1], y = measure[2], color = shading)) +
@@ -233,7 +232,8 @@ graph_ggplot2 <- function(x,
   shading = "lift",
   control = NULL,
   ...) {
-  if (is.na(shading))
+  
+  if (!is.null(shading) && all(is.na(shading)))
     shading <- NULL
   
   # NULLify
@@ -257,13 +257,14 @@ graph_ggplot2 <- function(x,
         # 3 mm is the radius for size 6 points
         end_cap = ggraph::circle(3, "mm"),
         start_cap = ggraph::circle(3, "mm"),
-        color = "grey80",
+        color = "black",
         arrow = arrow(length = unit(2, "mm"), angle = 20, type = "closed"),
-        alpha = .7
+        alpha = .2
       ),
       
-      nodes = ggraph::geom_node_point(aes_string(size = measure, color = shading)),
-      nodetext = ggraph::geom_node_text(aes(label = label)),
+      nodes = if (!is.null(shading)) ggraph::geom_node_point(aes_string(size = measure, color = shading))
+              else ggraph::geom_node_point(aes_string(size = measure), color = default_colors(1), alpha = .3),
+      nodetext = ggraph::geom_node_text(aes_string(label = "label")),
       
       colors = default_colors(2),
       engine = "ggplot2",
@@ -289,13 +290,14 @@ graph_ggplot2 <- function(x,
   g <- associations2igraph(x)
 
   # complains about missing values for points (na.rm = TRUE does not currently work)
-    do.call(ggraph::ggraph, c(list(graph = g, layout = control$layout, circular = control$circular),
-      control$ggraphdots)) +
+    do.call(ggraph::ggraph, 
+      c(list(graph = g, layout = control$layout, circular = control$circular), control$ggraphdots)) +
       #ggraph::ggraph(g, layout = control$layout, circular = control$circular) +
       control$edges +
       control$nodes +
       control$nodetext +
-      scale_color_gradient(low = control$colors[2],
+      scale_color_gradient(
+        low = control$colors[2],
         high = control$colors[1],
         na.value = 0) +
       scale_size(range = c(3, 8)) +

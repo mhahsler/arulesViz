@@ -32,7 +32,9 @@ rules2matrix <-
     
     # attribute encoding contains the rule ids
     enc <- m
-    
+  
+    if(is.null(measure)) stop("shading measure needed for this visualization")
+     
     for (i in seq_len(nrow(df))) {
       m[df$RHS[i], df$LHS[i]] <- df[[measure]][i]
       enc[df$RHS[i], df$LHS[i]] <- i

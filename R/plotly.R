@@ -42,8 +42,8 @@ scatterplot_plotly <- function(x,
   quality(x)[["order"]] <- size(x)
   qnames <- names(quality(x))
   measure <- qnames[pmatch(measure, qnames, duplicates.ok = TRUE)]
-  shading <- qnames[pmatch(shading, qnames)]
-  
+  if (!is.null(shading)) shading <- qnames[pmatch(shading, qnames)]
+ 
   .plotly_scatter(
     x,
     measure,
@@ -68,7 +68,7 @@ scatterplot_plotly <- function(x,
   colors <- rev(colors)
   
   ### order (overplotting) and check for max
-  if (!is.na(shading))
+  if (!is.null(shading))
     o <- order(quality(x)[[shading]], decreasing = FALSE)
   else
     o <- 1:length(x)
@@ -86,7 +86,7 @@ scatterplot_plotly <- function(x,
   }
   
   x <- x[o]
-  if (!is.na(shading))
+  if (!is.null(shading))
     q <- quality(x)[, c(measure, shading)]
   else
     q <- quality(x)[, measure]
@@ -128,7 +128,7 @@ scatterplot_plotly <- function(x,
     paste('<BR><BR>', measure[1], ": ", signif(q[, measure[1]], precision), sep = ""),
     paste('<BR>', measure[2], ": ", signif(q[, measure[2]], precision), sep =
         ""),
-    if (!is.na(shading)) {
+    if (!is.null(shading)) {
       paste('<BR>', shading, ": ",
         if (is.numeric(q[, shading]))
           signif(q[, shading], precision)
@@ -149,7 +149,7 @@ scatterplot_plotly <- function(x,
     for (m in measure)
       q[[m]] <- jitter(q[[m]], factor = jitter, amount = 0)
   
-  if (is.na(shading))
+  if (is.null(shading))
     p <-
     plotly::plot_ly(
       q,

@@ -20,7 +20,8 @@ and interactive HTML widget-based visualizations.
 \usage{
 \method{plot}{rules}(x, method = NULL, measure = "support", shading = "lift", 
     interactive = NULL, engine = "default", data = NULL, control = NULL, ...)
-\method{plot}{itemsets}(x, method = NULL, measure = "support", shading = NA,
+
+\method{plot}{itemsets}(x, method = NULL, measure = "support", shading = NULL,
     interactive = NULL, engine = "default", data = NULL, control = NULL, ...)
 }
 \arguments{
@@ -37,7 +38,7 @@ and interactive HTML widget-based visualizations.
   \item{shading}{ measure of interestingness used
     for the color of the points/arrows/nodes
     (e.g., "support", "confidence", "lift"). The default is "lift".
-    \code{NA} can be often used to suppress shading.}
+    \code{NULL} can be often used to suppress shading.}
   \item{interactive}{ deprecated. See parameter \code{engine} below. }
   \item{engine}{ a string indicating the plotting engine used to 
     render the plot. 
@@ -258,13 +259,13 @@ plot(rules, method="grouped matrix", engine = "grid",
 # Graphs only work well with very few rules (we sample a few of the high-lift rules)
 subrules2 <- sample(subset(rules, lift > 5), 25)
 
-# Default engine is ggplot2 with ggnetwork
+# Default engine is ggplot2 with ggraph
 plot(subrules2, method = "graph")
 
 # Circular layout (see? ggraph for the meaning of the arguments)
 plot(subrules2, method = "graph", layout = 'linear', circular = TRUE)
 
-# Use igraph layouts
+# Use igraph layouts (algorithm is passes on as ... to ggraph)
 plot(subrules2, method = "graph", layout = 'igraph', 
   ggraphdots = list(algorithm = 'graphopt', spring.const = 1, mass = 10))
 
@@ -279,7 +280,7 @@ plot(subrules2, method = "graph",
       alpha = .2
     ),
     nodes = ggraph::geom_node_point(aes_string(size = "support", color = "lift")),
-    nodetext = ggraph::geom_node_label(aes(label = label))
+    nodetext = ggraph::geom_node_label(aes_string(label = "label"), alpha = .2)
   )) + 
   scale_color_gradient(low = "yellow", high = "red") + 
   scale_size(range = c(2, 10)) 
@@ -294,7 +295,7 @@ plot(subrules2, method = "graph", engine = "igraph",
 # No shading for lift, set node color to gray and add 
 # labels for support
 plot(subrules2, method = "graph",  engine = "igraph", 
-  shading = NA, nodeCol = grey(.5), measureLabels = TRUE)
+  shading = NULL, nodeCol = grey(.5), measureLabels = TRUE)
 
 # Use plot_options to alter any aspect of the graph 
 # (see: https://igraph.org/r/doc/plot.common.html)
@@ -306,7 +307,7 @@ plot(subrules2, method = "graph", engine = "igraph",
     asp = .5))
 
 # igraph layout generators can be used (see ? igraph::layout_)
-plot(subrules2, method="graph", engine = "igraph", layout=igraph::in_circle())
+plot(subrules2, method="graph", engine = "igraph", layout = igraph::in_circle())
 plot(subrules2, method="graph", engine = "igraph",
   layout = igraph::with_graphopt(spring.const = 5, mass = 50))
 

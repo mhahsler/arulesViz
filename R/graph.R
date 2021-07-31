@@ -133,6 +133,10 @@ graphplot <- function(x,
     return(invisible(engines))
   }
   
+  ## check if shading measure is available
+  if (!is.null(shading) && is.null(quality(x)[[shading]]))
+    shading <- NULL
+  
   m <- pmatch(control$engine, engines, nomatch = 0)
   if (m == 0)
     stop(
@@ -181,9 +185,6 @@ graph_igraph <- function(x,
   shading = "lift",
   control = NULL,
   ...) {
-  ## check if shading measure is available
-  if (is.null(quality(x)[[shading]]))
-    shading <- NA
   
   control <- c(control, list(...))
   if (pmatch(control$engine, c("default"), nomatch = 0) == 1)
@@ -283,7 +284,7 @@ graph_igraph <- function(x,
   }
   
   s <- NA
-  if (!is.na(shading)) {
+  if (!is.null(shading)) {
     s <- quality(x)[[shading]]
     v.color <- c(
       rep(control$itemnodeCol, nItemNodes),
@@ -299,15 +300,15 @@ graph_igraph <- function(x,
   
   
   if (control$measureLabels &&
-      (!is.na(measure[1]) || !is.na(shading))) {
-    if (!is.na(measure[1]) && !is.na(shading))
+      (!is.na(measure[1]) || !is.null(shading))) {
+    if (!is.na(measure[1]) && !is.null(shading))
       mlabs <- paste(round(m, control$precision),
         round(s, control$precision),
         sep = "\n")
     else {
       if (!is.na(measure[1]))
         mlabs <- round(m, control$precision)
-      if (!is.na(shading))
+      if (!is.null(shading))
         mlabs <- round(s, control$precision)
     }
     v[vs$type == 2] <- mlabs
@@ -324,7 +325,7 @@ graph_igraph <- function(x,
       ")\n",
       sep = '')
   
-  if (!is.na(shading))
+  if (!is.null(shading))
     legend <- paste(legend,
       "color: ",
       shading,
@@ -349,7 +350,7 @@ graph_igraph <- function(x,
     
     ## TODO: plot edge labels
     s <- NA
-    if (!is.na(shading)) {
+    if (!is.null(shading)) {
       s <- quality(x)[[shading]]
       v.color <- c(
         rep(control$itemnodeCol, nItemNodes),

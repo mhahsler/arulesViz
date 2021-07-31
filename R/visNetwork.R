@@ -26,8 +26,6 @@ graph_visNetwork <-
     shading = "lift",
     control = NULL,
     ...) {
-    if (class(x) != "rules")
-      stop("Only implemented for rules!")
     
     control <- c(control, list(...))
     
@@ -49,16 +47,16 @@ graph_visNetwork <-
     
     if (length(x) > control$max) {
       warning(
-        "Too many rules supplied. Only plotting the best ",
+        "Too many rules/itemsets supplied. Only plotting the best ",
         control$max,
         " rules using ",
-        shading,
+        if (!is.null(shading)) shading else measure,
         " (change control parameter max if needed)",
         call. = FALSE
       )
       x <- tail(x,
         n = control$max,
-        by = shading,
+        by = if (!is.null(shading)) shading else measure,
         decreasing = FALSE)
     }
    
@@ -67,40 +65,61 @@ graph_visNetwork <-
     va <- igraph::get.vertex.attribute(g)
     n_items <- sum(va$type == 1)
     
-    titleRules <- paste0(
-      '<B>[',
-      1:length(x),
-      ']</B><BR>',
-      labels(
-        x,
-        itemSep = ',<BR>&nbsp;&nbsp;',
-        ruleSep = '<BR>&nbsp;&nbsp; => ',
-        setStart = '<B>{',
-        setEnd = '}</B>'
-      ),
-      "<BR><BR>",
-      apply(
-        quality(x),
-        MARGIN = 1,
-        FUN = function(x)
-          paste(names(x), "=", signif(x, control$precision), collapse = "<BR>")
-      )
-    )
-    
-    title <- c(va$label[va$type == 1], titleRules)
+    titleAssoc <- 
+      if (is(x, "rules")) 
+        paste0(
+          '<B>[',
+          1:length(x),
+          ']</B><BR>',
+          labels(
+            x,
+            itemSep = ',<BR>&nbsp;&nbsp;',
+            ruleSep = '<BR>&nbsp;&nbsp; => ',
+            setStart = '<B>{',
+            setEnd = '}</B>'
+          ),
+          "<BR><BR>",
+          apply(
+            quality(x),
+            MARGIN = 1,
+            FUN = function(x)
+              paste(names(x), "=", signif(x, control$precision), collapse = "<BR>")
+          )
+        )
+    else
+        paste0(
+          '<B>[',
+          1:length(x),
+          ']</B><BR>',
+          labels(
+            x,
+            itemSep = ',<BR>&nbsp;&nbsp;',
+            setStart = '<B>{',
+            setEnd = '}</B>'
+          ),
+          "<BR><BR>",
+          apply(
+            quality(x),
+            MARGIN = 1,
+            FUN = function(x)
+              paste(names(x), "=", signif(x, control$precision), collapse = "<BR>")
+          )
+        )
+           
+    title <- c(va$label[va$type == 1], titleAssoc)
     
     size <- map(va[[measure]], c(1, 100))
     size[va$type == 1] <- 1
     
-    if (!is.na(shading)) {
+    if (!is.null(shading)) {
       color <- c(rep(control$itemCol[1], n_items),
         .col_picker(map(va[[shading]][va$type == 2], c(0.9, 0.1)), control$nodeCol))
     } else
       color <- c(rep(control$itemCol[1], n_items),
-        .col_picker(rep(.5, length(va$type == 2)), control$nodeCol))
+        .col_picker(rep(.5, sum(va$type == 2)), control$nodeCol))
     
     label <- va$label
-    label[va$type == 2] <- paste("Rule", seq_along(x))
+    label[va$type == 2] <- paste(if (is(x, "rule")) "Rule" else "Itemset", seq_along(x))
     
     nodes <- data.frame(
       id = seq_along(va$name),

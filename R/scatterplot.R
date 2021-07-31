@@ -120,7 +120,7 @@ scatterplot_base <-
     col <- rev(control$col)
     
     ## shading
-    if (!is.na(shading)) {
+    if (!is.null(shading)) {
       ## reduce overplotting
       q <- q[order(q[[shading]]), ]
       
@@ -184,7 +184,7 @@ scatterplot_grid <-
     ## add order
     #quality(rules) <- cbind(quality(rules), order=size(rules))
     
-    if (!is.na(shading)) {
+    if (!is.null(shading)) {
       i <- pmatch(shading, colnames(quality(rules)))
       if (is.na(i))
         stop("Unknown quality measure for shading.")
@@ -241,7 +241,7 @@ scatterplot_grid <-
       }
       
       if (b == "filter") {
-        if (is.na(shading) || shading == "order") {
+        if (is.null(shading) || shading == "order") {
           cat("No filtering for order/no shading!\n")
           gI <- changeButton(gI, "filter", FALSE)
           next
@@ -337,7 +337,7 @@ scatterplot_grid <-
             "selected:",
             length(sel_r),
             "\n")
-          if (!is.null(shading) && !is.na(shading))
+          if (!is.null(shading))
             inspect(sort(sel_r, by = shading))
           else
             inspect(sel_r)
@@ -388,7 +388,7 @@ scatterplot_int <- function(rules, measure, shading, control, ...) {
   gTitle(control$main)
   
   ## colorkey
-  if (!is.na(shading)) {
+  if (!is.null(shading)) {
     pushViewport(viewport(
       x = unit(1, "npc") - unit(3 + 2, "lines"),
       y = unit(4 + addspace, "lines"),
@@ -473,7 +473,7 @@ scatterplot_int <- function(rules, measure, shading, control, ...) {
   
   
   ## get colors for shading
-  if (!is.na(shading)) {
+  if (!is.null(shading)) {
     col <- colors[map_int(q[[shading]],
       c(1, length(colors)), from.range = range_shading)]
     

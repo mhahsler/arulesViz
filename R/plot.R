@@ -69,8 +69,8 @@ plot.rules <- function(x,
       paste(sQuote(measure[is.na(mid)]), collapse = ", "))
   measure <- colnames(quality(x))[mid]
   
-  ## NA means no shading
-  if (!all(is.na(shading))) {
+  ## NULL means no shading
+  if (!is.null(shading)) {
     sid <- pmatch(shading, colnames(quality(x)))
     if (any(is.na(sid)))
       stop("Shading measure not available in rule set: ",
@@ -157,7 +157,7 @@ plot.rules <- function(x,
 plot.itemsets <- function(x,
   method = NULL,
   measure = "support",
-  shading = NA,
+  shading = NULL,
   interactive = NULL,
   engine = "default",
   data = NULL,
