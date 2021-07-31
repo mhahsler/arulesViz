@@ -261,19 +261,28 @@ subrules2 <- sample(subset(rules, lift > 5), 25)
 # Default engine is ggplot2 with ggnetwork
 plot(subrules2, method = "graph")
 
-# Specify layout (from igraph) and edge and node representation
-# Note: The measures for size and color shading have to be specified in
-# the control list in nodes!
-plot(subrules2, method="graph", 
+# Circular layout (see? ggraph for the meaning of the arguments)
+plot(subrules2, method = "graph", layout = 'linear', circular = TRUE)
+
+# Use igraph layouts
+plot(subrules2, method = "graph", layout = 'igraph', 
+  ggraphdots = list(algorithm = 'graphopt', spring.const = 1, mass = 10))
+
+# Specify edge and node representation
+plot(subrules2, method = "graph", 
   control = list(
-    layout = igraph::with_graphopt(),
-    edges = ggnetwork::geom_edges(color = "grey80", 
-      arrow = arrow(length = unit(5, "pt"), type = "open"), alpha = .5),
-    nodes = ggnetwork::geom_nodes(aes(size = support, color = lift),  na.rm = TRUE),
-    nodetext = ggnetwork::geom_nodetext(aes(label = label), alpha = .6)
+    edges = ggraph::geom_edge_link(
+      end_cap = ggraph::circle(4, "mm"),
+      start_cap = ggraph::circle(4, "mm"),
+      color = "black",
+      arrow = arrow(length = unit(2, "mm"), angle = 20, type = "closed"),
+      alpha = .2
+    ),
+    nodes = ggraph::geom_node_point(aes_string(size = "support", color = "lift")),
+    nodetext = ggraph::geom_node_label(aes(label = label))
   )) + 
   scale_color_gradient(low = "yellow", high = "red") + 
-  scale_size(range = c(2, 15)) 
+  scale_size(range = c(2, 10)) 
 
 # Engine igraph
 plot(subrules2, method = "graph", engine = "igraph")

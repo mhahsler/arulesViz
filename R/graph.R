@@ -56,7 +56,8 @@ associations2igraph_nodes <- function(x) {
   e.list <- cbind(c(from_lhs, from_rhs), c(to_lhs, to_rhs))
   v.labels <- data.frame(
     name = c(as.character(itemNodes), assocNodes),
-    label = c(itemLabels(x)[itemNodes], rep("", length(assocNodes))),
+    #label = c(itemLabels(x)[itemNodes], rep("", length(assocNodes))),
+    label = c(itemLabels(x)[itemNodes], rep(NA, length(assocNodes))),
     index = c(itemNodes, seq_along(assocNodes)),
     type = c(rep(1, length(itemNodes)), rep(2, length(assocNodes))),
     stringsAsFactors = FALSE
@@ -89,7 +90,7 @@ associations2igraph_edges <- function(x) {
   } else {
     items <- LIST(items(x), decode = FALSE)
     edges_per_assoc <- sapply(items, length) 
-    edges <- t(matrix(unlist(lapply(items, combn, 2)), nrow = 2))
+    edges <- t(matrix(unlist(lapply(items, utils::combn, 2)), nrow = 2))
   }
   
   e.list <- cbind(edges, index = rep(seq_along(x), times = edges_per_assoc))

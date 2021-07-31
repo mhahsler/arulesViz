@@ -6,6 +6,7 @@
 
 ## Changes
 * we use now a better check for installed suggested packages.
+* method graph uses not ggraph2.
 
 # arulesViz 1.5-0 (05/21/2021)
 

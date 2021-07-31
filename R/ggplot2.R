@@ -236,22 +236,35 @@ graph_ggplot2 <- function(x,
   if (is.na(shading))
     shading <- NULL
   
-  ### NULLify stuff for CRAN
-  label <- y <- xend <- yend <- NULL
+  # NULLify
+  label <- NULL
   
   control <- c(control, list(...))
   control <- .get_parameters(
     control,
     list(
       #main = paste("Graph for", length(x), "rules"),
-      layout = igraph::nicely(),
-      edges = ggnetwork::geom_edges(
+      layout = 'stress',
+      circular = FALSE,
+      ggraphdots = NULL,
+      
+      edges = ggraph::geom_edge_link(
+       ### FIXME: dynamic length!
+          # aes_string(
+          #   end_cap = paste0("circle(node2.", measure, ", unit = 'native')"),
+          #   start_cap = paste0("circle(node1.", measure, ", unit = 'native')"),
+          #   ),
+        # 3 mm is the radius for size 6 points
+        end_cap = ggraph::circle(3, "mm"),
+        start_cap = ggraph::circle(3, "mm"),
         color = "grey80",
-        arrow = arrow(length = unit(6, "pt"), type = "closed"),
+        arrow = arrow(length = unit(2, "mm"), angle = 20, type = "closed"),
         alpha = .7
       ),
-      nodes = ggnetwork::geom_nodes(aes_string(size = measure, color = shading), na.rm = TRUE),
-      nodetext = ggnetwork::geom_nodetext(aes(label = label)),
+      
+      nodes = ggraph::geom_node_point(aes_string(size = measure, color = shading)),
+      nodetext = ggraph::geom_node_text(aes(label = label)),
+      
       colors = default_colors(2),
       engine = "ggplot2",
       max = 100
@@ -273,21 +286,18 @@ graph_ggplot2 <- function(x,
       decreasing = FALSE)
   }
   
-  
   g <- associations2igraph(x)
-  n <- ggnetwork::fortify(g, layout = control$layout)
-  
-  ggplot(n, aes(
-    x = x,
-    y = y,
-    xend = xend,
-    yend = yend
-  )) +
-    control$edges +
-    control$nodes +
-    control$nodetext +
-    scale_color_gradient(low = control$colors[2],
-      high = control$colors[1],
-      na.value = 0) +
-    ggnetwork::theme_blank()
+
+  # complains about missing values for points (na.rm = TRUE does not currently work)
+    do.call(ggraph::ggraph, c(list(graph = g, layout = control$layout, circular = control$circular),
+      control$ggraphdots)) +
+      #ggraph::ggraph(g, layout = control$layout, circular = control$circular) +
+      control$edges +
+      control$nodes +
+      control$nodetext +
+      scale_color_gradient(low = control$colors[2],
+        high = control$colors[1],
+        na.value = 0) +
+      scale_size(range = c(3, 8)) +
+      ggraph::theme_graph(base_family = "") # base_family is a problem for latex
 }
