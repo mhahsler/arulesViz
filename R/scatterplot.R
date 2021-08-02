@@ -134,7 +134,7 @@ scatterplot_base <-
     
     control$jitter <- control$jitter[1]
     if (is.na(control$jitter) && any(duplicated(qq))) {
-      message("To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.")
+      message("To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter or set a value for jitter to supress this message.")
       control$jitter <- .jitter_default
     }
     

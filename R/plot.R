@@ -20,6 +20,7 @@ plot.rules <- function(x,
   method = NULL,
   measure = "support",
   shading = "lift",
+  limit = NULL,
   interactive = NULL,
   engine = "default",
   data = NULL,
@@ -46,7 +47,11 @@ plot.rules <- function(x,
   if (length(x) < 1)
     stop("x contains 0 rules!")
   
-  ### default is a scatter plot
+  ## add order and id
+  quality(x)$order <- size(x)
+  quality(x)$id <- seq_along(x)
+  
+  ## default is a scatter plot
   if (is.null(method))
     methodNr <- 6
   else
@@ -58,9 +63,6 @@ plot.rules <- function(x,
       "\nAvailable methods:",
       paste(sQuote(methods), collapse = ", ")
     ))
-  
-  ## add order
-  quality(x)$order <- size(x)
   
   ## complete measure and shading
   mid <- pmatch(measure, colnames(quality(x)), duplicates.ok = TRUE)
@@ -77,6 +79,9 @@ plot.rules <- function(x,
         paste(sQuote(shading[is.na(sid)]), collapse = ", "))
     shading <- colnames(quality(x))[sid]
   }
+  
+  ## limit
+  x <- limit(x, limit, shading, measure, quiet = TRUE)
   
   ## add interactive and engine
   if (!is.null(interactive)) {
@@ -158,6 +163,7 @@ plot.itemsets <- function(x,
   method = NULL,
   measure = "support",
   shading = NULL,
+  limit = NULL,
   interactive = NULL,
   engine = "default",
   data = NULL,
@@ -188,8 +194,12 @@ plot.itemsets <- function(x,
   if (length(x) < 1)
     stop("x contains 0 itemsets!")
   
-  ### add order
+  ## add order
   quality(x)$order <- size(x)
+  quality(x)$id <- seq_along(x)
+  
+  ## limit
+  x <- limit(x, limit, shading, measure, quiet = TRUE)
   
   if (is.null(method))
     methodNr <- 3

@@ -67,30 +67,13 @@ scatterplot_plotly <- function(x,
   ...) {
   colors <- rev(colors)
   
-  ### order (overplotting) and check for max
-  if (!is.null(shading))
-    o <- order(quality(x)[[shading]], decreasing = FALSE)
-  else
-    o <- 1:length(x)
+  quality(x)$id <- seq_along(x)
+  x <- limit(x, max, shading, measure)
   
-  if (length(o) > max) {
-    warning(
-      "plot: Too many rules supplied. Only plotting the best ",
-      max,
-      " rules using measure ",
-      shading,
-      " (change parameter max if needed)",
-      call. = FALSE
-    )
-    o <- tail(o, n = max)
-  }
+  ### reduce overplotting
+  x <- rev(x)
   
-  x <- x[o]
-  if (!is.null(shading))
-    q <- quality(x)[, c(measure, shading)]
-  else
-    q <- quality(x)[, measure]
-  
+  q <- quality(x)[, c(measure, shading)]
   for (i in 1:ncol(q)) {
     infin <- is.infinite(q[[i]])
     if (any(infin)) {
@@ -121,9 +104,8 @@ scatterplot_plotly <- function(x,
       setStart = '<B>{',
       setEnd = '}</B>')
   
-  
   txt <- paste(
-    paste0('[', o, ']<BR>'),
+    paste0('[', quality(x)$id, ']<BR>'),
     l,
     paste('<BR><BR>', measure[1], ": ", signif(q[, measure[1]], precision), sep = ""),
     paste('<BR>', measure[2], ": ", signif(q[, measure[2]], precision), sep =
@@ -232,21 +214,8 @@ matrix_plotly <- function(x, measure, shading, control, ...) {
   precision = 3,
   max = 1000) {
   colors <- rev(colors)
-  
-  if (length(x) > max) {
-    warning(
-      "plot: Too many rules supplied. Only plotting the best ",
-      max,
-      " rules using ",
-      measure,
-      " (change parameter max if needed)",
-      call. = FALSE
-    )
-    x <- tail(x,
-      n = max,
-      by = measure,
-      decreasing = FALSE)
-  }
+ 
+  x <- limit(x, max, measure = measure)
   
   m <- rules2matrix(x, measure, reorder)
   m <- m[nrow(m):1, , drop = FALSE] # reverse rows

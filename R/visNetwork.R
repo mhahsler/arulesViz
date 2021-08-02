@@ -28,7 +28,6 @@ graph_visNetwork <-
     ...) {
     
     control <- c(control, list(...))
-    
     control <- .get_parameters(
       control,
       list(
@@ -45,21 +44,7 @@ graph_visNetwork <-
       )
     )
     
-    if (length(x) > control$max) {
-      warning(
-        "Too many rules/itemsets supplied. Only plotting the best ",
-        control$max,
-        " rules using ",
-        if (!is.null(shading)) shading else measure,
-        " (change control parameter max if needed)",
-        call. = FALSE
-      )
-      x <- tail(x,
-        n = control$max,
-        by = if (!is.null(shading)) shading else measure,
-        decreasing = FALSE)
-    }
-   
+    x <- limit(x, control$max, shading, measure)
     g <- associations2igraph(x)
     
     va <- igraph::get.vertex.attribute(g)
@@ -119,7 +104,7 @@ graph_visNetwork <-
         .col_picker(rep(.5, sum(va$type == 2)), control$nodeCol))
     
     label <- va$label
-    label[va$type == 2] <- paste(if (is(x, "rule")) "Rule" else "Itemset", seq_along(x))
+    label[va$type == 2] <- paste(substr(class(x), 1, nchar(class(x)) - 1L), seq_along(x))
     
     nodes <- data.frame(
       id = seq_along(va$name),

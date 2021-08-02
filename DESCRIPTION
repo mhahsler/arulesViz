@@ -29,6 +29,7 @@ Imports: graphics,
 Suggests: datasets,
   graph,
   Rgraphviz, 
+  tidygraph,
   shiny, 
   shinythemes, 
   htmlwidgets

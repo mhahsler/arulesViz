@@ -5,6 +5,7 @@
 \alias{plot.rules}
 \alias{plot.grouped_matrix}
 \alias{plotly}
+\alias{guide_edge_colourbar}
 \title{Visualize Association Rules and Itemsets}
 \description{
 Methods (S3) to visualize association rules and itemsets.
@@ -18,10 +19,10 @@ standard plots with interactive manipulation
 and interactive HTML widget-based visualizations.
 }
 \usage{
-\method{plot}{rules}(x, method = NULL, measure = "support", shading = "lift", 
+\method{plot}{rules}(x, method = NULL, measure = "support", shading = "lift", limit = NULL, 
     interactive = NULL, engine = "default", data = NULL, control = NULL, ...)
 
-\method{plot}{itemsets}(x, method = NULL, measure = "support", shading = NULL,
+\method{plot}{itemsets}(x, method = NULL, measure = "support", shading = NULL, limit = NULL,
     interactive = NULL, engine = "default", data = NULL, control = NULL, ...)
 }
 \arguments{
@@ -39,6 +40,8 @@ and interactive HTML widget-based visualizations.
     for the color of the points/arrows/nodes
     (e.g., "support", "confidence", "lift"). The default is "lift".
     \code{NULL} can be often used to suppress shading.}
+  \item{limit}{ A limit on the number of associations displayed. The top limit associations 
+    according to the measure specified in shading are chosen. }
   \item{interactive}{ deprecated. See parameter \code{engine} below. }
   \item{engine}{ a string indicating the plotting engine used to 
     render the plot. 
@@ -182,6 +185,10 @@ plot(rules, method = "scatterplot", engine = "help")
 #  Display a scatter plot using two quality measures
 plot(rules)
 
+# Limit the number of rules displayed to the 100 with the largest value for 
+# lift (shading measure)
+plot(rules, limit = 100)
+
 # Scatter plot with custom measures
 plot(rules, measure = c("support", "lift"), shading = "confidence")
 
@@ -254,23 +261,22 @@ plot(rules, method="grouped matrix", engine = "grid",
 # Interactive grouped matrix plot
 \dontrun{sel <- plot(rules, method="grouped matrix", engine = "interactive")}
 
+
 ## Graph representation
-
-# Graphs only work well with very few rules (we sample a few of the high-lift rules)
-subrules2 <- sample(subset(rules, lift > 5), 25)
-
-# Default engine is ggplot2 with ggraph
-plot(subrules2, method = "graph")
+# Default engine is ggplot2 with ggraph. Associations are represented as nodes.
+# We limit the number of rules to the 10 with the larges 
+# lift (measure used for shading)
+plot(subrules, method = "graph", limit = 10)
 
 # Circular layout (see? ggraph for the meaning of the arguments)
-plot(subrules2, method = "graph", layout = 'linear', circular = TRUE)
+plot(subrules, method = "graph", layout = 'linear', circular = TRUE, limit = 10)
 
 # Use igraph layouts (algorithm is passes on as ... to ggraph)
-plot(subrules2, method = "graph", layout = 'igraph', 
-  ggraphdots = list(algorithm = 'graphopt', spring.const = 1, mass = 10))
+plot(subrules, method = "graph", layout = 'igraph', 
+  ggraphdots = list(algorithm = 'graphopt', spring.const = 1, mass = 10), limit = 10)
 
 # Specify edge and node representation
-plot(subrules2, method = "graph", 
+plot(subrules, method = "graph", 
   control = list(
     edges = ggraph::geom_edge_link(
       end_cap = ggraph::circle(4, "mm"),
@@ -280,52 +286,64 @@ plot(subrules2, method = "graph",
       alpha = .2
     ),
     nodes = ggraph::geom_node_point(aes_string(size = "support", color = "lift")),
-    nodetext = ggraph::geom_node_label(aes_string(label = "label"), alpha = .2)
-  )) + 
+    nodetext = ggraph::geom_node_label(aes_string(label = "label"), alpha = .8, repel = TRUE)
+  ),
+  limit = 10
+  ) + 
   scale_color_gradient(low = "yellow", high = "red") + 
   scale_size(range = c(2, 10)) 
 
+# ggplot also can represent associations as edges. Here a rules is represented as a set of 
+# arrows going from the LHS items to the RHS item. 
+plot(subrules, method = "graph", asEdges = TRUE, limit = 10)
+plot(subrules, method = "graph", asEdges = TRUE, circular = FALSE, limit = 10)
+
 # Engine igraph
-plot(subrules2, method = "graph", engine = "igraph")
+plot(subrules, method = "graph", engine = "igraph", limit = 10)
 
 # Custom colors
-plot(subrules2, method = "graph", engine = "igraph",
-  nodeCol = grey.colors(10), edgeCol = grey(.7), alpha = 1)
+plot(subrules, method = "graph", engine = "igraph",
+  nodeCol = grey.colors(10), edgeCol = grey(.7), alpha = 1,
+  limit = 10)
 
 # No shading for lift, set node color to gray and add 
 # labels for support
-plot(subrules2, method = "graph",  engine = "igraph", 
-  shading = NULL, nodeCol = grey(.5), measureLabels = TRUE)
+plot(subrules, method = "graph",  engine = "igraph", 
+  shading = NULL, nodeCol = grey(.5), measureLabels = TRUE,
+  limit = 10)
 
 # Use plot_options to alter any aspect of the graph 
 # (see: https://igraph.org/r/doc/plot.common.html)
-plot(subrules2, method = "graph", engine = "igraph",
+plot(subrules, method = "graph", engine = "igraph",
   plot_options = list(
     edge.lty = 2, 
     vertex.label.cex = .6, 
     margin = c(.1,.1,.1,.1), 
-    asp = .5))
+    asp = .5),
+  limit = 10)
 
 # igraph layout generators can be used (see ? igraph::layout_)
-plot(subrules2, method="graph", engine = "igraph", layout = igraph::in_circle())
-plot(subrules2, method="graph", engine = "igraph",
-  layout = igraph::with_graphopt(spring.const = 5, mass = 50))
+plot(subrules, method="graph", engine = "igraph", layout = igraph::in_circle(), limit = 10)
+plot(subrules, method="graph", engine = "igraph",
+  layout = igraph::with_graphopt(spring.const = 5, mass = 50), limit = 10)
 
 # Graph rendering using engine graphviz
-\dontrun{plot(subrules2, method = "graph", engine = "graphviz")}
+\dontrun{plot(subrules, method = "graph", engine = "graphviz", limit = 10)}
 
 # Default interactive plot (using igraph's tkplot)
-\dontrun{plot(subrules2, method = "graph", engine = "interactive")}
+\dontrun{plot(subrules, method = "graph", engine = "interactive", limit = 10)}
 
 # Interactive graph as a html widget (using igraph layout)
 \donttest{
-plot(subrules2, method = "graph", engine = "htmlwidget")
-plot(subrules2, method = "graph", engine = "htmlwidget", 
-  igraphLayout = "layout_in_circle")
+plot(subrules, method = "graph", engine = "htmlwidget", limit = 10)
+plot(subrules, method = "graph", engine = "htmlwidget", 
+  igraphLayout = "layout_in_circle", limit = 10)
 }
 
+
 ## Parallel coordinates plot
-plot(subrules2, method = "paracoord")
+plot(subrules, method = "paracoord", limit = 10)
+
 
 ## Doubledecker and mosaic plot
 # Uses functions in package vcd
@@ -336,6 +354,7 @@ inspect(oneRule)
 plot(oneRule, method = "doubledecker", data = Groceries)
 plot(oneRule, method = "mosaic", data = Groceries)
 
+
 ## Visualizing itemsets
 data(Groceries)
 itemsets <- eclat(Groceries, parameter = list(support = 0.02, minlen = 2))
@@ -345,18 +364,21 @@ plot(itemsets)
 plot(itemsets, engine = "grid")
 plot(itemsets, engine = "base")
 
-plot(itemsets, method = "graph")
-plot(itemsets, method = "graph", engine = "igraph")
+plot(itemsets, method = "graph", limit = 20)
+plot(itemsets, method = "graph", asEdges = TRUE, limit = 20)
+plot(itemsets, method = "graph", asEdges = TRUE, circular = FALSE, limit = 20) + 
+  theme(plot.margin = margin(10, 10, 30, 20, "mm"))
 
-plot(itemsets, method = "paracoord", alpha = .5)
+plot(itemsets, method = "graph", engine = "igraph", limit = 20)
 
-## Add more quality measures to use for the scatter plot
+plot(itemsets, method = "paracoord", alpha = .5, limit = 20)
 
+# Add more quality measures to use for the scatter plot
 quality(itemsets) <- interestMeasure(itemsets, transactions = Groceries)
 head(quality(itemsets))
 plot(itemsets, measure = c("support", "allConfidence"), shading = "lift")
 
-## Save HTML widget as web page
+# Save HTML widget as web page
 \dontrun{
 p <- plot(rules, engine = "html")
 htmlwidgets::saveWidget(p, "arules.html", selfcontained = FALSE)

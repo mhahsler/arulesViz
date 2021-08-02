@@ -2,6 +2,8 @@
 \Rdversion{1.1}
 \alias{saveAsGraph}
 \alias{associations2igraph}
+\alias{igraph}
+\alias{tidygraph}
 \title{Convert rules or itemsets into a graph}
 \description{
 Function to convert associations (rules, itemsets) into a igraph object and  
@@ -35,16 +37,19 @@ directed edge to the item in the RHS. For itemsets, undirected edges for each pa
 }
 \author{Michael Hahsler}
 \examples{
-library("igraph")
 data("Groceries")
-
 rules <- apriori(Groceries, parameter=list(support = 0.01, confidence = 0.5))
 
 # convert rules into a graph with rules as nodes
+library("igraph")
 g <- associations2igraph(rules)
 g
 
 plot(g)
+
+# convert the graph into a tidygraph
+library("tidygraph")
+as_tbl_graph(g)
 
 # convert the generating itemsets of the rules into a graph with itemsets as edges
 itemsets <- generatingItemsets(rules)
@@ -53,8 +58,6 @@ g <- associations2igraph(itemsets, associationsAsNodes = FALSE)
 g
 
 plot(g, layout = layout_in_circle)
-
-
 
 # save rules as a graph so they can be visualized using external tools
 saveAsGraph(rules, "rules.graphml")
