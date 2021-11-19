@@ -1,4 +1,4 @@
-# arulesViz 1.5-1 (xx/x/2021)
+# arulesViz 1.5-1 (11/18/2021)
 
 ## New features
 * plot method "grouped matrix" gained parameter grouped to pass on a grouped matrix.
@@ -9,7 +9,10 @@
 
 ## Changes
 * we use now a better check for installed suggested packages.
-* method graph uses not ggraph.
+* method graph uses now ggraph.
+
+## Bugfixes
+* plot method graph with engine htmlwidget shows not labels correctly.
 
 # arulesViz 1.5-0 (05/21/2021)
 

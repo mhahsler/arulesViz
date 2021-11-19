@@ -124,7 +124,6 @@ graph_visNetwork <-
     )
     
     visNetwork::visNetwork(nodes = nodes, edges = edges) %>%
-      visNetwork::visNodes(scaling = list(label = list(enabled = TRUE))) %>%
       visNetwork::visIgraphLayout(layout = control$igraphLayout) %>%
       visNetwork::visOptions(
         highlightNearest =
