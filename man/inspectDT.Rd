@@ -45,9 +45,15 @@ rules_df$count <- NULL
 head(rules_df)
 inspectDT(rules_df)
 
-# save a datatable as a html page.
+# Save HTML widget as web page
 p <- inspectDT(rules)
 htmlwidgets::saveWidget(p, "arules.html", selfcontained = FALSE)
-browseURL("arules.html")}
+# Note: self-contained seems to make the browser slow.
+
+# inspect the widget
+browseURL("arules.html")
+
+# clean up
+unlink(c("arules.html", "arules_files"), recursive = TRUE)}
 }
 \keyword{ print }
