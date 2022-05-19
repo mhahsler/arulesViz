@@ -3,6 +3,11 @@ title: "arulesViz - Visualizing Association Rules and Frequent Itemsets with R"
 output: github_document
 ---
 
+```{r echo=FALSE}
+options(digits = 2)
+knitr::opts_chunk$set(tidy = TRUE, message = FALSE, fig.path = 'inst/README_files/')
+```
+
 [![CRAN version](https://www.r-pkg.org/badges/version/arulesViz)](https://cran.r-project.org/package=arulesViz)
 [![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/arulesViz)](https://cran.r-project.org/package=arulesViz)
 [![R build status](https://github.com/mhahsler/arulesViz/workflows/R-CMD-check/badge.svg)](https://github.com/mhahsler/arulesViz/actions)
@@ -39,10 +44,6 @@ This might also require the development version of [arules](https://github.com/m
 
 ## Usage 
 
-```{r echo=FALSE}
-options(digits = 2)
-knitr::opts_chunk$set(tidy = TRUE, message = FALSE)
-```
 
 
 Mine some rules.

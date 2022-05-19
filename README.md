@@ -87,13 +87,13 @@ rules <- apriori(Groceries, parameter = list(support = 0.005, confidence = 0.5))
 plot(rules)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](inst/README_files/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
 plot(rules, method = "graph", limit = 20)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](inst/README_files/unnamed-chunk-6-1.png)<!-- -->
 
 ### Interactive visualization
 
@@ -104,14 +104,15 @@ Mining](https://mhahsler.github.io/Introduction_to_Data_Mining_R_Examples/book/a
 ## References
 
 -   Michael Hahsler. [arulesViz: Interactive visualization of
-    association rules
-    with R.](https://journal.r-project.org/archive/2017/RJ-2017-047/RJ-2017-047.pdf)
+    association rules with
+    R.](https://journal.r-project.org/archive/2017/RJ-2017-047/RJ-2017-047.pdf)
     *R Journal,* 9(2):163-175, December 2017.
 -   Michael Hahsler. [An R Companion for Introduction to Data Mining:
     Chapter
     5](https://mhahsler.github.io/Introduction_to_Data_Mining_R_Examples/book/association-analysis-basic-concepts-and-algorithms.html).
     Online Book.
-    <https://mhahsler.github.io/Introduction_to_Data_Mining_R_Examples/book/>, 2021.
+    <https://mhahsler.github.io/Introduction_to_Data_Mining_R_Examples/book/>,
+    2021.
 -   Michael Hahsler, Sudheer Chelluboina, Kurt Hornik, and Christian
     Buchta. [The arules R-package ecosystem: Analyzing interesting
     patterns from large transaction
