@@ -6,7 +6,6 @@ proj$
 ^.*\.Rproj$
 ^LICENSE
 README.Rmd
-README_files
 ^Work/
 ^_config\.yml
 ^docs/
