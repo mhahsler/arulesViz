@@ -12,7 +12,7 @@
 * method graph uses now ggraph.
 
 ## Bugfixes
-* plot method graph with engine htmlwidget shows not labels correctly.
+* plot method graph with engine htmlwidget shows now labels correctly.
 
 # arulesViz 1.5-0 (05/21/2021)
 

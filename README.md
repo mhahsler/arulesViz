@@ -2,11 +2,11 @@ arulesViz - Visualizing Association Rules and Frequent Itemsets with R
 ================
 
 [![CRAN
-version](https://www.r-pkg.org/badges/version/arulesViz)](https://cran.r-project.org/package=arulesViz)
+version](http://www.r-pkg.org/badges/version/arulesViz)](https://CRAN.R-project.org/package=arulesViz)
+[![stream r-universe
+status](https://mhahsler.r-universe.dev/badges/arulesViz)](https://mhahsler.r-universe.dev/ui#package:arulesViz)
 [![CRAN RStudio mirror
-downloads](https://cranlogs.r-pkg.org/badges/arulesViz)](https://cran.r-project.org/package=arulesViz)
-[![R build
-status](https://github.com/mhahsler/arulesViz/workflows/R-CMD-check/badge.svg)](https://github.com/mhahsler/arulesViz/actions)
+downloads](http://cranlogs.r-pkg.org/badges/grand-total/arulesViz)](https://CRAN.R-project.org/package=arulesViz)
 
 This R package extends package
 [arules](https://github.com/mhahsler/arules) with various visualization
@@ -21,12 +21,8 @@ several interactive visualizations for rule exploration.
 install.packages("arulesViz")
 ```
 
-**Current development version:** install from GitHub (needs devtools)
-with
-
-``` r
-devtools::install_github("mhahsler/arulesViz")
-```
+**Current development version:** Install from
+[r-universe.](https://mhahsler.r-universe.dev/ui#package:arulesViz)
 
 This might also require the development version of
 [arules](https://github.com/mhahsler/arules).
@@ -87,13 +83,13 @@ rules <- apriori(Groceries, parameter = list(support = 0.005, confidence = 0.5))
 plot(rules)
 ```
 
-![](inst/README_files/unnamed-chunk-5-1.png)<!-- -->
+![](inst/README_files/scatterplot-1.png)<!-- -->
 
 ``` r
 plot(rules, method = "graph", limit = 20)
 ```
 
-![](inst/README_files/unnamed-chunk-6-1.png)<!-- -->
+![](inst/README_files/graph-1.png)<!-- -->
 
 ### Interactive visualization
 

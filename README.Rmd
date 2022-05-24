@@ -8,10 +8,16 @@ options(digits = 2)
 knitr::opts_chunk$set(tidy = TRUE, message = FALSE, fig.path = 'inst/README_files/')
 ```
 
-[![CRAN version](https://www.r-pkg.org/badges/version/arulesViz)](https://cran.r-project.org/package=arulesViz)
-[![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/arulesViz)](https://cran.r-project.org/package=arulesViz)
-[![R build status](https://github.com/mhahsler/arulesViz/workflows/R-CMD-check/badge.svg)](https://github.com/mhahsler/arulesViz/actions)
-  
+```{r echo=FALSE, results = 'asis'}
+pkg <- 'arulesViz'
+
+library(stringr)
+
+  cat(str_interp("[![CRAN version](http://www.r-pkg.org/badges/version/${pkg})](https://CRAN.R-project.org/package=${pkg})\n"))
+  cat(str_interp("[![stream r-universe status](https://mhahsler.r-universe.dev/badges/${pkg})](https://mhahsler.r-universe.dev/ui#package:${pkg})\n"))
+  cat(str_interp("[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/grand-total/${pkg})](https://CRAN.R-project.org/package=${pkg})\n"))
+```
+
 This R package 
 extends package [arules](https://github.com/mhahsler/arules) with various visualization techniques for association rules and itemsets. The package also includes several interactive visualizations for rule exploration.
 
@@ -21,10 +27,10 @@ __Stable CRAN version:__ install from within R with
 ```{r eval=FALSE}
 install.packages("arulesViz")
 ```
-__Current development version:__ install from GitHub (needs devtools) with
-```{r eval=FALSE}
-devtools::install_github("mhahsler/arulesViz")
-```
+
+__Current development version:__ Install from [r-universe.](https://mhahsler.r-universe.dev/ui#package:arulesViz)
+
+
 This might also require the development version of [arules](https://github.com/mhahsler/arules).
 
 ## Features
@@ -55,11 +61,11 @@ rules <- apriori(Groceries, parameter = list(support = 0.005, confidence = 0.5))
 
 ### Standard visualizations
 
-```{r }
+```{r scatterplot}
 plot(rules)
 ```
 
-```{r }
+```{r graph}
 plot(rules, method = "graph", limit = 20)
 ```
 
