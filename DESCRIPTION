@@ -3,8 +3,9 @@ Version: 1.5-1
 Date: 2021-11-18
 Title: Visualizing Association Rules and Frequent Itemsets
 Authors@R: c(person("Michael", "Hahsler", role = c("aut", "cre", "cph"),
-                email = "mhahsler@lyle.smu.edu"),
-            person("Giallanza", "Tyler", role = c("ctb")),
+	    email = "mhahsler@lyle.smu.edu",
+	    comment = c(ORCID = "0000-0003-2716-1405")),
+	    person("Giallanza", "Tyler", role = c("ctb")),
             person("Sudheer", "Chelluboina", role = c("ctb"))
             )
 Depends: arules (>= 1.6.0) 
