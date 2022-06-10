@@ -1,5 +1,5 @@
-arulesViz - Visualizing Association Rules and Frequent Itemsets with R
-================
+
+# <img src='man/figures/logo.svg' align="right" height="139" /> R package arulesViz - Visualizing Association Rules and Frequent Itemsets with R
 
 [![CRAN
 version](http://www.r-pkg.org/badges/version/arulesViz)](https://CRAN.R-project.org/package=arulesViz)
