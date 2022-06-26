@@ -2,35 +2,19 @@
 output: github_document
 ---
 
-# <img src='man/figures/logo.svg' align="right" height="139" /> R package arulesViz - Visualizing Association Rules and Frequent Itemsets with R
-
-```{r echo=FALSE}
-options(digits = 2)
-knitr::opts_chunk$set(tidy = TRUE, message = FALSE, fig.path = 'inst/README_files/')
-```
-
 ```{r echo=FALSE, results = 'asis'}
 pkg <- 'arulesViz'
 
-library(stringr)
-
-  cat(str_interp("[![CRAN version](http://www.r-pkg.org/badges/version/${pkg})](https://CRAN.R-project.org/package=${pkg})\n"))
-  cat(str_interp("[![stream r-universe status](https://mhahsler.r-universe.dev/badges/${pkg})](https://mhahsler.r-universe.dev/ui#package:${pkg})\n"))
-  cat(str_interp("[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/grand-total/${pkg})](https://CRAN.R-project.org/package=${pkg})\n"))
+source("https://raw.githubusercontent.com/mhahsler/pkg_helpers/main/pkg_helpers.R")
+pkg_title(pkg)
 ```
 
 This R package 
 extends package [arules](https://github.com/mhahsler/arules) with various visualization techniques for association rules and itemsets. The package also includes several interactive visualizations for rule exploration.
 
-## Installation
-
-__Stable CRAN version:__ install from within R with
-```{r eval=FALSE}
-install.packages("arulesViz")
+```{r echo=FALSE, results = 'asis'}
+pkg_install(pkg)
 ```
-
-__Current development version:__ Install from [r-universe.](https://mhahsler.r-universe.dev/ui#package:arulesViz)
-
 
 This might also require the development version of [arules](https://github.com/mhahsler/arules).
 

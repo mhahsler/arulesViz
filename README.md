@@ -1,12 +1,12 @@
 
-# <img src='man/figures/logo.svg' align="right" height="139" /> R package arulesViz - Visualizing Association Rules and Frequent Itemsets with R
+# <img src="man/figures/logo.svg" align="right" height="139" /> R package arulesViz - Visualizing Association Rules and Frequent Itemsets
 
 [![CRAN
 version](http://www.r-pkg.org/badges/version/arulesViz)](https://CRAN.R-project.org/package=arulesViz)
 [![stream r-universe
 status](https://mhahsler.r-universe.dev/badges/arulesViz)](https://mhahsler.r-universe.dev/ui#package:arulesViz)
 [![CRAN RStudio mirror
-downloads](http://cranlogs.r-pkg.org/badges/grand-total/arulesViz)](https://CRAN.R-project.org/package=arulesViz)
+downloads](http://cranlogs.r-pkg.org/badges/arulesViz)](https://CRAN.R-project.org/package=arulesViz)
 
 This R package extends package
 [arules](https://github.com/mhahsler/arules) with various visualization
@@ -15,7 +15,7 @@ several interactive visualizations for rule exploration.
 
 ## Installation
 
-**Stable CRAN version:** install from within R with
+**Stable CRAN version:** Install from within R with
 
 ``` r
 install.packages("arulesViz")
@@ -23,6 +23,10 @@ install.packages("arulesViz")
 
 **Current development version:** Install from
 [r-universe.](https://mhahsler.r-universe.dev/ui#package:arulesViz)
+
+``` r
+install.packages("arulesViz", repos = "https://mhahsler.r-universe.dev")
+```
 
 This might also require the development version of
 [arules](https://github.com/mhahsler/arules).
