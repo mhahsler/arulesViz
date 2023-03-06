@@ -1,6 +1,6 @@
 Package: arulesViz
-Version: 1.5-1
-Date: 2021-11-18
+Version: 1.5-1-1
+Date: 2023-xx-xx
 Title: Visualizing Association Rules and Frequent Itemsets
 Authors@R: c(person("Michael", "Hahsler", role = c("aut", "cre", "cph"),
 	    email = "mhahsler@lyle.smu.edu",

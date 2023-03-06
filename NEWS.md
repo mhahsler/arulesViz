@@ -1,3 +1,9 @@
+# arulesViz 1.5-1-1 (xx/xx/2023)
+
+## Bugfixes
+* S3 method registration for inspectDT.default
+* print.gInteraction has not parameters (x, ...) to match the print generic.
+
 # arulesViz 1.5-1 (11/18/2021)
 
 ## New features

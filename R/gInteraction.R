@@ -52,14 +52,14 @@ gInteraction <- function(buttons = data.frame(),
     class = "gInteraction")
 }
 
-print.gInteraction <- function(object) {
+print.gInteraction <- function(x, ...) {
   writeLines(paste(
     "Object of class 'gInteraction' with",
-    nrow(object$buttons),
+    nrow(x$buttons),
     "buttons."
   ))
   
-  print(t(object$buttons[, "active", drop = FALSE]))
+  print(t(x$buttons[, "active", drop = FALSE]))
 }
 
 ## functions for buttons
@@ -227,20 +227,20 @@ gBoxSelection <- function(loc1,
 ## S3 dispatch for filterSelection
 filterSelection <- function(sel, ...)
   UseMethod("filterSelection")
+
 foo.default <- function(sel, ...)
   stop("Unknown gSelection type!")
 
-filterSelection.gBoxSelection <- function(sel, x) {
+filterSelection.gBoxSelection <- function(sel, x, ...) {
   locs <- rbind(unlist(convertLoc(sel$loc, "native", valueOnly = TRUE)),
     unlist(convertLoc(sel$loc2, "native", valueOnly = TRUE)))
-  
   
   x[, 1] >= min(locs[, "x"]) & x[, 1] <= max(locs[, "x"]) &
     x[, 2] >= min(locs[, "y"]) & x[, 2] <= max(locs[, "y"])
 }
 
 filterSelection.gPointSelection <-
-  function(sel, x, sensitivity = 0.01) {
+  function(sel, x, sensitivity = 0.01, ...) {
     loc1 <- sel$loc
     loc1$x <- loc1$x - unit(sensitivity, "npc")
     loc1$y <- loc1$y + unit(sensitivity, "npc")

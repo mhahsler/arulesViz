@@ -208,7 +208,8 @@ if(interactive()) {
   sel <- plot(rules, engine = "interactive")
 
 # Create a html widget for interactive visualization (uses plotly)
-  plot(rules, engine = "htmlwidget")}
+  plot(rules, engine = "htmlwidget")
+  }
 }
 
 # Two-key plot (a scatter plot with shading = "order")

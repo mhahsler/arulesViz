@@ -4,7 +4,7 @@
 [![CRAN
 version](http://www.r-pkg.org/badges/version/arulesViz)](https://CRAN.R-project.org/package=arulesViz)
 [![stream r-universe
-status](https://mhahsler.r-universe.dev/badges/arulesViz)](https://mhahsler.r-universe.dev/ui#package:arulesViz)
+status](https://mhahsler.r-universe.dev/badges/arulesViz)](https://mhahsler.r-universe.dev/arulesViz)
 [![CRAN RStudio mirror
 downloads](http://cranlogs.r-pkg.org/badges/arulesViz)](https://CRAN.R-project.org/package=arulesViz)
 
@@ -22,7 +22,7 @@ install.packages("arulesViz")
 ```
 
 **Current development version:** Install from
-[r-universe.](https://mhahsler.r-universe.dev/ui#package:arulesViz)
+[r-universe.](https://mhahsler.r-universe.dev/arulesViz)
 
 ``` r
 install.packages("arulesViz", repos = "https://mhahsler.r-universe.dev")
@@ -33,21 +33,21 @@ This might also require the development version of
 
 ## Features
 
--   Visualizations using engines `ggplot2` (default engine for most
-    methods), `grid`, `base` (R base plots), `htmlwidget` (powered by
-    `plotly` and `visNetwork`).
--   Interactive visualizations using `grid`, `plotly` and `visNetwork`.
--   Interactive rule inspection with `datatable`.
--   Integrated interactive rule exploration using `ruleExplorer`.
+- Visualizations using engines `ggplot2` (default engine for most
+  methods), `grid`, `base` (R base plots), `htmlwidget` (powered by
+  `plotly` and `visNetwork`).
+- Interactive visualizations using `grid`, `plotly` and `visNetwork`.
+- Interactive rule inspection with `datatable`.
+- Integrated interactive rule exploration using `ruleExplorer`.
 
 ### Available Visualizations:
 
--   Scatterplot, two-key plot
--   Matrix and matrix 3D visualization
--   Grouped matrix-based visualization
--   Several graph-based visualizations
--   Doubledecker and mosaic plots
--   Parallel Coordinate plot
+- Scatterplot, two-key plot
+- Matrix and matrix 3D visualization
+- Grouped matrix-based visualization
+- Several graph-based visualizations
+- Doubledecker and mosaic plots
+- Parallel Coordinate plot
 
 ## Usage
 
@@ -103,22 +103,22 @@ Mining](https://mhahsler.github.io/Introduction_to_Data_Mining_R_Examples/book/a
 
 ## References
 
--   Michael Hahsler. [arulesViz: Interactive visualization of
-    association rules with
-    R.](https://journal.r-project.org/archive/2017/RJ-2017-047/RJ-2017-047.pdf)
-    *R Journal,* 9(2):163-175, December 2017.
--   Michael Hahsler. [An R Companion for Introduction to Data Mining:
-    Chapter
-    5](https://mhahsler.github.io/Introduction_to_Data_Mining_R_Examples/book/association-analysis-basic-concepts-and-algorithms.html).
-    Online Book.
-    <https://mhahsler.github.io/Introduction_to_Data_Mining_R_Examples/book/>,
-    2021.
--   Michael Hahsler, Sudheer Chelluboina, Kurt Hornik, and Christian
-    Buchta. [The arules R-package ecosystem: Analyzing interesting
-    patterns from large transaction
-    datasets.](https://jmlr.csail.mit.edu/papers/v12/hahsler11a.html)
-    *Journal of Machine Learning Research,* 12:1977-1981, 2011.
--   Michael Hahsler and Sudheer Chelluboina. [Visualizing Association
-    Rules: Introduction to the R-extension Package
-    arulesViz](https://cran.r-project.org/package=arulesViz/vignettes/arulesViz.pdf)
-    (with complete examples).
+- Michael Hahsler. [arulesViz: Interactive visualization of association
+  rules with
+  R.](https://journal.r-project.org/archive/2017/RJ-2017-047/RJ-2017-047.pdf)
+  *R Journal,* 9(2):163-175, December 2017.
+- Michael Hahsler. [An R Companion for Introduction to Data Mining:
+  Chapter
+  5](https://mhahsler.github.io/Introduction_to_Data_Mining_R_Examples/book/association-analysis-basic-concepts-and-algorithms.html).
+  Online Book.
+  <https://mhahsler.github.io/Introduction_to_Data_Mining_R_Examples/book/>,
+  2021.
+- Michael Hahsler, Sudheer Chelluboina, Kurt Hornik, and Christian
+  Buchta. [The arules R-package ecosystem: Analyzing interesting
+  patterns from large transaction
+  datasets.](https://jmlr.csail.mit.edu/papers/v12/hahsler11a.html)
+  *Journal of Machine Learning Research,* 12:1977-1981, 2011.
+- Michael Hahsler and Sudheer Chelluboina. [Visualizing Association
+  Rules: Introduction to the R-extension Package
+  arulesViz](https://cran.r-project.org/package=arulesViz/vignettes/arulesViz.pdf)
+  (with complete examples).
