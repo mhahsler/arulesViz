@@ -4,7 +4,9 @@ bibentry(bibtype = "article",
   title = paste("arules{V}iz: {I}nteractive Visualization of Association Rules with {R}"),
   author = {
     c(person("Michael", "Hahsler",
-      email = "mhahsler@lyle.smu.edu"))
+      email = "mhahsler@lyle.smu.edu",
+      comment = c(ORCID = "0000-0003-2716-1405")),
+      )
   },
   year = 2017,
   journal = "R Journal",
