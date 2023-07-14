@@ -9,11 +9,14 @@ source("https://raw.githubusercontent.com/mhahsler/pkg_helpers/main/pkg_helpers.
 pkg_title(pkg)
 ```
 
+## Introduction
+
 This R package 
 extends package [arules](https://github.com/mhahsler/arules) with various visualization techniques for association rules and itemsets. The package also includes several interactive visualizations for rule exploration.
 
 ```{r echo=FALSE, results = 'asis'}
-pkg_install(pkg)
+pkg_usage(pkg)
+pkg_citation(pkg, 2)
 ```
 
 This might also require the development version of [arules](https://github.com/mhahsler/arules).
@@ -24,7 +27,7 @@ This might also require the development version of [arules](https://github.com/m
 * Interactive rule inspection with `datatable`.
 * Integrated interactive rule exploration using `ruleExplorer`. 
 
-### Available Visualizations:
+Available Visualizations
 
 * Scatterplot, two-key plot
 * Matrix and matrix 3D visualization
@@ -33,9 +36,12 @@ This might also require the development version of [arules](https://github.com/m
 * Doubledecker and mosaic plots
 * Parallel Coordinate plot
 
+
+```{r echo=FALSE, results = 'asis'}
+pkg_install(pkg)
+```
+
 ## Usage 
-
-
 
 Mine some rules.
 ```{r }

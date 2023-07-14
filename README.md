@@ -8,10 +8,60 @@ status](https://mhahsler.r-universe.dev/badges/arulesViz)](https://mhahsler.r-un
 [![CRAN RStudio mirror
 downloads](http://cranlogs.r-pkg.org/badges/arulesViz)](https://CRAN.R-project.org/package=arulesViz)
 
+## Introduction
+
 This R package extends package
 [arules](https://github.com/mhahsler/arules) with various visualization
 techniques for association rules and itemsets. The package also includes
 several interactive visualizations for rule exploration.
+
+The following R packages use `arulesViz`:
+[arules](https://CRAN.R-project.org/package=arules),
+[fdm2id](https://CRAN.R-project.org/package=fdm2id),
+[rattle](https://CRAN.R-project.org/package=rattle),
+[TELP](https://CRAN.R-project.org/package=TELP)
+
+Please cite the use of this package as:
+
+> Hahsler M (2017). “arulesViz: Interactive Visualization of Association
+> Rules with R.” *R Journal*, *9*(2), 163-175. ISSN 2073-4859,
+> <doi:10.32614/RJ-2017-047> <https://doi.org/10.32614/RJ-2017-047>,
+> <https://journal.r-project.org/archive/2017/RJ-2017-047/RJ-2017-047.pdf>.
+
+    @Article{,
+      title = {arules{V}iz: {I}nteractive Visualization of Association Rules with {R}},
+      author = {Michael Hahsler},
+      year = {2017},
+      journal = {R Journal},
+      volume = {9},
+      number = {2},
+      pages = {163--175},
+      url = {https://journal.r-project.org/archive/2017/RJ-2017-047/RJ-2017-047.pdf},
+      doi = {10.32614/RJ-2017-047},
+      month = {December},
+      issn = {2073-4859},
+    }
+
+This might also require the development version of
+[arules](https://github.com/mhahsler/arules).
+
+## Features
+
+- Visualizations using engines `ggplot2` (default engine for most
+  methods), `grid`, `base` (R base plots), `htmlwidget` (powered by
+  `plotly` and `visNetwork`).
+- Interactive visualizations using `grid`, `plotly` and `visNetwork`.
+- Interactive rule inspection with `datatable`.
+- Integrated interactive rule exploration using `ruleExplorer`.
+
+Available Visualizations
+
+- Scatterplot, two-key plot
+- Matrix and matrix 3D visualization
+- Grouped matrix-based visualization
+- Several graph-based visualizations
+- Doubledecker and mosaic plots
+- Parallel Coordinate plot
 
 ## Installation
 
@@ -27,27 +77,6 @@ install.packages("arulesViz")
 ``` r
 install.packages("arulesViz", repos = "https://mhahsler.r-universe.dev")
 ```
-
-This might also require the development version of
-[arules](https://github.com/mhahsler/arules).
-
-## Features
-
-- Visualizations using engines `ggplot2` (default engine for most
-  methods), `grid`, `base` (R base plots), `htmlwidget` (powered by
-  `plotly` and `visNetwork`).
-- Interactive visualizations using `grid`, `plotly` and `visNetwork`.
-- Interactive rule inspection with `datatable`.
-- Integrated interactive rule exploration using `ruleExplorer`.
-
-### Available Visualizations:
-
-- Scatterplot, two-key plot
-- Matrix and matrix 3D visualization
-- Grouped matrix-based visualization
-- Several graph-based visualizations
-- Doubledecker and mosaic plots
-- Parallel Coordinate plot
 
 ## Usage
 
