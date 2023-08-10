@@ -75,7 +75,8 @@ install.packages("arulesViz")
 [r-universe.](https://mhahsler.r-universe.dev/arulesViz)
 
 ``` r
-install.packages("arulesViz", repos = c("https://mhahsler.r-universe.dev". "https://cloud.r-project.org/"))
+install.packages("arulesViz",
+    repos = c("https://mhahsler.r-universe.dev". "https://cloud.r-project.org/"))
 ```
 
 ## Usage
