@@ -21,7 +21,7 @@ The following R packages use `arulesViz`:
 [rattle](https://CRAN.R-project.org/package=rattle),
 [TELP](https://CRAN.R-project.org/package=TELP)
 
-Please cite the use of this package as:
+To cite package ‘arulesViz’ in publications use:
 
 > Hahsler M (2017). “arulesViz: Interactive Visualization of Association
 > Rules with R.” *R Journal*, *9*(2), 163-175. ISSN 2073-4859,
@@ -75,7 +75,7 @@ install.packages("arulesViz")
 [r-universe.](https://mhahsler.r-universe.dev/arulesViz)
 
 ``` r
-install.packages("arulesViz", repos = "https://mhahsler.r-universe.dev")
+install.packages("arulesViz", repos = c("https://mhahsler.r-universe.dev". "https://cloud.r-project.org/"))
 ```
 
 ## Usage
