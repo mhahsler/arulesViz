@@ -25,6 +25,9 @@
     grDevices::rgb(.6, .6, .8, alpha))
 }
 
+
+#' @rdname saveAsGraph
+#' @export 
 associations2igraph <- function(x, associationsAsNodes = TRUE) {
   if (associationsAsNodes) associations2igraph_nodes(x)
   else associations2igraph_edges(x)

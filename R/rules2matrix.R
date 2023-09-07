@@ -16,6 +16,64 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+#' Convert association rules into a matrix
+#' 
+#' Converts a set of association rules into a matrix with unique LHS itemsets
+#' as columns and unique RHS itemsets as rows. The matrix cells contain a
+#' quality measure. The LHS itemsets can be grouped.
+#' 
+#' 
+#' @aliases rules2matrix rules2groupedMatrix
+#' @param rules a rules object.
+#' @param measure quality measure put in the matrix
+#' @param reorder reorder rows and columns? Possible methods are: "none",
+#' "measure" (default), "support/confidence", "similarity".
+#' @param measure2 second quality measure (organized in the same way as
+#' measure).
+#' @param k number of LHS itemset groups.
+#' @param aggr.fun function to aggregate the quality measure for groups.
+#' @param lhs_label_items number of top items used to name LHS itemset groups
+#' (columns).
+#' @param ...  passed on to [`DATAFRAME()`].
+#' @return \code{rules2matrix} returns a matrix with quality values.
+#' 
+#' \code{rules2groupedMatrix} returns a list with elements 
+#' \item{m}{ the
+#' grouped matrix for measure. } 
+#' \item{m2}{ the grouped matrix for measure2. }
+#' \item{clustering_rules}{ vector with group assignment for each rule. }
+#' @author Michael Hahsler
+#' @seealso \code{\link{plot}} for rules using \code{method = 'matrix'} and
+#' \code{method = 'grouped matrix'}.
+#' @references Michael Hahsler and Radoslaw Karpienko. Visualizing association
+#' rules in hierarchical groups. Journal of Business Economics, 87(3):317--335,
+#' May 2016. \doi{10.1007/s11573-016-0822-8}.
+#' @examples
+#' 
+#' data(Groceries)
+#' rules <- apriori(Groceries, parameter=list(support = 0.001, confidence = 0.8))
+#' rules
+#' 
+#' ## Matrix
+#' m <- rules2matrix(rules[1:10], measure = "lift")
+#' m
+#' plot(rules[1:10], method = "matrix")
+#' 
+#' ## Grouped matrix
+#' # create a matrix with LHSs grouped in k = 10 groups
+#' gm <- rules2groupedMatrix(rules, k = 10)
+#' gm$m
+#' 
+#' # number of rules per group 
+#' table(gm$clustering_rules)
+#' 
+#' # get rules for group 1
+#' inspect(rules[gm$clustering_rules == 1])
+#' 
+#' # create the corresponding grouped matrix plot by passing the grouped matrix as the groups parameter
+#' plot(rules, method = "grouped matrix", groups = gm)
+#' 
+#' @export
 rules2matrix <-
   function(rules,
     measure = "support",

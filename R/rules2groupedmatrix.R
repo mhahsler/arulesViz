@@ -17,6 +17,9 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 ## create matrix with grouped LHS (columns) using measure
+
+#' @rdname rules2matrix
+#' @export 
 rules2groupedMatrix <-
   function(rules,
     measure = "lift",
@@ -332,6 +335,8 @@ inspect.grouped_matrix <- function(x, cluster, measure = "lift") {
 
 
 ## display grouped_matrix
+#' @rdname plot_arulesViz
+#' @export
 plot.grouped_matrix <- function(x, ...) {
   control <- list(...)$control
   

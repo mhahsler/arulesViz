@@ -1,6 +1,6 @@
 Package: arulesViz
-Version: 1.5-2
-Date: 2023-03-07
+Version: 1.5.2-1
+Date: 2023-xx-xx
 Title: Visualizing Association Rules and Frequent Itemsets
 Authors@R: c(person("Michael", "Hahsler", role = c("aut", "cre", "cph"),
 	    email = "mhahsler@lyle.smu.edu",
@@ -36,6 +36,9 @@ Suggests: datasets,
   htmlwidgets
 Description: Extends package 'arules' with various visualization techniques for association rules and itemsets. The package also includes several interactive visualizations for rule exploration. Michael Hahsler (2017) <doi:10.32614/RJ-2017-047>.
 License: GPL-3
+Encoding: UTF-8
+RoxygenNote: 7.2.3
+Roxygen: list(markdown = TRUE)
 URL: https://github.com/mhahsler/arulesViz
 BugReports: https://github.com/mhahsler/arulesViz/issues
 Copyright: (C) 2021 Michael Hahsler

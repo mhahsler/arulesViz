@@ -153,7 +153,7 @@ graph_igraph <- function(x,
       sep = '')
   
   if (control$engine == "graphviz") {
-    check_installed(c("Rgraphviz"), action = "stop",  message = "Install package from Bioconductor at https://www.bioconductor.org/packages/release/bioc/html/Rgraphviz.html")
+    check_installed(c("Rgraphviz"), action = "stop",  message = "Install package from Bioconductor at https://bioconductor.org/packages/Rgraphviz/")
     
     gNEL <- igraph::igraph.to.graphNEL(g)
     

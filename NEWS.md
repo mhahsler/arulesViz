@@ -1,3 +1,8 @@
+# arulesViz 1.5.2-1 (xx/xx/2023)
+
+## Changes
+* We use now roxygen for documentation
+
 # arulesViz 1.5-2 (03/03/2023)
 
 ## Bugfixes
