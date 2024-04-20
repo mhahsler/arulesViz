@@ -21,7 +21,7 @@ represented by edges?}
 \item{file}{file name.}
 
 \item{format}{file format (e.g., "edgelist", "graphml", "dimacs", "gml",
-"dot"). See \code{\link[igraph:write_graph]{igraph::write.graph()}}.}
+"dot"). See \code{\link[igraph:write.graph]{igraph::write.graph()}}.}
 
 \item{...}{further arguments are passed on to \code{associations2igraph()}.}
 }

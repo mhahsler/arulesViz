@@ -34,7 +34,7 @@
 #' @param aggr.fun function to aggregate the quality measure for groups.
 #' @param lhs_label_items number of top items used to name LHS itemset groups
 #' (columns).
-#' @param ...  passed on to [`DATAFRAME()`].
+#' @param ...  passed on to [`arules::DATAFRAME()`].
 #' @return \code{rules2matrix} returns a matrix with quality values.
 #' 
 #' \code{rules2groupedMatrix} returns a list with elements 

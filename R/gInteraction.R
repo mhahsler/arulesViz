@@ -228,7 +228,7 @@ gBoxSelection <- function(loc1,
 filterSelection <- function(sel, ...)
   UseMethod("filterSelection")
 
-foo.default <- function(sel, ...)
+filterSelection.default <- function(sel, ...)
   stop("Unknown gSelection type!")
 
 filterSelection.gBoxSelection <- function(sel, x, ...) {

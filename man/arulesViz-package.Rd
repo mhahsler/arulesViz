@@ -2,10 +2,11 @@
 % Please edit documentation in R/AAA_arulesViz-package.R
 \docType{package}
 \name{arulesViz-package}
+\alias{arulesViz}
 \alias{arulesViz-package}
 \title{arulesViz: Visualizing Association Rules and Frequent Itemsets}
 \description{
-Extends package 'arules' with various visualization techniques for association rules and itemsets. The package also includes several interactive visualizations for rule exploration. Michael Hahsler (2017) .
+Extends package 'arules' with various visualization techniques for association rules and itemsets. The package also includes several interactive visualizations for rule exploration. Michael Hahsler (2017) \doi{10.32614/RJ-2017-047}.
 }
 \section{Main Functions}{
 
@@ -16,9 +17,22 @@ Extends package 'arules' with various visualization techniques for association r
 }
 }
 
-\references{
-Hahsler M (2017). arulesViz: Interactive Visualization of Association Rules with R. R Journal, 9(2), 163–175. ISSN 2073-4859, \doi{10.32614/RJ-2017-047}.
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/mhahsler/arulesViz}
+  \item Report bugs at \url{https://github.com/mhahsler/arulesViz/issues}
+}
+
 }
 \author{
-Michael Hahsler
+\strong{Maintainer}: Michael Hahsler \email{mhahsler@lyle.smu.edu} (\href{https://orcid.org/0000-0003-2716-1405}{ORCID}) [copyright holder]
+
+Other contributors:
+\itemize{
+  \item Giallanza Tyler [contributor]
+  \item Sudheer Chelluboina [contributor]
 }
+
+}
+\keyword{internal}

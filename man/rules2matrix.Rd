@@ -34,7 +34,7 @@ measure).}
 \item{reorder}{reorder rows and columns? Possible methods are: "none",
 "measure" (default), "support/confidence", "similarity".}
 
-\item{...}{passed on to \code{\link[=DATAFRAME]{DATAFRAME()}}.}
+\item{...}{passed on to \code{\link[arules:DATAFRAME]{arules::DATAFRAME()}}.}
 }
 \value{
 \code{rules2matrix} returns a matrix with quality values.
