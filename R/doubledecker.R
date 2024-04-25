@@ -33,29 +33,37 @@ rules2table <- function(rules, data) {
 }
 
 
-doubledeckerplot <- function(rules,
-  measure = "support",
-  data,
-  control = list(),
-  ...) {
+doubledeckerplot <- function(
+    rules,
+    measure = "support",
+    data,
+    control = list(),
+    ...) {
   engines <- c("default")
-  
+
   if (control$engine == "help") {
-    message("Available engines for this plotting method are:\n",
-      paste0(engines, collapse = ", "))
+    message(
+      "Available engines for this plotting method are:\n",
+      paste0(engines, collapse = ", ")
+    )
     return(invisible(engines))
   }
-  
-  if (pmatch(control$engine, engines, nomatch = 0) != 1)
-    stop("Unknown engine for scatterplot: '",
+
+  if (pmatch(control$engine, engines, nomatch = 0) != 1) {
+    stop(
+      "Unknown engine for scatterplot: '",
       control$engine,
-      "' Valid engines: 'default'.")
-  
-  if (length(rules) != 1)
+      "' Valid engines: 'default'."
+    )
+  }
+
+  if (length(rules) != 1) {
     stop("only can visualize one rule.")
-  if (is.null(data))
+  }
+  if (is.null(data)) {
     stop("data has to be specified, but is missing.")
-  
+  }
+
   control <- c(control, list(...))
   control <- .get_parameters(
     control,
@@ -67,13 +75,14 @@ doubledeckerplot <- function(rules,
       plot_options = list()
     )
   )
-  
-  if (control$interactive)
+
+  if (control$interactive) {
     stop("No interactive visualization available for doubledecker/mosaic plot.")
-  
+  }
+
   table <- rules2table(rules, data)
-  
-  if (control$type == "doubledecker")
+
+  if (control$type == "doubledecker") {
     do.call(vcd::doubledecker, c(
       list(
         table,
@@ -82,7 +91,7 @@ doubledeckerplot <- function(rules,
       ),
       control$plot_options
     ))
-  else {
+  } else {
     control$main <- "Mosaic plot for 1 rule"
     do.call(vcd::mosaic, c(
       list(

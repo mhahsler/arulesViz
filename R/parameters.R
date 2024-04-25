@@ -20,63 +20,72 @@
 ## helper to parse parameter lists with defaults
 .nodots <- function(...) {
   l <- list(...)
-  if (length(l) > 0L)
+  if (length(l) > 0L) {
     warning("Unknown arguments: ",
       paste(names(l), "=", l, collapse = ", "),
-      call. = FALSE)
+      call. = FALSE
+    )
+  }
 }
 
 .get_parameters <- function(parameter, defaults) {
   if (!is.null(parameter[["help"]])) {
     cat("Available control parameters (with default values):\n")
     cat(rbind(names(defaults), " = ", gsub("\n", " ", as.character(defaults))),
-      sep = c("\t", " ", "\n"))
-    
+      sep = c("\t", " ", "\n")
+    )
+
     # stop quietly
     opt <- options(show.error.messages = F)
     on.exit(options(opt))
     stop()
   }
-  
+
   defaults <- as.list(defaults)
   parameter <- as.list(parameter)
-  
+
   ## add verbose
-  if (is.null(defaults$verbose))
+  if (is.null(defaults$verbose)) {
     defaults$verbose <- FALSE
-  
+  }
+
   if (length(parameter) != 0) {
     o <- pmatch(names(parameter), names(defaults))
-    
+
     ## unknown parameter
     if (any(is.na(o))) {
-      warning(sprintf(
-        ngettext(
-          length(is.na(o)),
-          "Unknown control parameter: %s",
-          "Unknown control parameters: %s"
+      warning(
+        sprintf(
+          ngettext(
+            length(is.na(o)),
+            "Unknown control parameter: %s",
+            "Unknown control parameters: %s"
+          ),
+          paste(names(parameter)[is.na(o)],
+            collapse = ", "
+          )
         ),
-        paste(names(parameter)[is.na(o)],
-          collapse = ", ")
-      ),
         call. = FALSE,
-        immediate. = TRUE)
-      
+        immediate. = TRUE
+      )
+
       cat("Available control parameters (with default values):\n")
-      #print(defaults)
+      # print(defaults)
       cat(rbind(names(defaults), " = ", gsub("\n", " ", as.character(defaults))),
-        sep = c("\t", " ", "\n"))
+        sep = c("\t", " ", "\n")
+      )
     }
-    
+
     defaults[o[!is.na(o)]] <- parameter[!is.na(o)]
   }
-  
+
   if (defaults$verbose) {
     cat("Used control parameters:\n")
-    #print(defaults)
+    # print(defaults)
     cat(rbind(names(defaults), " = ", gsub("\n", " ", as.character(defaults))),
-      sep = c("\t", " ", "\n"))
+      sep = c("\t", " ", "\n")
+    )
   }
-  
+
   defaults
 }

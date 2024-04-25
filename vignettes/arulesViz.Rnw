@@ -265,7 +265,7 @@ Next we mine association rules using the Apriori algorithm implemented
 in \pkg{arules}.
 
 <<>>=
-rules <- apriori(Groceries, parameter=list(support=0.001, confidence=0.5))
+rules <- apriori(Groceries, parameter = list(support = 0.001, confidence = 0.5))
 rules
 @
 
@@ -275,7 +275,7 @@ with respect to the lift measure,
 a popular measure of rule strength, are:
 
 <<>>=
-inspect(head(rules, n = 3, by ="lift"))
+inspect(head(rules, n = 3, by = "lift"))
 @
 
 However, it is clear that going through all the \Sexpr{length(rules)} rules
@@ -400,8 +400,10 @@ and zooming. Interaction
 is activated using \code{interactive=TRUE}.
 
 <<eval=FALSE>>=
-sel <- plot(rules, measure=c("support", "lift"), shading = "confidence",
-            interactive = TRUE)
+sel <- plot(rules,
+  measure = c("support", "lift"), shading = "confidence",
+  interactive = TRUE
+)
 @
 
 Interactive features include:

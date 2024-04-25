@@ -1,12 +1,9 @@
 proj$
 ^\.Rproj\.user$
 ^cran-comments\.md$
-^revdep$
-^.*\.o$
 ^.*\.Rproj$
 ^LICENSE
 README.Rmd
 ^Work/
 ^_config\.yml
-^docs/
 ^\.github$

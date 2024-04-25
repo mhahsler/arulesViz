@@ -1,7 +1,7 @@
 #' @keywords internal
 #'
 #' @section Main Functions:
-#' 
+#'
 #' * [`arulesViz::plot()`] plot association rules.
 #' * [`inspectDT()`] for interactive rule tables.
 #' * [`ruleExplorer()`] for interactive rule inspection with tables and graphs.
@@ -15,7 +15,7 @@
 
 # NOTE: dplyr has many NAMESPACE conflicts with arules so we use ::
 # import("dplyr")
- 
+
 #' @importFrom graphics par mtext text axis box
 #' @importFrom stats median
 #' @importFrom methods is as new

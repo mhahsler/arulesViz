@@ -21,11 +21,11 @@
 #
 
 #' Explore Association Rules Interactively
-#' 
+#'
 #' Explore association rules using interactive manipulations and visualization
 #' using \pkg{shiny}.
-#' 
-#' 
+#'
+#'
 #' @aliases ruleExplorer explore
 #' @param x a set of rules, a transactions object or a data.frame.
 #' @param sidebarWidth width of the sidebar as a number between 0 (= 0% of the
@@ -42,73 +42,77 @@
 #' Association Rules with R. \emph{R Journal,} 9(2):163-175. ISSN 2073-4859.
 #' \doi{10.32614/RJ-2017-047}.
 #' @examples
-#' 
 #' \dontrun{
 #' data(Groceries)
-#' 
+#'
 #' # explore pre-mined rules
-#' rules <- apriori(Groceries, 
-#'   parameter=list(support=0.001, confidence=0.8))
+#' rules <- apriori(Groceries,
+#'   parameter = list(support = 0.001, confidence = 0.8)
+#' )
 #' rules
-#' 
+#'
 #' ruleExplorer(rules)
-#' 
+#'
 #' # mine and explore rules on the fly
 #' data(iris)
 #' ruleExplorer(iris)
 #' }
 #' @export
 ruleExplorer <-
-  function(x,
-    sidebarWidth = 2,
-    graphHeight = '600px') {
-    
+  function(
+      x,
+      sidebarWidth = 2,
+      graphHeight = "600px") {
     check_installed(c("shiny", "shinythemes"))
-    
+
     shinyTheme <- shinythemes::shinytheme("yeti")
-    
+
     message("ruleExplorer started.")
-    
+
     # show warnings immediately
     o <- options(warn = 1)
     on.exit(options(o))
-    
+
     ### rounding helpers
-    roundUp <- function(x, digits = 3)
-      round(x + .5 * 10 ^ -digits, digits)
-    roundDown <- function(x, digits = 3)
-      round(x - .5 * 10 ^ -digits, digits)
-    
+    roundUp <- function(x, digits = 3) {
+      round(x + .5 * 10^-digits, digits)
+    }
+    roundDown <- function(x, digits = 3) {
+      round(x - .5 * 10^-digits, digits)
+    }
+
     ### dataset can be rules or transactions
-    
+
     ### make sure we have transactions or rules
     if (!is(x, "rules") && !is(x, "transactions")) {
       message("Converting dataset into transactions.")
       x <- transactions(x)
     }
-    
+
     ### default measures to use
     xIndexCached <- "support"
     yIndexCached <- "confidence"
     zIndexCached <- "lift"
-    
+
     ### javascript cannot handle very large arrays
     itemLabels <- itemLabels(x)
-    if (length(itemLabels) > 10000)
+    if (length(itemLabels) > 10000) {
       itemLabels <-
-      list('Disabled because of excessive number of items (>10,000)' = c(""))
-    
+        list("Disabled because of excessive number of items (>10,000)" = c(""))
+    }
+
     if (is(x, "rules")) {
-      if (length(x) < 1)
+      if (length(x) < 1) {
         stop("Zero rules provided!")
-      
+      }
+
       minSupp <- roundDown(min(quality(x)$support), 5)
       maxSupp <- roundUp(max(quality(x)$support), 5)
       minConf <- roundDown(min(quality(x)$confidence), 3)
       maxConf <- roundUp(max(quality(x)$confidence), 3)
       minLift <- floor(min(quality(x)$lift))
       maxLift <- ceiling(max(quality(x)$lift))
-      
+
       supp <- minSupp
       conf <- minConf
       lift <- minLift
@@ -121,31 +125,28 @@ ruleExplorer <-
       minLift <- 0
       maxLift <- 25
       lift <- 0
-      
-      defaultParam <- new('APparameter')
+
+      defaultParam <- new("APparameter")
       supp <- defaultParam@support
       conf <- defaultParam@confidence
     }
-    
+
     ## create Shiny UI and server code
     shiny::shinyApp(
       ui = shiny::shinyUI(
         shiny::fluidPage(
           theme = shinyTheme,
-          
           shiny::titlePanel("Association Rule Explorer"),
-          
           shiny::sidebarLayout(
             shiny::sidebarPanel(
-              shiny::htmlOutput('numRulesOutput'),
+              shiny::htmlOutput("numRulesOutput"),
               shiny::br(),
-              
               shiny::sliderInput(
                 "supp",
                 "Minimum Support:",
                 min = minSupp,
                 max = maxSupp,
-                value = supp ,
+                value = supp,
                 step = (maxSupp - minSupp) / 10000,
                 sep = ""
               ),
@@ -154,8 +155,8 @@ ruleExplorer <-
                 "Minimum Confidence:",
                 min = minConf,
                 max = maxConf,
-                value = conf ,
-                step =  (maxConf - minConf) / 1000,
+                value = conf,
+                step = (maxConf - minConf) / 1000,
                 sep = ""
               ),
               shiny::sliderInput(
@@ -163,8 +164,8 @@ ruleExplorer <-
                 "Minimum Lift:",
                 min = minLift,
                 max = maxLift,
-                value = lift ,
-                step =  (maxLift - minLift) / 1000,
+                value = lift,
+                step = (maxLift - minLift) / 1000,
                 sep = ""
               ),
               shiny::sliderInput(
@@ -172,53 +173,49 @@ ruleExplorer <-
                 "Rule length (from-to):",
                 min = 2,
                 max = 20,
-                value = c(2, 10) ,
-                step =  1,
+                value = c(2, 10),
+                step = 1,
                 sep = ""
               ),
-              
-              shiny::em(shiny::HTML('Filter rules by items:')),
+              shiny::em(shiny::HTML("Filter rules by items:")),
               shiny::selectInput(
-                'colsType',
+                "colsType",
                 NULL,
-                c('Exclude items:' = 'rem', 'Require items:' = 'req')
+                c("Exclude items:" = "rem", "Require items:" = "req")
               ),
               shiny::uiOutput("choose_columns"),
               shiny::selectInput(
-                'colsLHSType',
+                "colsLHSType",
                 NULL,
                 c(
-                  'Exclude items from LHS:' = 'rem',
-                  'Require items in LHS:' = 'req'
+                  "Exclude items from LHS:" = "rem",
+                  "Require items in LHS:" = "req"
                 )
               ),
               shiny::uiOutput("choose_lhs"),
               shiny::selectInput(
-                'colsRHSType',
+                "colsRHSType",
                 NULL,
                 c(
-                  'Exclude items from RHS:' = 'rem',
-                  'Require items in RHS:' = 'req'
+                  "Exclude items from RHS:" = "rem",
+                  "Require items in RHS:" = "req"
                 )
               ),
               shiny::uiOutput("choose_rhs"),
               width = sidebarWidth
             ),
-            
             shiny::mainPanel(
               shiny::tabsetPanel(
-                id = 'tabs',
-                
+                id = "tabs",
                 shiny::tabPanel(
-                  'Data Table',
-                  value = 'datatable',
+                  "Data Table",
+                  value = "datatable",
                   shiny::br(),
                   DT::dataTableOutput("rulesDataTable")
                 ),
-                
                 shiny::tabPanel(
-                  'Scatter',
-                  value = 'scatter',
+                  "Scatter",
+                  value = "scatter",
                   shiny::wellPanel(
                     shiny::fluidRow(
                       shiny::column(2, shiny::uiOutput("xAxisSelectInput")),
@@ -239,49 +236,52 @@ ruleExplorer <-
                       shiny::column(3, shiny::uiOutput("topRules_scatter"))
                     )
                   ),
-                  plotly::plotlyOutput("scatterPlot", width = '100%', height =
-                      graphHeight)
+                  plotly::plotlyOutput("scatterPlot",
+                    width = "100%", height =
+                      graphHeight
+                  )
                 ),
-                
                 shiny::tabPanel(
-                  'Matrix',
-                  value = 'matrix',
+                  "Matrix",
+                  value = "matrix",
                   shiny::wellPanel(shiny::fluidRow(
                     shiny::column(6, shiny::uiOutput("cAxisSelectInput_matrix")),
                     shiny::column(6, shiny::uiOutput("topRules_matrix"))
                   )),
-                  plotly::plotlyOutput("matrixPlot", width = '100%', height =
-                      graphHeight)
+                  plotly::plotlyOutput("matrixPlot",
+                    width = "100%", height =
+                      graphHeight
+                  )
                 ),
-                
                 shiny::tabPanel(
-                  'Grouped Matrix',
-                  value = 'grouped',
+                  "Grouped Matrix",
+                  value = "grouped",
                   shiny::wellPanel(shiny::fluidRow(
                     shiny::column(6, shiny::uiOutput("cAxisSelectInput_grouped")),
                     shiny::column(6, shiny::uiOutput("kSelectInput"))
                   )),
-                  shiny::plotOutput("groupedPlot", width = '100%', height =
-                      graphHeight)
+                  shiny::plotOutput("groupedPlot",
+                    width = "100%", height =
+                      graphHeight
+                  )
                 ),
-                
                 shiny::tabPanel(
-                  'Graph',
-                  value = 'graph',
+                  "Graph",
+                  value = "graph",
                   shiny::wellPanel(shiny::fluidRow(
                     shiny::column(6, shiny::uiOutput("cAxisSelectInput_graph")),
                     shiny::column(6, shiny::uiOutput("topRules_graph"))
                   )),
-                  
-                  visNetwork::visNetworkOutput("graphPlot", width = '100%', height =
-                      graphHeight)
+                  visNetwork::visNetworkOutput("graphPlot",
+                    width = "100%", height =
+                      graphHeight
+                  )
                 ),
-                
                 shiny::tabPanel(
-                  'Export',
-                  value = 'export',
+                  "Export",
+                  value = "export",
                   shiny::br(),
-                  shiny::downloadButton('rules.csv', 'Export rules (CSV)')
+                  shiny::downloadButton("rules.csv", "Export rules (CSV)")
                 )
               ),
               width = 12 - sidebarWidth
@@ -291,64 +291,72 @@ ruleExplorer <-
       ),
       server = function(input, output, session) {
         output$numRulesOutput <- shiny::renderUI({
-          if (is(x, "rules"))
+          if (is(x, "rules")) {
             shiny::em(shiny::HTML(paste(
-              'Selected rules: ', length(rules()),
-              ' of ', length(x)
+              "Selected rules: ", length(rules()),
+              " of ", length(x)
             )))
-          else
-            shiny::em(shiny::HTML(paste('Rules: ', length(rules(
-              
-            )))))
+          } else {
+            shiny::em(shiny::HTML(paste("Rules: ", length(rules()))))
+          }
         })
-        
+
         output$kSelectInput <- shiny::renderUI({
           shiny::sliderInput(
-            'k',
-            label = 'Choose # of rule clusters',
+            "k",
+            label = "Choose # of rule clusters",
             min = 1,
             max = 50,
             step = 1,
             value = 15
           )
         })
-        
+
         output$xAxisSelectInput <- shiny::renderUI({
-          shiny::selectInput("xAxis", "X Axis:", colnames(quality(rules())), selected =
-              xIndexCached)
+          shiny::selectInput("xAxis", "X Axis:", colnames(quality(rules())),
+            selected =
+              xIndexCached
+          )
         })
-        
+
         output$yAxisSelectInput <- shiny::renderUI({
-          shiny::selectInput("yAxis", "Y Axis:", colnames(quality(rules())), selected =
-              yIndexCached)
+          shiny::selectInput("yAxis", "Y Axis:", colnames(quality(rules())),
+            selected =
+              yIndexCached
+          )
         })
-        
+
         output$cAxisSelectInput <- shiny::renderUI({
-          shiny::selectInput("cAxis", "Shading:", colnames(quality(rules())), selected =
-              zIndexCached)
+          shiny::selectInput("cAxis", "Shading:", colnames(quality(rules())),
+            selected =
+              zIndexCached
+          )
         })
-        
+
         output$cAxisSelectInput_matrix <- shiny::renderUI({
           shiny::selectInput("cAxis_matrix",
             "Shading:",
             colnames(quality(rules())),
-            selected = zIndexCached)
+            selected = zIndexCached
+          )
         })
-        
+
         output$cAxisSelectInput_grouped <- shiny::renderUI({
           shiny::selectInput("cAxis_grouped",
             "Shading:",
             colnames(quality(rules())),
-            selected = zIndexCached)
+            selected = zIndexCached
+          )
         })
-        
+
         output$cAxisSelectInput_graph <- shiny::renderUI({
           shiny::selectInput("cAxis_graph",
             "Shading:",
             colnames(quality(rules())),
-            selected = zIndexCached)
+            selected = zIndexCached
+          )
         })
-        
+
         output$topRules_matrix <- shiny::renderUI({
           shiny::sliderInput(
             "topRules_matrix",
@@ -360,7 +368,7 @@ ruleExplorer <-
             sep = ""
           )
         })
-        
+
         output$topRules_scatter <- shiny::renderUI({
           shiny::sliderInput(
             "topRules_scatter",
@@ -372,7 +380,7 @@ ruleExplorer <-
             sep = ""
           )
         })
-        
+
         output$topRules_graph <- shiny::renderUI({
           shiny::sliderInput(
             "topRules_graph",
@@ -384,19 +392,19 @@ ruleExplorer <-
             sep = ""
           )
         })
-        
+
         output$choose_columns <- shiny::renderUI({
-          shiny::selectizeInput('cols', NULL, itemLabels, multiple = TRUE)
+          shiny::selectizeInput("cols", NULL, itemLabels, multiple = TRUE)
         })
-        
+
         output$choose_lhs <- shiny::renderUI({
-          shiny::selectizeInput('colsLHS', NULL, itemLabels, multiple = TRUE)
+          shiny::selectizeInput("colsLHS", NULL, itemLabels, multiple = TRUE)
         })
-        
+
         output$choose_rhs <- shiny::renderUI({
-          shiny::selectizeInput('colsRHS', NULL, itemLabels, multiple = TRUE)
+          shiny::selectizeInput("colsRHS", NULL, itemLabels, multiple = TRUE)
         })
-        
+
         ## caching data
         cachedRules <- NULL
         cachedSupp <- supp
@@ -404,7 +412,7 @@ ruleExplorer <-
         cachedLift <- lift
         cachedMinL <- minLift
         cachedMaxL <- maxLift
-        
+
         if (is(x, "rules")) {
           cachedRules <- x
           cachedSupp <<- info(x)$support
@@ -413,16 +421,17 @@ ruleExplorer <-
           cachedMinL <<- min(size(x))
           cachedMaxL <<- max(size(x))
         }
-        
+
         # re-mine rules if necessary dataset is transactions!
         remineRules <- shiny::reactive({
           # use a minimum of 1 absolute support!
           supp <- input$supp
-          if (supp == 0)
+          if (supp == 0) {
             supp <- 1 / length(x)
-          
+          }
+
           message("Remining rules...")
-          
+
           rules <- apriori(
             x,
             parameter = list(
@@ -434,9 +443,9 @@ ruleExplorer <-
             control = list(verbose = FALSE)
           )
           quality(rules) <- interestMeasure(rules, transactions = x)
-          
+
           message("Remined ", length(rules), " rules.")
-          
+
           cachedRules <<- rules
           cachedSupp <<- input$supp
           cachedConf <<- input$conf
@@ -444,106 +453,108 @@ ruleExplorer <-
           cachedMinL <<- input$length[1]
           cachedMaxL <<- input$length[2]
         })
-        
+
         # handle warning for too low support
         override <- shiny::reactiveVal(FALSE)
-        
+
         shiny::observeEvent(input$cancel, {
           shiny::removeModal()
           # reset the slider (Note this does not change input$supp!)
           shiny::updateSliderInput(session, "supp", value = cachedSupp)
         })
-        
+
         shiny::observeEvent(input$continue, {
           shiny::removeModal()
           override(TRUE)
         })
-        
+
         rules <- shiny::reactive({
           # recalculate rules?
-          
-          if (is(x, 'transactions')) {
+
+          if (is(x, "transactions")) {
             # check for low minimum support first
             if (input$supp * length(x) > 10 || override()) {
-              if (is.null(cachedRules))
+              if (is.null(cachedRules)) {
                 remineRules()
+              }
               if ((input$supp < cachedSupp) ||
-                  input$conf < cachedConf)
+                input$conf < cachedConf) {
                 remineRules()
+              }
               if (input$length[1] < cachedMinL ||
-                  input$length[1] > cachedMaxL)
+                input$length[1] > cachedMaxL) {
                 remineRules()
-              
+              }
             } else {
               shiny::showModal(
                 shiny::modalDialog(
-                  title = 'Warning',
-                  'Very low minimum support! Too low values can result in long wait times and memory issues.',
+                  title = "Warning",
+                  "Very low minimum support! Too low values can result in long wait times and memory issues.",
                   footer = shiny::tagList(
-                    shiny::actionButton('cancel', 'cancel'),
-                    shiny::actionButton('continue', 'proceed')
+                    shiny::actionButton("cancel", "cancel"),
+                    shiny::actionButton("continue", "proceed")
                   )
                 )
               )
             }
           }
-          
+
           ar <- cachedRules
-          
+
           # filter rules
           if (input$supp > cachedSupp) {
             ar <- subset(ar, subset = support > input$supp)
           }
-          
+
           if (input$conf > cachedConf) {
             ar <- subset(ar, subset = quality(ar)$confidence > input$conf)
           }
-          
+
           if (input$lift > cachedLift) {
             ar <- subset(ar, subset = lift > input$lift)
           }
-          
+
           if (input$length[1] > cachedMinL) {
             ar <- ar[size(ar) >= input$length[1]]
           }
-          
+
           if (input$length[2] < cachedMaxL) {
             ar <- ar[size(ar) <= input$length[2]]
           }
-          
-          if (input$colsType == 'rem' && length(input$cols) > 0) {
+
+          if (input$colsType == "rem" && length(input$cols) > 0) {
             ar <- subset(ar, subset = !(items %in% input$cols))
           }
-          
-          if (input$colsType == 'req' && length(input$cols) > 0) {
+
+          if (input$colsType == "req" && length(input$cols) > 0) {
             ar <- subset(ar, subset = items %in% input$cols)
           }
-          
-          if (input$colsLHSType == 'rem' &&
-              length(input$colsLHS) > 0) {
+
+          if (input$colsLHSType == "rem" &&
+            length(input$colsLHS) > 0) {
             ar <- subset(ar, subset = !(lhs %in% input$colsLHS))
           }
-          
-          if (input$colsLHSType == 'req' &&
-              length(input$colsLHS) > 0) {
+
+          if (input$colsLHSType == "req" &&
+            length(input$colsLHS) > 0) {
             ar <- subset(ar, subset = lhs %in% input$colsLHS)
           }
-          
-          if (input$colsRHSType == 'rem' &&
-              length(input$colsRHS) > 0) {
+
+          if (input$colsRHSType == "rem" &&
+            length(input$colsRHS) > 0) {
             ar <- subset(ar, subset = !(rhs %in% input$colsRHS))
           }
-          
-          if (input$colsRHSType == 'req' &&
-              length(input$colsRHS) > 0) {
+
+          if (input$colsRHSType == "req" &&
+            length(input$colsRHS) > 0) {
             ar <- subset(ar, subset = rhs %in% input$colsRHS)
           }
-          
+
           shiny::validate()
-          
+
           ar
         })
-        
+
         # remember settings for other plots
         shiny::observe({
           shiny::req(input$xAxis)
@@ -569,23 +580,23 @@ ruleExplorer <-
           shiny::req(input$cAxis_graph)
           zIndexCached <<- input$cAxis_graph
         })
-        
+
         # Present errors nicely to the user
         handleErrors <- shiny::reactive({
           shiny::validate(
             shiny::need(
               length(rules()) > 0,
-              'No rules to visualize! Decrease support, confidence or lift.'
+              "No rules to visualize! Decrease support, confidence or lift."
             )
           )
         })
-        
+
         ## Data Table ##########################
         output$rulesDataTable <- DT::renderDT({
           handleErrors()
           inspectDT(rules())
         })
-        
+
         ## Scatter Plot ##########################
         output$scatterPlot <- plotly::renderPlotly({
           shiny::req(
@@ -599,10 +610,10 @@ ruleExplorer <-
           suppressWarnings(
             plot(
               rules(),
-              method = 'scatterplot',
+              method = "scatterplot",
               measure = c(input$xAxis, input$yAxis),
               shading = input$cAxis,
-              engine = 'htmlwidget',
+              engine = "htmlwidget",
               control = list(
                 max = input$topRules_scatter,
                 jitter = input$jitter_scatter
@@ -610,7 +621,7 @@ ruleExplorer <-
             )
           )
         })
-        
+
         ## Matrix Plot ###################
         output$matrixPlot <- plotly::renderPlotly({
           shiny::req(input$cAxis_matrix, input$topRules_matrix)
@@ -618,18 +629,18 @@ ruleExplorer <-
           suppressWarnings(
             plot(
               rules(),
-              method = 'matrix',
+              method = "matrix",
               shading = input$cAxis_matrix,
-              engine = 'htmlwidget',
+              engine = "htmlwidget",
               control = list(max = input$topRules_matrix)
             )
           )
         })
-        
+
         ## Grouped Matrix Plot ##########
-        
+
         ### FIXME: htmlWidget does not render
-        
+
         # output$groupedPlot <- plotly::renderPlotly({
         #   shiny::req(input$cAxis_grouped, input$k)
         #   handleErrors()
@@ -637,33 +648,33 @@ ruleExplorer <-
         #   plot(rules(), method='grouped', shading = input$cAxis_grouped, engine = 'htmlwidget',
         #     control=list(k=input$k))
         # })
-        
+
         output$groupedPlot <- shiny::renderPlot({
           shiny::req(input$cAxis_grouped, input$k)
           handleErrors()
-          
+
           plot(
             rules(),
-            method = 'grouped',
+            method = "grouped",
             shading = input$cAxis_grouped,
-            engine = 'ggplot2',
+            engine = "ggplot2",
             control = list(k = input$k)
           ) + theme(text = element_text(size = 14))
         })
-        
-        
-        
+
+
+
         ## Graph Plot ##########################
         output$graphPlot <- visNetwork::renderVisNetwork({
           shiny::req(input$cAxis_graph, input$topRules_graph)
           handleErrors()
-          
+
           suppressWarnings(
             plt <- plot(
               rules(),
-              method = 'graph',
+              method = "graph",
               shading = input$cAxis_graph,
-              engine = 'htmlwidget',
+              engine = "htmlwidget",
               control = list(max = input$topRules_graph)
             )
           )
@@ -679,16 +690,14 @@ ruleExplorer <-
           # plt$x$height <- 1000
           plt
         })
-        
+
         ## Export ########################
         output$rules.csv <- shiny::downloadHandler(
-          filename = 'rules.csv',
+          filename = "rules.csv",
           content = function(file) {
             utils::write.csv(as(rules(), "data.frame"), file)
           }
         )
-        
-        
       }
     )
   }

@@ -17,12 +17,16 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 limit <- function(x, max, shading = NULL, measure = NULL, quiet = FALSE) {
-  if (is.null(max)) return(x)
-  if (length(x) <= max) return(x)
-  
+  if (is.null(max)) {
+    return(x)
+  }
+  if (length(x) <= max) {
+    return(x)
+  }
+
   l <- if (!is.null(shading)) shading[1] else measure[1]
-  
-  if (!quiet)
+
+  if (!quiet) {
     warning(
       "Too many ", class(x), " supplied. Only plotting the best ",
       max, " using ",
@@ -30,9 +34,11 @@ limit <- function(x, max, shading = NULL, measure = NULL, quiet = FALSE) {
       " (change control parameter max if needed).",
       call. = FALSE
     )
-  
+  }
+
   head(x,
     n = max,
     by = l,
-    decreasing = TRUE)
+    decreasing = TRUE
+  )
 }

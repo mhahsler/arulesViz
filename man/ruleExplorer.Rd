@@ -24,13 +24,13 @@ Explore association rules using interactive manipulations and visualization
 using \pkg{shiny}.
 }
 \examples{
-
 \dontrun{
 data(Groceries)
 
 # explore pre-mined rules
-rules <- apriori(Groceries, 
-  parameter=list(support=0.001, confidence=0.8))
+rules <- apriori(Groceries,
+  parameter = list(support = 0.001, confidence = 0.8)
+)
 rules
 
 ruleExplorer(rules)

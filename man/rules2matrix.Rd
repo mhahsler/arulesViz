@@ -53,7 +53,7 @@ quality measure. The LHS itemsets can be grouped.
 \examples{
 
 data(Groceries)
-rules <- apriori(Groceries, parameter=list(support = 0.001, confidence = 0.8))
+rules <- apriori(Groceries, parameter = list(support = 0.001, confidence = 0.8))
 rules
 
 ## Matrix
@@ -66,7 +66,7 @@ plot(rules[1:10], method = "matrix")
 gm <- rules2groupedMatrix(rules, k = 10)
 gm$m
 
-# number of rules per group 
+# number of rules per group
 table(gm$clustering_rules)
 
 # get rules for group 1

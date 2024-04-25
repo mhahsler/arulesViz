@@ -35,16 +35,15 @@ Uses \pkg{datatable} to create a HTML table widget using the DataTables
 library. Rules can be interactively filtered and sorted.
 }
 \examples{
-
 \dontrun{
 data(Groceries)
-rules <- apriori(Groceries, parameter=list(support=0.005, confidence=0.5))
+rules <- apriori(Groceries, parameter = list(support = 0.005, confidence = 0.5))
 rules
 
 inspectDT(rules)
 
 # for more control on the data table, you can used DATAFRAME() to convert the rules.
-rules_df <- DATAFRAME(rules, setStart = '', setEnd = '', itemSep = ' + ')
+rules_df <- DATAFRAME(rules, setStart = "", setEnd = "", itemSep = " + ")
 rules_df$count <- NULL
 head(rules_df)
 inspectDT(rules_df)
@@ -58,7 +57,8 @@ htmlwidgets::saveWidget(p, "arules.html", selfcontained = FALSE)
 browseURL("arules.html")
 
 # clean up
-unlink(c("arules.html", "arules_files"), recursive = TRUE)}
+unlink(c("arules.html", "arules_files"), recursive = TRUE)
+}
 
 }
 \references{

@@ -172,11 +172,11 @@ coordinate plot. Currently there is no interactive version available. }
 }
 \examples{
 
-# Note: To speed example execution, not all examples are not run when using example("plot"). 
-# Use example("plot", run.dontrun = TRUE) to run all examples.
+# Note: To speed example execution, not all examples are not run when using example("plot").
+# Use example("plot") to run all examples.
 
 data(Groceries)
-rules <- apriori(Groceries, parameter=list(support = 0.001, confidence = 0.8))
+rules <- apriori(Groceries, parameter = list(support = 0.001, confidence = 0.8))
 rules
 
 ## Getting help
@@ -197,32 +197,34 @@ plot(rules, method = "scatterplot", engine = "ggplot2", control = "help")
 #  Display a scatter plot using two quality measures
 plot(rules)
 
-# Scatter plot with custom measures and limiting the plot to the 100 with the 
-# largest value for for the shading measure. 
+# Scatter plot with custom measures and limiting the plot to the 100 with the
+# largest value for for the shading measure.
 plot(rules, measure = c("support", "lift"), shading = "confidence", limit = 100)
 
 \dontrun{
 # Custom color scale, labels, theme and no title (ggplot2)
 library(ggplot2)
-plot(rules, engine = "ggplot2", main = NULL, limit = 100) + 
-  scale_color_gradient2(low = "red", mid = "gray90", high = "blue", 
-    midpoint = 1, limits = c(0,12)) +
-  labs(x = "Supp.", y = "Conf.", color = "Lift") + 
+plot(rules, engine = "ggplot2", main = NULL, limit = 100) +
+  scale_color_gradient2(
+    low = "red", mid = "gray90", high = "blue",
+    midpoint = 1, limits = c(0, 12)
+  ) +
+  labs(x = "Supp.", y = "Conf.", color = "Lift") +
   theme_classic()
 
 # Interactive scatter plot using the grid engine (selected rules are returned)
-if(interactive()) {
+if (interactive()) {
   sel <- plot(rules, engine = "interactive")
 
-# Create a html widget for interactive visualization (uses plotly)
+  # Create a html widget for interactive visualization (uses plotly)
   plot(rules, engine = "htmlwidget")
-  }
+}
 }
 
 # Two-key plot (a scatter plot with shading = "order")
 plot(rules, method = "two-key plot", limit = 100)
 
-  
+
 ## Matrix shading
 #  Display rules as a matrix with RHS itemsets as rows and LHS itemsets as columns
 
@@ -230,15 +232,15 @@ plot(rules, method = "two-key plot", limit = 100)
 subrules <- subset(rules, lift > 5)
 subrules
 
-# 2D matrix with shading (ggplot2). The LHS and RHS are reordered so 
+# 2D matrix with shading (ggplot2). The LHS and RHS are reordered so
 # that rules with similar lift are displayed close to each other.
 plot(subrules, method = "matrix")
 
 \dontrun{
-# Interactive matrix plot 
-# * Engine interactive: identify rules by clicking on them (click outside to end) 
+# Interactive matrix plot
+# * Engine interactive: identify rules by clicking on them (click outside to end)
 # * Engine htmlwidget: hoover over rules to identify
-if(interactive()) {
+if (interactive()) {
   plot(subrules, method = "matrix", engine = "interactive")
   plot(subrules, method = "matrix", engine = "htmlwidget")
 }
@@ -247,35 +249,38 @@ if(interactive()) {
 
 ## Grouped matrix plot
 # Default engine is ggplot2
-plot(rules, method="grouped matrix", k = 5)
+plot(rules, method = "grouped matrix", k = 5)
 
 \dontrun{
 # Create a htmlwidget
 plot(rules, method = "grouped matrix", engine = "htmlwidget")
 
 # Interactive grouped matrix plot
-if(interactive()){
-  sel <- plot(rules, method="grouped matrix", engine = "interactive")
+if (interactive()) {
+  sel <- plot(rules, method = "grouped matrix", engine = "interactive")
 }
 }
 
 ## Graph representation
 # Default engine is ggplot2 with ggraph. Associations are represented as nodes.
-# We limit the number of rules to the 10 with the larges 
+# We limit the number of rules to the 10 with the larges
 # lift (measure used for shading)
 plot(subrules, method = "graph", limit = 10)
 
 \dontrun{
 # Circular layout (see? ggraph for the meaning of the arguments)
-plot(subrules, method = "graph", layout = 'linear', circular = TRUE, limit = 10)
+plot(subrules, method = "graph", layout = "linear", circular = TRUE, limit = 10)
 
 # Use igraph layouts (algorithm is passes on as ... to ggraph)
-plot(subrules, method = "graph", layout = 'igraph', 
-  ggraphdots = list(algorithm = 'graphopt', spring.const = 1, mass = 10), limit = 10)
+plot(subrules,
+  method = "graph", layout = "igraph",
+  ggraphdots = list(algorithm = "graphopt", spring.const = 1, mass = 10), limit = 10
+)
 
 # Specify edge and node representation
 library(ggplot2)
-plot(subrules, method = "graph", 
+plot(subrules,
+  method = "graph",
   control = list(
     edges = ggraph::geom_edge_link(
       end_cap = ggraph::circle(4, "mm"),
@@ -284,51 +289,58 @@ plot(subrules, method = "graph",
       arrow = arrow(length = unit(2, "mm"), angle = 20, type = "closed"),
       alpha = .2
     ),
-    nodes = ggraph::geom_node_point(aes_string(size = "support", color = "lift")),
-    nodetext = ggraph::geom_node_label(aes_string(label = "label"), alpha = .8, repel = TRUE)
+    nodes = ggraph::geom_node_point(aes(size = support, color = lift)),
+    nodetext = ggraph::geom_node_label(aes(label = label), alpha = .8, repel = TRUE)
   ),
   limit = 10
-  ) + 
-  scale_color_gradient(low = "yellow", high = "red") + 
-  scale_size(range = c(2, 10)) 
+) +
+  scale_color_gradient(low = "yellow", high = "red") +
+  scale_size(range = c(2, 10))
 
-# ggplot also can represent associations as edges. Here a rules is represented as a set of 
-# arrows going from the LHS items to the RHS item. 
+# ggplot also can represent associations as edges. Here a rules is represented as a set of
+# arrows going from the LHS items to the RHS item.
 plot(subrules, method = "graph", asEdges = TRUE, limit = 10)
 plot(subrules, method = "graph", asEdges = TRUE, circular = FALSE, limit = 10)
 }
 
 # Engine igraph
 plot(subrules, method = "graph", engine = "igraph", limit = 10)
-plot(subrules, method = "graph", engine = "igraph",
+plot(subrules,
+  method = "graph", engine = "igraph",
   nodeCol = grey.colors(10), edgeCol = grey(.7), alpha = 1,
-  limit = 10)
+  limit = 10
+)
 
-# Use plot_options to alter any aspect of the graph 
+# Use plot_options to alter any aspect of the graph
 # (see: https://igraph.org/r/doc/plot.common.html)
-plot(subrules, method = "graph", engine = "igraph",
+plot(subrules,
+  method = "graph", engine = "igraph",
   plot_options = list(
-    edge.lty = 2, 
-    vertex.label.cex = .6, 
-    margin = c(.1,.1,.1,.1), 
-    asp = .5),
-  limit = 10)
+    edge.lty = 2,
+    vertex.label.cex = .6,
+    margin = c(.1, .1, .1, .1),
+    asp = .5
+  ),
+  limit = 10
+)
 
 # igraph layout generators can be used (see ? igraph::layout_)
-plot(subrules, method="graph", engine = "igraph", layout = igraph::in_circle(), limit = 10)
+plot(subrules, method = "graph", engine = "igraph", layout = igraph::in_circle(), limit = 10)
 
 \dontrun{
 # Graph rendering using engine graphviz
 plot(subrules, method = "graph", engine = "graphviz", limit = 10)
 
-if(interactive()) {
-# Default interactive plot (using igraph's tkplot)
+if (interactive()) {
+  # Default interactive plot (using igraph's tkplot)
   plot(subrules, method = "graph", engine = "interactive", limit = 10)
 
-# Interactive graph as a html widget (using igraph layout)
+  # Interactive graph as a html widget (using igraph layout)
   plot(subrules, method = "graph", engine = "htmlwidget", limit = 10)
-  plot(subrules, method = "graph", engine = "htmlwidget", 
-    igraphLayout = "layout_in_circle", limit = 10)
+  plot(subrules,
+    method = "graph", engine = "htmlwidget",
+    igraphLayout = "layout_in_circle", limit = 10
+  )
 }
 }
 
@@ -338,7 +350,7 @@ plot(subrules, method = "paracoord", limit = 10)
 
 ## Doubledecker and mosaic plot
 # Uses functions in package vcd
-# Notes: doubledecker and mosaic plots only visualize a single rule 
+# Notes: doubledecker and mosaic plots only visualize a single rule
 # and the transaction set is needed.
 oneRule <- sample(rules, 1)
 inspect(oneRule)
@@ -356,7 +368,7 @@ plot(itemsets, method = "graph", limit = 10)
 
 \dontrun{
 plot(itemsets, method = "graph", asEdges = TRUE, limit = 10)
-plot(itemsets, method = "graph", asEdges = TRUE, circular = FALSE, limit = 10) + 
+plot(itemsets, method = "graph", asEdges = TRUE, circular = FALSE, limit = 10) +
   theme(plot.margin = margin(10, 10, 30, 20, "mm"))
 }
 
@@ -400,9 +412,9 @@ Moghaddess, and A. Oztekin, editors, 11th INFORMS Workshop on Data Mining
 and Decision Analytics (DM-DA 2016).
 }
 \seealso{
-\code{\link[scatterplot3d]{scatterplot3d}} in \pkg{scatterplot3d},
-\code{\link[igraph]{plot.igraph}} and \code{\link[igraph]{tkplot}} in
-\pkg{igraph}, \code{\link[seriation]{seriate}} in \pkg{seriation}
+\code{\link[scatterplot3d:scatterplot3d]{scatterplot3d::scatterplot3d()}},
+\code{\link[igraph:plot.igraph]{igraph::plot.igraph()}} and \code{\link[igraph:tkplot]{igraph::tkplot()}},
+\code{\link[seriation:seriate]{seriation::seriate()}}.
 }
 \author{
 Michael Hahsler and Sudheer Chelluboina. Some visualizations are

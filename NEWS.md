@@ -1,7 +1,9 @@
-# arulesViz 1.5.2-1 (xx/xx/2023)
+# arulesViz 1.5.3 (04/25/2024)
 
 ## Changes
 * We use now roxygen for documentation.
+* Updated deprecated function calls for ggplot2 and igraph.
+* Added test_that to test complete man pages locally (including dontrun sections)
 
 # arulesViz 1.5-2 (03/03/2023)
 

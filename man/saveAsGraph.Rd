@@ -21,7 +21,7 @@ represented by edges?}
 \item{file}{file name.}
 
 \item{format}{file format (e.g., "edgelist", "graphml", "dimacs", "gml",
-"dot"). See \code{\link[igraph:write.graph]{igraph::write.graph()}}.}
+"dot"). See \code{\link[igraph:write_graph]{igraph::write_graph()}}.}
 
 \item{...}{further arguments are passed on to \code{associations2igraph()}.}
 }
@@ -44,7 +44,7 @@ undirected edges for each pair of item in the itemset are created.
 \examples{
 
 data("Groceries")
-rules <- apriori(Groceries, parameter=list(support = 0.01, confidence = 0.5))
+rules <- apriori(Groceries, parameter = list(support = 0.01, confidence = 0.5))
 
 # convert rules into a graph with rules as nodes
 library("igraph")
@@ -59,7 +59,7 @@ as_tbl_graph(g)
 
 # convert the generating itemsets of the rules into a graph with itemsets as edges
 itemsets <- generatingItemsets(rules)
-itemsets 
+itemsets
 g <- associations2igraph(itemsets, associationsAsNodes = FALSE)
 g
 
@@ -71,10 +71,6 @@ saveAsGraph(rules, "rules.graphml")
 ## clean up
 unlink("rules.graphml")
 
-}
-\seealso{
-\code{\link{plot}}, \code{\link[igraph]{write.graph}} in
-\pkg{igraph}
 }
 \author{
 Michael Hahsler

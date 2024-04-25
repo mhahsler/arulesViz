@@ -19,26 +19,33 @@
 
 ### default with alpha
 .nodeColors <- function(alpha = NULL) {
-  if (is.null(alpha))
+  if (is.null(alpha)) {
     alpha <- 1
-  c(grDevices::rgb(.4, .8, .4, alpha),
-    grDevices::rgb(.6, .6, .8, alpha))
+  }
+  c(
+    grDevices::rgb(.4, .8, .4, alpha),
+    grDevices::rgb(.6, .6, .8, alpha)
+  )
 }
 
 
 #' @rdname saveAsGraph
-#' @export 
+#' @export
 associations2igraph <- function(x, associationsAsNodes = TRUE) {
-  if (associationsAsNodes) associations2igraph_nodes(x)
-  else associations2igraph_edges(x)
+  if (associationsAsNodes) {
+    associations2igraph_nodes(x)
+  } else {
+    associations2igraph_edges(x)
+  }
 }
 
 associations2igraph_nodes <- function(x) {
   # only used items
   itemNodes <- which(itemFrequency(items(x),
-    type = "absolute") > 0)
-  assocNodes <- paste("assoc", 1:length(x), sep = '')
-  
+    type = "absolute"
+  ) > 0)
+  assocNodes <- paste("assoc", 1:length(x), sep = "")
+
   ## add rhs for rules
   if (is(x, "rules")) {
     lhs <- LIST(lhs(x), decode = FALSE)
@@ -55,24 +62,26 @@ associations2igraph_nodes <- function(x) {
     from_rhs <- integer(0)
     to_rhs <- integer(0)
   }
-  
+
   e.list <- cbind(c(from_lhs, from_rhs), c(to_lhs, to_rhs))
   v.labels <- data.frame(
     name = c(as.character(itemNodes), assocNodes),
-    #label = c(itemLabels(x)[itemNodes], rep("", length(assocNodes))),
+    # label = c(itemLabels(x)[itemNodes], rep("", length(assocNodes))),
     label = c(itemLabels(x)[itemNodes], rep(NA, length(assocNodes))),
     index = c(itemNodes, seq_along(assocNodes)),
     type = c(rep(1, length(itemNodes)), rep(2, length(assocNodes))),
     stringsAsFactors = FALSE
   )
-  
+
   g <-
-    igraph::graph.data.frame(e.list, directed = is(x, "rules"), vertices = v.labels)
-  
+    igraph::graph_from_data_frame(e.list, directed = is(x, "rules"), vertices = v.labels)
+
   ## add quality measures
   for (m in names(quality(x))) {
-    g <- igraph::set.vertex.attribute(g, m, which(v.labels$type == 2),
-      quality(x)[[m]])
+    g <- igraph::set_vertex_attr(
+      g, m, which(v.labels$type == 2),
+      quality(x)[[m]]
+    )
   }
   g
 }
@@ -80,23 +89,24 @@ associations2igraph_nodes <- function(x) {
 associations2igraph_edges <- function(x) {
   # only used items
   itemNodes <- which(itemFrequency(items(x),
-    type = "absolute") > 0)
-  
+    type = "absolute"
+  ) > 0)
+
   ## add rhs for rules
   if (is(x, "rules")) {
     lhs <- LIST(lhs(x), decode = FALSE)
-    edges_per_assoc <- sapply(lhs, length) 
+    edges_per_assoc <- sapply(lhs, length)
     lhs <- unlist(lhs)
     rhs <- unlist(LIST(rhs(x), decode = FALSE))
     rhs <- rep(rhs, times = edges_per_assoc)
-    edges <- cbind(lhs, rhs) 
+    edges <- cbind(lhs, rhs)
   } else {
     items <- LIST(items(x), decode = FALSE)
     edges <- lapply(items, utils::combn, 2)
-    edges_per_assoc <- sapply(edges, ncol) 
+    edges_per_assoc <- sapply(edges, ncol)
     edges <- t(matrix(unlist(edges), nrow = 2))
   }
-  
+
   e.list <- cbind(edges, index = rep(seq_along(x), times = edges_per_assoc))
   v.labels <- data.frame(
     name = as.character(itemNodes),
@@ -104,23 +114,25 @@ associations2igraph_edges <- function(x) {
     index = itemNodes,
     stringsAsFactors = FALSE
   )
-  
+
   g <-
-    igraph::graph.data.frame(e.list, directed = is(x, "rules"), vertices = v.labels)
-  
+    igraph::graph_from_data_frame(e.list, directed = is(x, "rules"), vertices = v.labels)
+
   ## add quality measures
   for (m in names(quality(x))) {
-    g <- igraph::set.edge.attribute(g, m,
-      value = rep(quality(x)[[m]], times = edges_per_assoc))
+    g <- igraph::set_edge_attr(g, m,
+      value = rep(quality(x)[[m]], times = edges_per_assoc)
+    )
   }
   g
 }
 
-graphplot <- function(x,
-  measure = "support",
-  shading = "lift",
-  control = NULL,
-  ...) {
+graphplot <- function(
+    x,
+    measure = "support",
+    shading = "lift",
+    control = NULL,
+    ...) {
   engines <-
     c(
       "default",
@@ -132,28 +144,32 @@ graphplot <- function(x,
       "htmlwidget"
     )
   if (control$engine == "help") {
-    message("Available engines for this plotting method are:\n",
-      paste0(engines, collapse = ", "))
+    message(
+      "Available engines for this plotting method are:\n",
+      paste0(engines, collapse = ", ")
+    )
     return(invisible(engines))
   }
-  
+
   ## check if shading measure is available
-  if (!is.null(shading) && is.null(quality(x)[[shading]]))
+  if (!is.null(shading) && is.null(quality(x)[[shading]])) {
     shading <- NULL
-  
+  }
+
   m <- pmatch(control$engine, engines, nomatch = 0)
-  if (m == 0)
+  if (m == 0) {
     stop(
       "Unknown engine: ",
       sQuote(control$engine),
       " Valid engines: ",
       paste(sQuote(engines), collapse = ", ")
     )
+  }
   control$engine <- engines[m]
-  
+
   ### FIXME: fix max and control
   if (pmatch(control$engine, c("visNetwork", "htmlwidget"), nomatch = 0) >
-      0) {
+    0) {
     return(graph_visNetwork(
       x,
       measure = measure,
@@ -161,10 +177,10 @@ graphplot <- function(x,
       control = control,
       ...
     ))
-    
   } else if (pmatch(control$engine,
     c("igraph", "interactive", "graphviz"),
-    nomatch = 0) > 0) {
+    nomatch = 0
+  ) > 0) {
     return(graph_igraph(
       x,
       measure = measure,
@@ -173,7 +189,7 @@ graphplot <- function(x,
       ...
     ))
   }
-  
+
   ## default is ggplot2 with ggnetwork
   return(graph_ggplot2(
     x,

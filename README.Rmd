@@ -3,7 +3,7 @@ output: github_document
 ---
 
 ```{r echo=FALSE, results = 'asis'}
-pkg <- 'arulesViz'
+pkg <- "arulesViz"
 
 source("https://raw.githubusercontent.com/mhahsler/pkg_helpers/main/pkg_helpers.R")
 pkg_title(pkg)
