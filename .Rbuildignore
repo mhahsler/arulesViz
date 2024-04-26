@@ -4,6 +4,6 @@ proj$
 ^.*\.Rproj$
 ^LICENSE
 README.Rmd
-^Work/
+^Work
 ^_config\.yml
 ^\.github$

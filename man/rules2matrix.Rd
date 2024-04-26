@@ -82,7 +82,7 @@ rules in hierarchical groups. Journal of Business Economics, 87(3):317--335,
 May 2016. \doi{10.1007/s11573-016-0822-8}.
 }
 \seealso{
-\code{\link{plot}} for rules using \code{method = 'matrix'} and
+\code{\link[=plot]{plot()}} for rules using \code{method = 'matrix'} and
 \code{method = 'grouped matrix'}.
 }
 \author{

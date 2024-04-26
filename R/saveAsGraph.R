@@ -38,7 +38,7 @@
 #' @param format file format (e.g., "edgelist", "graphml", "dimacs", "gml",
 #' "dot"). See [`igraph::write_graph()`].
 #' @param ...  further arguments are passed on to `associations2igraph()`.
-#' @return \code{associations2igraph} returns an igraph object.
+#' @return `associations2igraph` returns an igraph object.
 #' @author Michael Hahsler
 #' @keywords file
 #' @examples

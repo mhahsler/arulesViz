@@ -35,16 +35,16 @@
 #' @param lhs_label_items number of top items used to name LHS itemset groups
 #' (columns).
 #' @param ...  passed on to [`arules::DATAFRAME()`].
-#' @return \code{rules2matrix} returns a matrix with quality values.
+#' @return `rules2matrix` returns a matrix with quality values.
 #'
-#' \code{rules2groupedMatrix} returns a list with elements
+#' `rules2groupedMatrix` returns a list with elements
 #' \item{m}{ the
 #' grouped matrix for measure. }
 #' \item{m2}{ the grouped matrix for measure2. }
 #' \item{clustering_rules}{ vector with group assignment for each rule. }
 #' @author Michael Hahsler
-#' @seealso \code{\link{plot}} for rules using \code{method = 'matrix'} and
-#' \code{method = 'grouped matrix'}.
+#' @seealso [plot()] for rules using `method = 'matrix'` and
+#' `method = 'grouped matrix'`.
 #' @references Michael Hahsler and Radoslaw Karpienko. Visualizing association
 #' rules in hierarchical groups. Journal of Business Economics, 87(3):317--335,
 #' May 2016. \doi{10.1007/s11573-016-0822-8}.

@@ -27,9 +27,9 @@
 #' @param ...  additional arguments are passed on to [`DT::datatable()`].
 #' @return A datatable htmlwidget.
 #' @author Michael Hahsler
-#' @seealso \code{\link[DT]{datatable}} in \pkg{DT}.
+#' @seealso [DT::datatable()] in \pkg{DT}.
 #' @references Hahsler M (2017). arulesViz: Interactive Visualization of
-#' Association Rules with R. \emph{R Journal,} 9(2):163-175. ISSN 2073-4859.
+#' Association Rules with R. *R Journal,* 9(2):163-175. ISSN 2073-4859.
 #' \doi{10.32614/RJ-2017-047}.
 #' @keywords print
 #' @examples

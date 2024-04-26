@@ -30,14 +30,14 @@
 #' Most visualization techniques are described by Bruzzese and Davino (2008),
 #' however, we added more color shading, reordering and interactive features
 #' (see Hahsler, 2017). Many visualization methods take extra parameters as the
-#' \code{control} parameter list. Although, we have tried to keep control
+#' `control` parameter list. Although, we have tried to keep control
 #' parameters consistent, the available control parameters vary from
-#' visualization method to visualization method. You can specift \code{"help"}
-#' for \code{method}, \code{engine}, or \code{control} to get a list of
+#' visualization method to visualization method. You can specift `"help"`
+#' for `method`, `engine`, or `control` to get a list of
 #' available settings.
 #'
 #' Note on HTML widgets: HTML widgets tend to get very slow or unresponsive for
-#' too many rules. To prevent this situation, the control parameter \code{max}
+#' too many rules. To prevent this situation, the control parameter `max`
 #' sets a limit, and the user is warned if the limit is reached.
 #'
 #' The following visualization method are available:
@@ -53,10 +53,10 @@
 #' \item{"matrix"}{ Arranges the association rules as a matrix with the
 #' itemsets in the antecedents on one axis and the itemsets in the consequents
 #' on the other.  The measure of interestingness (first element of
-#' \code{measure}) is either visualized by a color (darker means a higher value
+#' `measure`) is either visualized by a color (darker means a higher value
 #' for the measure) or as the height of a bar (engine "3d").  The control
-#' parameter \code{reorder} takes the values \code{"none"}, \code{"measure"},
-#' \code{"support/confidence"}, or \code{"similarity"} and can be used to
+#' parameter `reorder` takes the values `"none"`, `"measure"`,
+#' `"support/confidence"`, or `"similarity"` and can be used to
 #' reorder LHS and RHS of the rules differntly. The default reordering average
 #' measure (typically lift) pushing the rules with the highest lift value to
 #' the top-left corner of the plot.  }
@@ -93,7 +93,7 @@
 #' pointing to the item. }
 #'
 #' \item{"doubledecker", "mosaic"}{ Represents a single rule as a doubledecker
-#' or mosaic plot. Parameter \code{data} has to be specified to compute the
+#' or mosaic plot. Parameter `data` has to be specified to compute the
 #' needed contingency table. No interactive version is available. }
 #'
 #' \item{"paracoord"}{ Represents the rules (or itemsets) as a parallel
@@ -114,13 +114,13 @@
 #' @param measure measure(s) of interestingness (e.g., "support", "confidence",
 #' "lift", "order") used in the visualization. Some visualization methods need
 #' one measure, others take a vector with two measures (e.g., scatterplot). In
-#' some plots (e.g., graphs) \code{NA} can be used to suppress using a measure.
+#' some plots (e.g., graphs) `NA` can be used to suppress using a measure.
 #' @param shading measure of interestingness used for the color of the
 #' points/arrows/nodes (e.g., "support", "confidence", "lift"). The default is
-#' "lift".  \code{NULL} can be often used to suppress shading.
+#' "lift".  `NULL` can be often used to suppress shading.
 #' @param limit A limit on the number of associations displayed. The top limit
 #' associations according to the measure specified in shading are chosen.
-#' @param interactive deprecated. See parameter \code{engine} below.
+#' @param interactive deprecated. See parameter `engine` below.
 #' @param engine a string indicating the plotting engine used to render the
 #' plot.  The "default" engine uses (mostly) \pkg{ggplot2}.  Other engines
 #' include "base" (base R plots), "grid", "interactive", "plotly",
@@ -135,7 +135,7 @@
 #' Specify "help" to get a complete list of available control parameters and
 #' their default values.
 #' @param \dots Further arguments are added for convenience to the
-#' \code{control} list.
+#' `control` list.
 #' @return Several interactive plots return a set of selected rules/itemsets.
 #' Other plots might return other data structures. For example, graph-based
 #' plots return the graph (invisibly). Engine "htmlwidget" always returns an

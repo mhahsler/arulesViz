@@ -39,8 +39,9 @@ graph_nodes_ggplot2 <- function(
     shading <- NULL
   }
 
-  # NULLify
+  # NULLify for checker
   label <- NULL
+  type <- NULL
 
   control <- c(control, list(...))
   control <- .get_parameters(
