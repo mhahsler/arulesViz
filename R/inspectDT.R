@@ -32,8 +32,7 @@
 #' Association Rules with R. *R Journal,* 9(2):163-175. ISSN 2073-4859.
 #' \doi{10.32614/RJ-2017-047}.
 #' @keywords print
-#' @examples
-#' \dontrun{
+#' @examplesif requireNamespace("datatable", quietly = TRUE)
 #' data(Groceries)
 #' rules <- apriori(Groceries, parameter = list(support = 0.005, confidence = 0.5))
 #' rules
@@ -56,8 +55,6 @@
 #'
 #' # clean up
 #' unlink(c("arules.html", "arules_files"), recursive = TRUE)
-#' }
-#'
 #' @export
 inspectDT <- function(x, ...) {
   UseMethod("inspectDT", x)

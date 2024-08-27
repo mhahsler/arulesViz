@@ -24,21 +24,19 @@ Explore association rules using interactive manipulations and visualization
 using \pkg{shiny}.
 }
 \examples{
-\dontrun{
-data(Groceries)
+\dontshow{if (FALSE ) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+# this example can only be run manually from the console.
 
-# explore pre-mined rules
-rules <- apriori(Groceries,
-  parameter = list(support = 0.001, confidence = 0.8)
-)
-rules
+# explore pre-mined rules 
+data(Groceries)
+rules <- apriori(Groceries, parameter = 
+    list(support = 0.001, confidence = 0.8))
 
 ruleExplorer(rules)
 
 # mine and explore rules on the fly
-data(iris)
 ruleExplorer(iris)
-}
+\dontshow{\}) # examplesIf}
 }
 \references{
 Hahsler M (2017). arulesViz: Interactive Visualization of
@@ -46,8 +44,7 @@ Association Rules with R. \emph{R Journal,} 9(2):163-175. ISSN 2073-4859.
 \doi{10.32614/RJ-2017-047}.
 }
 \seealso{
-\code{\link[=plot]{plot()}} with \code{engine = "html"},
-\code{\link[=inspectDT]{inspectDT()}}, \code{\link[arules:apriori]{arules::apriori()}}.
+\code{\link[=plot]{plot()}} with \code{engine = "html"}, \code{\link[=inspectDT]{inspectDT()}}, \code{\link[arules:apriori]{arules::apriori()}}.
 }
 \author{
 Tyler Giallanza and Michael Hahsler.  Adapted from functions

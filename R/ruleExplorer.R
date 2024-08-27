@@ -29,34 +29,29 @@
 #' @aliases ruleExplorer explore
 #' @param x a set of rules, a transactions object or a data.frame.
 #' @param sidebarWidth width of the sidebar as a number between 0 (= 0% of the
-#' display width) and 12 (= 100% of the display width).
+#'   display width) and 12 (= 100% of the display width).
 #' @param graphHeight height of the plots in pixels. Increase if you have a
-#' larger/higher resolution display.
+#'   larger/higher resolution display.
 #' @return returns a shiny app.
 #' @author Tyler Giallanza and Michael Hahsler.  Adapted from functions
-#' originally created by Andrew Brooks. See
-#' [Rsenal](https://github.com/brooksandrew/Rsenal) for the original code.
-#' @seealso [plot()] with `engine = "html"`,
-#' [inspectDT()], [arules::apriori()].
+#'   originally created by Andrew Brooks. See
+#'   [Rsenal](https://github.com/brooksandrew/Rsenal) for the original code.
+#' @seealso [plot()] with `engine = "html"`, [inspectDT()], [arules::apriori()].
 #' @references Hahsler M (2017). arulesViz: Interactive Visualization of
-#' Association Rules with R. *R Journal,* 9(2):163-175. ISSN 2073-4859.
-#' \doi{10.32614/RJ-2017-047}.
-#' @examples
-#' \dontrun{
+#'   Association Rules with R. *R Journal,* 9(2):163-175. ISSN 2073-4859.
+#'   \doi{10.32614/RJ-2017-047}.
+#' @examplesIf FALSE 
+#' # this example can only be run manually from the console.
+#' 
+#' # explore pre-mined rules 
 #' data(Groceries)
-#'
-#' # explore pre-mined rules
-#' rules <- apriori(Groceries,
-#'   parameter = list(support = 0.001, confidence = 0.8)
-#' )
-#' rules
+#' rules <- apriori(Groceries, parameter = 
+#'     list(support = 0.001, confidence = 0.8))
 #'
 #' ruleExplorer(rules)
 #'
 #' # mine and explore rules on the fly
-#' data(iris)
 #' ruleExplorer(iris)
-#' }
 #' @export
 ruleExplorer <-
   function(

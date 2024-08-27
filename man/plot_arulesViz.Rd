@@ -171,7 +171,6 @@ coordinate plot. Currently there is no interactive version available. }
 }
 }
 \examples{
-
 # Note: To speed example execution, not all examples are not run when using example("plot").
 # Use example("plot") to run all examples.
 

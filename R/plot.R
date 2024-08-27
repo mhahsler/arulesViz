@@ -163,7 +163,6 @@
 #' and Decision Analytics (DM-DA 2016).
 #' @keywords hplot
 #' @examples
-#'
 #' # Note: To speed example execution, not all examples are not run when using example("plot").
 #' # Use example("plot") to run all examples.
 #'

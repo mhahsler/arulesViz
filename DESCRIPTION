@@ -1,48 +1,52 @@
 Package: arulesViz
-Version: 1.5.3
-Date: 2024-04-25
 Title: Visualizing Association Rules and Frequent Itemsets
+Version: 1.5.3-1
+Date: 2024-xx-xx
 Authors@R: c(
-      person("Michael", "Hahsler", role = c("aut", "cre", "cph"),
-        email = "mhahsler@lyle.smu.edu",
-	      comment = c(ORCID = "0000-0003-2716-1405")),
-	    person("Giallanza", "Tyler", role = c("ctb")),
-      person("Sudheer", "Chelluboina", role = c("ctb"))
-      )
-Depends: arules (>= 1.6.0) 
-Imports: graphics, 
-  methods, 
-  utils, 
-  grDevices, 
-  stats, 
-  seriation, 
-  grid,
-  vcd, 
-  igraph, 
-  scatterplot3d, 
-  ggplot2,
-  ggraph,
-  tibble, 
-  tidyr, 
-  dplyr, 
-  DT, 
-  plotly, 
-  visNetwork
+    person("Michael", "Hahsler", , "mhahsler@lyle.smu.edu", role = c("aut", "cre", "cph"),
+           comment = c(ORCID = "0000-0003-2716-1405")),
+    person("Giallanza", "Tyler", role = "ctb"),
+    person("Sudheer", "Chelluboina", role = "ctb")
+  )
+Description: Extends package 'arules' with various visualization
+    techniques for association rules and itemsets. The package also
+    includes several interactive visualizations for rule exploration.
+    Michael Hahsler (2017) <doi:10.32614/RJ-2017-047>.
+License: GPL-3
+URL: https://github.com/mhahsler/arulesViz
+BugReports: https://github.com/mhahsler/arulesViz/issues
+Depends: 
+    arules (>= 1.6.0)
+Imports: 
+    dplyr,
+    DT,
+    ggplot2,
+    ggraph,
+    graphics,
+    grDevices,
+    grid,
+    igraph,
+    methods,
+    plotly,
+    scatterplot3d,
+    seriation,
+    stats,
+    tibble,
+    tidyr,
+    utils,
+    vcd,
+    visNetwork
 Suggests: 
     datasets,
     graph,
+    htmlwidgets,
     Rgraphviz,
-    tidygraph,
     shiny,
     shinythemes,
-    htmlwidgets,
-    testthat (>= 3.0.0)
-Description: Extends package 'arules' with various visualization techniques for association rules and itemsets. The package also includes several interactive visualizations for rule exploration. Michael Hahsler (2017) <doi:10.32614/RJ-2017-047>.
-License: GPL-3
-Encoding: UTF-8
-RoxygenNote: 7.3.1
-Roxygen: list(markdown = TRUE)
-URL: https://github.com/mhahsler/arulesViz
-BugReports: https://github.com/mhahsler/arulesViz/issues
-Copyright: (C) 2021 Michael Hahsler
+    testthat (>= 3.0.0),
+    tidygraph
 Config/testthat/edition: 3
+Copyright: (C) 2021 Michael Hahsler
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
