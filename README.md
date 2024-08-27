@@ -1,12 +1,12 @@
 
 # <img src="man/figures/logo.svg" align="right" height="139" /> R package arulesViz - Visualizing Association Rules and Frequent Itemsets
 
-[![CRAN
-version](http://www.r-pkg.org/badges/version/arulesViz)](https://CRAN.R-project.org/package=arulesViz)
-[![stream r-universe
+[![r-universe
 status](https://mhahsler.r-universe.dev/badges/arulesViz)](https://mhahsler.r-universe.dev/arulesViz)
+[![Package on
+CRAN](https://www.r-pkg.org/badges/version/arulesViz)](https://CRAN.R-project.org/package=arulesViz)
 [![CRAN RStudio mirror
-downloads](http://cranlogs.r-pkg.org/badges/arulesViz)](https://CRAN.R-project.org/package=arulesViz)
+downloads](https://cranlogs.r-pkg.org/badges/arulesViz)](https://CRAN.R-project.org/package=arulesViz)
 
 ## Introduction
 
@@ -76,7 +76,8 @@ install.packages("arulesViz")
 
 ``` r
 install.packages("arulesViz",
-    repos = c("https://mhahsler.r-universe.dev". "https://cloud.r-project.org/"))
+    repos = c("https://mhahsler.r-universe.dev",
+              "https://cloud.r-project.org/"))
 ```
 
 ## Usage
