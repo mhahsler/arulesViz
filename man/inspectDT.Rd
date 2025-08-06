@@ -34,6 +34,31 @@ A datatable htmlwidget.
 Uses \pkg{datatable} to create a HTML table widget using the DataTables
 library. Rules can be interactively filtered and sorted.
 }
+\examples{
+
+data(Groceries)
+rules <- apriori(Groceries, parameter = list(support = 0.005, confidence = 0.5))
+rules
+
+inspectDT(rules)
+
+# for more control on the data table, you can used DATAFRAME() to convert the rules.
+rules_df <- DATAFRAME(rules, setStart = "", setEnd = "", itemSep = " + ")
+rules_df$count <- NULL
+head(rules_df)
+inspectDT(rules_df)
+
+# Save HTML widget as web page
+p <- inspectDT(rules)
+htmlwidgets::saveWidget(p, "arules.html", selfcontained = FALSE)
+# Note: self-contained seems to make the browser slow.
+
+# inspect the widget
+browseURL("arules.html")
+
+# clean up
+unlink(c("arules.html", "arules_files"), recursive = TRUE)
+}
 \references{
 Hahsler M (2017). arulesViz: Interactive Visualization of
 Association Rules with R. \emph{R Journal,} 9(2):163-175. ISSN 2073-4859.

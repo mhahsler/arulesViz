@@ -1,5 +1,8 @@
 # arulesViz 1.5.3-1 (xx/xx/2024)
 
+## Changes
+* Fixed partial argument matches.
+
 # arulesViz 1.5.3 (04/25/2024)
 
 ## Changes

@@ -32,7 +32,8 @@
 #' Association Rules with R. *R Journal,* 9(2):163-175. ISSN 2073-4859.
 #' \doi{10.32614/RJ-2017-047}.
 #' @keywords print
-#' @examplesif requireNamespace("datatable", quietly = TRUE)
+#' @examples
+#' 
 #' data(Groceries)
 #' rules <- apriori(Groceries, parameter = list(support = 0.005, confidence = 0.5))
 #' rules
