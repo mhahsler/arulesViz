@@ -1,7 +1,11 @@
-# arulesViz 1.5.3-1 (xx/xx/2024)
+# arulesViz 1.5.4 (08/20/2025)
 
 ## Changes
 * Fixed partial argument matches.
+
+## Bugfixes
+* Fixed ggplot2 color specification for NA in matrix_ggplot2 and ggraph. 
+  It is now translucent: "#FFFFFFFF"
 
 # arulesViz 1.5.3 (04/25/2024)
 

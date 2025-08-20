@@ -143,7 +143,7 @@
 #' @author Michael Hahsler and Sudheer Chelluboina. Some visualizations are
 #' based on the implementation by Martin Vodenicharov.
 #' @seealso [scatterplot3d::scatterplot3d()],
-#' [igraph::plot.igraph()] and [igraph::tkplot()], 
+#' [igraph::plot.igraph()] and [igraph::tkplot()],
 #' [seriation::seriate()].
 #' @references Hahsler M (2017). arulesViz: Interactive Visualization of
 #' Association Rules with R. _R Journal,_ 9(2):163-175. ISSN 2073-4859.
@@ -384,17 +384,16 @@
 #' }
 #'
 #' @export
-plot.rules <- function(
-    x,
-    method = NULL,
-    measure = "support",
-    shading = "lift",
-    limit = NULL,
-    interactive = NULL,
-    engine = "default",
-    data = NULL,
-    control = NULL,
-    ...) {
+plot.rules <- function(x,
+                       method = NULL,
+                       measure = "support",
+                       shading = "lift",
+                       limit = NULL,
+                       interactive = NULL,
+                       engine = "default",
+                       data = NULL,
+                       control = NULL,
+                       ...) {
   methods <- c(
     "matrix",
     "mosaic",
@@ -406,63 +405,48 @@ plot.rules <- function(
     "two-key plot",
     "matrix3D"
   )
-
+  
   if (!is.null(method) && method == "help") {
-    message(
-      "Available methods for plotting rules are:\n",
-      paste0(methods, collapse = ", ")
-    )
+    message("Available methods for plotting rules are:\n",
+            paste0(sQuote(methods), collapse = ", "))
     return(invisible(methods))
   }
-
+  
   if (length(x) < 1) {
     stop("x contains 0 rules!")
   }
-
+  
   ## add order and id
   quality(x)$order <- size(x)
   quality(x)$id <- seq_along(x)
-
+  
   ## default is a scatter plot
   if (is.null(method)) {
-    methodNr <- 6
-  } else {
-    methodNr <- pmatch(tolower(method), tolower(methods))
+    method <- "scatterplot"
   }
-  if (is.na(methodNr)) {
-    stop(paste(
-      "Unknown method:",
-      sQuote(method),
-      "\nAvailable methods:",
-      paste(sQuote(methods), collapse = ", ")
-    ))
-  }
-
+  method <- match.arg(method, methods)
+  
   ## complete measure and shading
   mid <- pmatch(measure, colnames(quality(x)), duplicates.ok = TRUE)
   if (any(is.na(mid))) {
-    stop(
-      "Measure not available in rule set: ",
-      paste(sQuote(measure[is.na(mid)]), collapse = ", ")
-    )
+    stop("Measure not available in rule set: ",
+         paste(sQuote(measure[is.na(mid)]), collapse = ", "))
   }
   measure <- colnames(quality(x))[mid]
-
+  
   ## NULL means no shading
   if (!is.null(shading)) {
     sid <- pmatch(shading, colnames(quality(x)))
     if (any(is.na(sid))) {
-      stop(
-        "Shading measure not available in rule set: ",
-        paste(sQuote(shading[is.na(sid)]), collapse = ", ")
-      )
+      stop("Shading measure not available in rule set: ",
+           paste(sQuote(shading[is.na(sid)]), collapse = ", "))
     }
     shading <- colnames(quality(x))[sid]
   }
-
+  
   ## limit
   x <- limit(x, limit, shading, measure, quiet = TRUE)
-
+  
   ## add interactive and engine
   if (!is.null(interactive)) {
     warning("The parameter interactive is deprecated. Use engine='interactive' instead.")
@@ -472,7 +456,7 @@ plot.rules <- function(
   } else {
     interactive <- FALSE
   }
-
+  
   ### if control is character then I think it is "help"
   if (is.character(control)) {
     control <- list(help = TRUE)
@@ -480,94 +464,88 @@ plot.rules <- function(
   if (is.null(control$engine)) {
     control$engine <- engine
   }
-
+  
   ## work horses
-  if (methodNr == 1) {
-    matrixplot(x, measure = shading, control, ...)
-  } else if (methodNr == 2) {
-    doubledeckerplot(x,
+  switch(
+    method,
+    matrix =  matrixplot(x, measure = shading, control, ...),
+    mosaic =   doubledeckerplot(
+      x,
       measure = measure,
       data = data,
       c(control, list(type = "mosaic")),
       ...
-    )
-  } else if (methodNr == 3) {
-    doubledeckerplot(x,
+    ),
+    doubledecker =  doubledeckerplot(
+      x,
       measure = measure,
       data = data,
       c(control, list(type = "doubledecker")),
       ...
-    )
-  } else if (methodNr == 4) {
-    graphplot(x,
-      measure = measure,
-      shading = shading, control, ...
-    )
-  } else if (methodNr == 5) {
-    paracoord_rules(x,
-      measure = measure,
-      shading = shading,
-      control = control,
-      ...
-    )
-  } else if (methodNr == 6) {
-    if (length(measure) < 2) {
-      measure[2] <- "confidence"
-    }
-    scatterplot(x, measure = measure, shading = shading, control, ...)
-  } else if (methodNr == 7) {
-    grouped_matrix_plot(x,
-      measure = measure,
-      shading = shading,
-      control = control,
-      ...
-    )
-  } else if (methodNr == 8) {
-    if (is.null(control$col)) {
-      control$col <- grDevices::rainbow(max(size(x)) - 1L)
-    }
-    scatterplot(
+    ),
+    graph =  graphplot(x, measure = measure, shading = shading, control, ...),
+    paracoord =   paracoord_rules(
       x,
-      measure = c("support", "confidence"),
-      shading = "order",
-      control,
+      measure = measure,
+      shading = shading,
+      control = control,
       ...
-    )
-  } else if (methodNr == 9) {
-    warning("method 'matrix3D' is deprecated use method 'matrix' with engine '3d'")
-    control$engine <- "3d"
-    matrixplot(x, measure = shading, control = control, ...)
-  }
+    ),
+    scatterplot = {
+      if (length(measure) < 2) {
+        measure[2] <- "confidence"
+      }
+      scatterplot(x, measure = measure, shading = shading, control, ...)
+    },
+    "grouped matrix" = grouped_matrix_plot(
+      x,
+      measure = measure,
+      shading = shading,
+      control = control,
+      ...
+    ),
+    "two-key plot" = {
+      if (is.null(control$col)) {
+        control$col <- grDevices::rainbow(max(size(x)) - 1L)
+      }
+      scatterplot(
+        x,
+        measure = c("support", "confidence"),
+        shading = "order",
+        control,
+        ...
+      )
+    } ,
+    matrix3D =  {
+      warning("method 'matrix3D' is deprecated use method 'matrix' with engine '3d'")
+      control$engine <- "3d"
+      matrixplot(x, measure = shading, control = control, ...)
+    }
+  )
+  
 }
 
 #' @rdname plot_arulesViz
 #' @export
-plot.itemsets <- function(
-    x,
-    method = NULL,
-    measure = "support",
-    shading = NULL,
-    limit = NULL,
-    interactive = NULL,
-    engine = "default",
-    data = NULL,
-    control = NULL,
-    ...) {
+plot.itemsets <- function(x,
+                          method = NULL,
+                          measure = "support",
+                          shading = NULL,
+                          limit = NULL,
+                          interactive = NULL,
+                          engine = "default",
+                          data = NULL,
+                          control = NULL,
+                          ...) {
   ## methods
-  methods <- c(
-    "graph",
-    "paracoord",
-    "scatterplot"
-  )
-
+  methods <- c("graph", "paracoord", "scatterplot")
+  
   if (!is.null(method) && method == "help") {
-    message(
-      "Available methods for plotting itemsets are:\n",
-      paste0(methods, collapse = ", ")
-    )
+    message("Available methods for plotting itemsets are:\n",
+            paste0(sQuote(methods), collapse = ", "))
     return(invisible(methods))
   }
-
+  
   ## add interactive and engine
   if (is.null(control$engine)) {
     control$engine <- engine
@@ -580,52 +558,46 @@ plot.itemsets <- function(
   } else {
     interactive <- FALSE
   }
-
+  
   if (length(x) < 1) {
     stop("x contains 0 itemsets!")
   }
-
+  
   ## add order
   quality(x)$order <- size(x)
   quality(x)$id <- seq_along(x)
-
+  
   ## limit
   x <- limit(x, limit, shading, measure, quiet = TRUE)
-
+  
   if (is.null(method)) {
-    methodNr <- 3
-  } else {
-    methodNr <- pmatch(tolower(method), tolower(methods))
+    method <- "scatterplot"
   }
-  if (is.na(methodNr)) {
-    stop(paste(
-      "Unknown method:",
-      sQuote(method),
-      "\nAvailable methods:",
-      paste(sQuote(methods), collapse = ", ")
-    ))
-  }
-
-
+  
+  method <- match.arg(method, methods)
+  
   ## work horses
-  if (methodNr == 1) {
-    graphplot(x,
+  switch(
+    method,
+    graph =  graphplot(
+      x,
       measure = measure,
       shading = shading,
       control = control,
       ...
-    )
-  } else if (methodNr == 2) {
-    paracoord_items(x,
+    ),
+    paracoord =  paracoord_items(
+      x,
       measure = measure,
       shading = shading,
       control = control,
       ...
-    )
-  } else if (methodNr == 3) {
-    if (length(measure) < 2) {
-      measure[2] <- "order"
+    ),
+    scatterplot = {
+      if (length(measure) < 2) {
+        measure[2] <- "order"
+      }
+      scatterplot(x, measure = measure, shading = shading, control, ...)
     }
-    scatterplot(x, measure = measure, shading = shading, control, ...)
-  }
+  )
 }

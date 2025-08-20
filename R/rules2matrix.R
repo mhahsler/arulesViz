@@ -168,17 +168,8 @@ matrixplot <-
       return(invisible(engines))
     }
 
-    m <- pmatch(control$engine, engines, nomatch = 0)
-    if (m == 0) {
-      stop(
-        "Unknown engine: ",
-        sQuote(control$engine),
-        " Valid engines: ",
-        paste(sQuote(engines), collapse = ", ")
-      )
-    }
-    control$engine <- engines[m]
-
+    control$engine <- match.arg(control$engine, engines)
+    
     ### FIXME: fix max and control & reorder!
     if (pmatch(control$engine, c("plotly", "htmlwidget"), nomatch = 0) >
       0) {

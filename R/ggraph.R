@@ -93,7 +93,7 @@ graph_nodes_ggplot2 <- function(
     scale_color_gradient(
       low = control$colors[2],
       high = control$colors[1],
-      na.value = 0
+      na.value = "#FFFFFFFF"
     ) +
     # base_family is a problem for latex
     ggraph::theme_graph(base_family = "") +
@@ -171,7 +171,7 @@ graph_edges_ggplot2 <- function(
     ggraph::scale_edge_color_gradient(
       low = control$colors[2],
       high = control$colors[1],
-      na.value = 0
+      na.value = "#FFFFFFFF",
     ) +
     # base_family is a problem for latex
     ggraph::theme_graph(base_family = "", plot_margin = margin(5, 5, 5, 5, unit = "mm")) +
