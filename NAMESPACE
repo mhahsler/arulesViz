@@ -20,12 +20,16 @@ import(grid)
 import(tibble)
 import(tidyr)
 importFrom(ggraph,guide_edge_colourbar)
-importFrom(graphics,axis)
-importFrom(graphics,box)
-importFrom(graphics,mtext)
-importFrom(graphics,par)
-importFrom(graphics,text)
-importFrom(methods,as)
-importFrom(methods,is)
-importFrom(methods,new)
+importFrom(graphics,
+  axis,
+  box,
+  mtext,
+  par,
+  text
+)
+importFrom(methods,
+  as,
+  is,
+  new
+)
 importFrom(stats,median)

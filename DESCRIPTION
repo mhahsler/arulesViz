@@ -49,4 +49,4 @@ Config/testthat/edition: 3
 Copyright: (C) 2021 Michael Hahsler
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+Config/roxygen2/version: 8.1.0
