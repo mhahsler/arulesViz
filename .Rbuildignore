@@ -7,3 +7,6 @@ README.Rmd
 ^Work
 ^_config\.yml
 ^\.github$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

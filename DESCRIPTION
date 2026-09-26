@@ -13,7 +13,7 @@ Description: Extends package 'arules' with various visualization
     includes several interactive visualizations for rule exploration.
     Michael Hahsler (2017) <doi:10.32614/RJ-2017-047>.
 License: GPL-3
-URL: https://github.com/mhahsler/arulesViz
+URL: https://github.com/mhahsler/arulesViz, http://michael.hahsler.net/arulesViz/
 BugReports: https://github.com/mhahsler/arulesViz/issues
 Depends: 
     arules (>= 1.6.0)

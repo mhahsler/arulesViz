@@ -108,7 +108,7 @@ rules <- apriori(Groceries, parameter = list(support = 0.005, confidence = 0.5))
     ## set item appearances ...[0 item(s)] done [0.00s].
     ## set transactions ...[169 item(s), 9835 transaction(s)] done [0.00s].
     ## sorting and recoding items ... [120 item(s)] done [0.00s].
-    ## creating transaction tree ... done [0.00s].
+    ## creating transaction tree ... done [0.01s].
     ## checking subsets of size 1 2 3 4 done [0.00s].
     ## writing ... [120 rule(s)] done [0.00s].
     ## creating S4 object  ... done [0.00s].
@@ -119,13 +119,13 @@ rules <- apriori(Groceries, parameter = list(support = 0.005, confidence = 0.5))
 plot(rules)
 ```
 
-![](inst/README_files/scatterplot-1.png)<!-- -->
+![](man/figures/README-scatterplot-1.png)<!-- -->
 
 ``` r
 plot(rules, method = "graph", limit = 20)
 ```
 
-![](inst/README_files/graph-1.png)<!-- -->
+![](man/figures/README-graph-1.png)<!-- -->
 
 ### Interactive visualization
 
