@@ -16,7 +16,6 @@ extends package [arules](https://mhahsler.github.io/arules) with various visuali
 
 ```{r echo=FALSE, results = 'asis'}
 pkg_usage(pkg)
-pkg_citation(pkg, 2)
 ```
 
 ## Features
@@ -63,11 +62,17 @@ plot(rules, method = "graph", limit = 20)
 
 Live examples for interactive visualizations can be seen in [Chapter 5 of An R Companion for Introduction to Data Mining](https://michael.hahsler.net/Introduction_to_Data_Mining_R_Examples/book/association-analysis-basic-concepts.html#interactive-visualizations).
 
+
+## Citation request
+
+```{r echo=FALSE, results = 'asis'}
+pkg_citation(pkg, 2)
+```
+
 ## References
 
 * Michael Hahsler. [arulesViz: Interactive visualization of association rules with R.](https://journal.r-project.org/archive/2017/RJ-2017-047/RJ-2017-047.pdf) _R Journal,_ 9(2):163-175, December 2017.
-* Michael Hahsler. [An R Companion for Introduction to Data Mining: Chapter 5, Association Rule Visualization](https://michael.hahsler.net/Introduction_to_Data_Mining_R_Examples/book/association-analysis-basic-concepts.html#association-rule-visualization). 
-Online Book. https://mhahsler.github.io/Introduction_to_Data_Mining_R_Examples/book/, 2021.
+* Michael Hahsler. [An R Companion for Introduction to Data Mining: Chapter 5, Association Rule Visualization](https://michael.hahsler.net/Introduction_to_Data_Mining_R_Examples/book/association-analysis-basic-concepts.html#association-rule-visualization). Online Book, 2021.
 * Michael Hahsler, Sudheer Chelluboina, Kurt Hornik, and Christian Buchta. [The arules R-package ecosystem: Analyzing interesting patterns from large transaction datasets.](https://jmlr.csail.mit.edu/papers/v12/hahsler11a.html) _Journal of Machine Learning Research,_ 12:1977-1981, 2011.
 * Michael Hahsler and Sudheer Chelluboina. [Visualizing Association Rules: Introduction 
-to the R-extension Package arulesViz](https://cran.r-project.org/package=arulesViz/vignettes/arulesViz.pdf) (with complete examples). 
+to the R-extension Package arulesViz](https://mhahsler.github.io/arulesViz/articles/arulesViz_vignette.pdf) (with complete examples). 
