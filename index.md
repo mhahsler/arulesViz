@@ -160,5 +160,5 @@ To cite package ‘arulesViz’ in publications use:
   *Journal of Machine Learning Research,* 12:1977-1981, 2011.
 - Michael Hahsler and Sudheer Chelluboina. [Visualizing Association
   Rules: Introduction to the R-extension Package
-  arulesViz](https://mhahsler.github.io/arulesViz/articles/arulesViz_vignette.pdf)
+  arulesViz](https://mhahsler.r-universe.dev/arulesViz/doc/arulesViz_vignette.pdf)
   (with complete examples).

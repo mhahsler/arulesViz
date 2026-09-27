@@ -96,10 +96,10 @@ library("igraph")
 #>     union
 g <- associations2igraph(rules)
 g
-#> IGRAPH 56df730 DN-B 27 45 -- 
+#> IGRAPH 29b9230 DN-B 27 45 -- 
 #> + attr: name (v/c), label (v/c), index (v/n), type (v/n), support
 #> | (v/n), confidence (v/n), coverage (v/n), lift (v/n), count (v/n)
-#> + edges from 56df730 (vertex names):
+#> + edges from 29b9230 (vertex names):
 #>  [1] 27    ->assoc1  30    ->assoc1  23    ->assoc2  26    ->assoc2 
 #>  [5] 23    ->assoc3  55    ->assoc3  30    ->assoc4  31    ->assoc4 
 #>  [9] 23    ->assoc5  31    ->assoc5  16    ->assoc6  23    ->assoc6 
@@ -156,10 +156,10 @@ itemsets
 #> set of 15 itemsets 
 g <- associations2igraph(itemsets, associationsAsNodes = FALSE)
 g
-#> IGRAPH f670c25 UN-- 12 45 -- 
+#> IGRAPH a5d7327 UN-- 12 45 -- 
 #> + attr: name (v/c), label (v/c), index (v/n), index (e/n), support
 #> | (e/n)
-#> + edges from f670c25 (vertex names):
+#> + edges from a5d7327 (vertex names):
 #>  [1] 25--27 25--30 27--30 23--25 23--26 25--26 23--25 23--55 25--55 25--30
 #> [11] 25--31 30--31 23--25 23--31 25--31 16--23 16--25 23--25 14--20 14--23
 #> [21] 20--23 15--20 15--23 20--23 15--20 15--25 20--25 15--25 15--30 25--30
