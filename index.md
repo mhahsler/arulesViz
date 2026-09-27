@@ -24,29 +24,6 @@ The following R packages use `arulesViz`:
 [TELP](https://CRAN.R-project.org/package=TELP),
 [tidylearn](https://CRAN.R-project.org/package=tidylearn)
 
-To cite package ‘arulesViz’ in publications use:
-
-> Hahsler M (2017). “arulesViz: Interactive Visualization of Association
-> Rules with R.” *R Journal*, *9*(2), 163-175. ISSN 2073-4859.
-> <doi:10.32614/RJ-2017-047> <https://doi.org/10.32614/RJ-2017-047>.
-> <https://journal.r-project.org/archive/2017/RJ-2017-047/RJ-2017-047.pdf>.
-
-``` R
-@Article{,
-  title = {arules{V}iz: {I}nteractive Visualization of Association Rules with {R}},
-  author = {Michael Hahsler},
-  year = {2017},
-  journal = {R Journal},
-  volume = {9},
-  number = {2},
-  pages = {163--175},
-  url = {https://journal.r-project.org/archive/2017/RJ-2017-047/RJ-2017-047.pdf},
-  doi = {10.32614/RJ-2017-047},
-  month = {December},
-  issn = {2073-4859},
-}
-```
-
 ## Features
 
 - Visualizations using engines `ggplot2` (default engine for most
@@ -113,7 +90,7 @@ rules <- apriori(Groceries, parameter = list(support = 0.005, confidence = 0.5))
 ## set item appearances ...[0 item(s)] done [0.00s].
 ## set transactions ...[169 item(s), 9835 transaction(s)] done [0.00s].
 ## sorting and recoding items ... [120 item(s)] done [0.00s].
-## creating transaction tree ... done [0.01s].
+## creating transaction tree ... done [0.00s].
 ## checking subsets of size 1 2 3 4 done [0.00s].
 ## writing ... [120 rule(s)] done [0.00s].
 ## creating S4 object  ... done [0.00s].
@@ -141,6 +118,31 @@ Live examples for interactive visualizations can be seen in [Chapter 5
 of An R Companion for Introduction to Data
 Mining](https://michael.hahsler.net/Introduction_to_Data_Mining_R_Examples/book/association-analysis-basic-concepts.html#interactive-visualizations).
 
+## Citation request
+
+To cite package ‘arulesViz’ in publications use:
+
+> Hahsler M (2017). “arulesViz: Interactive Visualization of Association
+> Rules with R.” *R Journal*, *9*(2), 163-175. ISSN 2073-4859.
+> <doi:10.32614/RJ-2017-047> <https://doi.org/10.32614/RJ-2017-047>.
+> <https://journal.r-project.org/archive/2017/RJ-2017-047/RJ-2017-047.pdf>.
+
+``` R
+@Article{,
+  title = {arules{V}iz: {I}nteractive Visualization of Association Rules with {R}},
+  author = {Michael Hahsler},
+  year = {2017},
+  journal = {R Journal},
+  volume = {9},
+  number = {2},
+  pages = {163--175},
+  url = {https://journal.r-project.org/archive/2017/RJ-2017-047/RJ-2017-047.pdf},
+  doi = {10.32614/RJ-2017-047},
+  month = {December},
+  issn = {2073-4859},
+}
+```
+
 ## References
 
 - Michael Hahsler. [arulesViz: Interactive visualization of association
@@ -150,9 +152,7 @@ Mining](https://michael.hahsler.net/Introduction_to_Data_Mining_R_Examples/book/
 - Michael Hahsler. [An R Companion for Introduction to Data Mining:
   Chapter 5, Association Rule
   Visualization](https://michael.hahsler.net/Introduction_to_Data_Mining_R_Examples/book/association-analysis-basic-concepts.html#association-rule-visualization).
-  Online Book.
-  <https://mhahsler.github.io/Introduction_to_Data_Mining_R_Examples/book/>,
-  2021. 
+  Online Book, 2021.
 - Michael Hahsler, Sudheer Chelluboina, Kurt Hornik, and Christian
   Buchta. [The arules R-package ecosystem: Analyzing interesting
   patterns from large transaction
@@ -160,5 +160,5 @@ Mining](https://michael.hahsler.net/Introduction_to_Data_Mining_R_Examples/book/
   *Journal of Machine Learning Research,* 12:1977-1981, 2011.
 - Michael Hahsler and Sudheer Chelluboina. [Visualizing Association
   Rules: Introduction to the R-extension Package
-  arulesViz](https://cran.r-project.org/package=arulesViz/vignettes/arulesViz.pdf)
+  arulesViz](https://mhahsler.github.io/arulesViz/articles/arulesViz_vignette.pdf)
   (with complete examples).
