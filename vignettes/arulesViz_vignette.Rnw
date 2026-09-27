@@ -325,7 +325,7 @@ plot(rules)
 
 \begin{figure}
 \centering
-\includegraphics[width=10cm]{arulesViz-scatterplot1}
+\includegraphics[width=10cm]{arulesViz_vignette-scatterplot1}
 \caption{Default scatter plot.\label{fig:scatterplot1}}
 \end{figure}
 
@@ -362,7 +362,7 @@ is easy to identify all rules with high lift.
 
 \begin{figure}
 \centering
-\includegraphics[width=10cm]{arulesViz-scatterplot2}
+\includegraphics[width=10cm]{arulesViz_vignette-scatterplot2}
 \caption{Scatter plot with lift on the y-axis.\label{fig:scatterplot2}}
 \end{figure}
 
@@ -378,7 +378,7 @@ plot(rules, method = "two-key plot")
 
 \begin{figure}
 \centering
-\includegraphics[width=10cm]{arulesViz-scatterplot3}
+\includegraphics[width=10cm]{arulesViz_vignette-scatterplot3}
 \caption{Two-key plot.\label{fig:scatterplot3}}
 \end{figure}
 
@@ -585,13 +585,13 @@ Itemsets in Consequent (rhs)
 
 \begin{figure}
 \centering
-\includegraphics[width=\linewidth]{arulesViz-matrix1}
+\includegraphics[width=\linewidth]{arulesViz_vignette-matrix1}
 \caption{Matrix-based visualization with colored squares.
 \label{fig:matrix1}}
 
 %\vspace{5mm}
 %
-%\includegraphics[width=\linewidth]{arulesViz-matrix2}
+%\includegraphics[width=\linewidth]{arulesViz_vignette-matrix2}
 %\caption{Matrix-based visualization with colored squares (reordered).
 %\label{fig:matrix2}}
 \end{figure}
@@ -607,12 +607,12 @@ plot(subrules, method = "matrix", engine = "3d", measure = "lift")
 \begin{figure}
 %\begin{minipage}{.48\linewidth}
 \centering
-\includegraphics[width=.48\linewidth]{arulesViz-matrix3D1}
+\includegraphics[width=.48\linewidth]{arulesViz_vignette-matrix3D1}
 \caption{Matrix-based visualization with 3D bars.
 \label{fig:matrix3D1}}
 %\end{minipage}
 %\begin{minipage}{.48\linewidth}
-%\includegraphics[width=\linewidth]{arulesViz-matrix3D2}
+%\includegraphics[width=\linewidth]{arulesViz_vignette-matrix3D2}
 %\caption{Matrix-based visualization with 3D bars (reordered).
 %\label{fig:matrix3D2}}
 %\end{minipage}
@@ -722,7 +722,7 @@ antecedent and the consequent is ``hamburger meat.''
 
 \begin{figure}
 \centering
-\includegraphics[width=12cm]{arulesViz-clusterplot1}
+\includegraphics[width=12cm]{arulesViz_vignette-clusterplot1}
 \caption{Grouped matrix-based visualization.\label{fig:clusterplot1}}
 \end{figure}
 
@@ -736,7 +736,7 @@ The resulting, more detailed plot is shown in Figure~\ref{fig:clusterplot2}.
 
 \begin{figure}
 \centering
-\includegraphics[width=20cm, angle=90]{arulesViz-clusterplot2}
+\includegraphics[width=20cm, angle=90]{arulesViz_vignette-clusterplot2}
 \caption{Grouped matrix with $k=50$.\label{fig:clusterplot2}}
 \end{figure}
 
@@ -792,7 +792,7 @@ plot(subrules2, method = "graph")
 
 \begin{figure}
 \centering
-\includegraphics[width=\linewidth]{arulesViz-graph1}
+\includegraphics[width=\linewidth]{arulesViz_vignette-graph1}
 \caption{Graph-based visualization with items and rules as vertices.
 \label{fig:graph1}}
 \end{figure}
@@ -887,10 +887,10 @@ to reduce crossovers.
 
 \begin{figure}
 \centering
-\includegraphics[width=15cm]{arulesViz-pc1}
+\includegraphics[width=15cm]{arulesViz_vignette-pc1}
 \caption{Parallel coordinate plot.\label{fig:pc1}}
 
-\includegraphics[width=15cm]{arulesViz-pc2}
+\includegraphics[width=15cm]{arulesViz_vignette-pc2}
 \caption{Parallel coordinate plot (reordered).\label{fig:pc2}}
 \end{figure}
 
@@ -922,7 +922,7 @@ plot(oneRule, method = "doubledecker", data = Groceries)
 @
 \begin{figure}
 \centering
-\includegraphics[width=8cm]{arulesViz-doubledecker1}
+\includegraphics[width=8cm]{arulesViz_vignette-doubledecker1}
 \caption{Double decker plot for a the rule
 \Sexpr{labels(oneRule)}.\label{fig:doubledecker1}}
 \end{figure}

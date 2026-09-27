@@ -75,4 +75,4 @@ pkg_citation(pkg, 2)
 * Michael Hahsler. [An R Companion for Introduction to Data Mining: Chapter 5, Association Rule Visualization](https://michael.hahsler.net/Introduction_to_Data_Mining_R_Examples/book/association-analysis-basic-concepts.html#association-rule-visualization). Online Book, 2021.
 * Michael Hahsler, Sudheer Chelluboina, Kurt Hornik, and Christian Buchta. [The arules R-package ecosystem: Analyzing interesting patterns from large transaction datasets.](https://jmlr.csail.mit.edu/papers/v12/hahsler11a.html) _Journal of Machine Learning Research,_ 12:1977-1981, 2011.
 * Michael Hahsler and Sudheer Chelluboina. [Visualizing Association Rules: Introduction 
-to the R-extension Package arulesViz](https://mhahsler.github.io/arulesViz/articles/arulesViz_vignette.pdf) (with complete examples). 
+to the R-extension Package arulesViz](https://mhahsler.r-universe.dev/arulesViz/doc/arulesViz_vignette.pdf) (with complete examples). 
