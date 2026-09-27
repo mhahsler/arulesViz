@@ -44,7 +44,10 @@ Suggests:
     shiny,
     shinythemes,
     testthat (>= 3.0.0),
-    tidygraph
+    tidygraph,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
 Config/testthat/edition: 3
 Copyright: (C) 2021 Michael Hahsler
 Encoding: UTF-8
