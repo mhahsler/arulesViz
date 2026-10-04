@@ -1,4 +1,4 @@
 url: http://michael.hahsler.net/arulesViz/
 template:
   bootstrap: 5
-
+  math-rendering: mathjax
